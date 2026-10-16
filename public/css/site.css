@@ -351,6 +351,8 @@ figure { margin: 0; }
 .feature-product { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(16px, 2vw, 32px); align-items: center; text-decoration: none; padding-bottom: clamp(56px, 8vw, 112px); }
 .feature-product .frame { grid-column: 1 / span 7; aspect-ratio: 1 / 1; }
 .feature-product .info { grid-column: 9 / span 4; }
+.feature-product.is-reverse .frame { grid-column: 6 / span 7; grid-row: 1; }
+.feature-product.is-reverse .info { grid-column: 1 / span 4; grid-row: 1; }
 .feature-product h2 { font-size: clamp(40px, 5vw, 72px); color: var(--plum); margin: 18px 0 18px; transition: color .3s; }
 .feature-product:hover h2 { color: var(--chocolate); }
 .feature-product .frame img { transition: transform 1.6s var(--ease-out); }
@@ -362,7 +364,8 @@ figure { margin: 0; }
 .collection-note { border-top: 1px solid var(--rule); padding-block: 56px; display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: center; }
 .collection-note .monogram { width: 34px; }
 @media (max-width: 860px) {
-  .feature-product .frame, .feature-product .info { grid-column: 1 / -1; }
+  .feature-product .frame, .feature-product .info,
+  .feature-product.is-reverse .frame, .feature-product.is-reverse .info { grid-column: 1 / -1; grid-row: auto; }
   .feature-product .frame { margin-inline: calc(-1 * var(--gutter) + 12px); }
   .collection-note { grid-template-columns: 1fr; }
 }

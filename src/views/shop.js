@@ -20,7 +20,10 @@ const steps = (current) => html`<ol class="steps" aria-label="Checkout progress"
 // ---- Collection -------------------------------------------------------------------
 
 export function collectionPage({ products, cartCount }) {
-  const [feature, ...rest] = products;
+  // A small collection gives every piece the full feature treatment, alternating sides;
+  // a larger one features the first and lists the rest in a grid.
+  const featured = products.length <= 4 ? products : products.slice(0, 1);
+  const rest = products.slice(featured.length);
   const body = html`
 <header class="wrap page-head">
   ${eyebrow('Cocoa Caramel')}
@@ -28,8 +31,8 @@ export function collectionPage({ products, cartCount }) {
   <p class="lede">Each creation is made to order and composed to be the centrepiece of the table.</p>
 </header>
 <div class="wrap">
-  ${feature ? featureCard(feature, 1) : html`<p class="lede">Our collection is being prepared. Please check back soon.</p>`}
-  ${rest.length ? html`<div class="product-grid">${rest.map((p, i) => productCard(p, i + 2))}</div>` : ''}
+  ${featured.length ? featured.map((p, i) => featureCard(p, i + 1)) : html`<p class="lede">Our collection is being prepared. Please check back soon.</p>`}
+  ${rest.length ? html`<div class="product-grid">${rest.map((p, i) => productCard(p, i + featured.length + 1))}</div>` : ''}
   <aside class="collection-note">
     ${monogram()}
     <p class="lede" style="margin:0">More creations, and seasonal collections, will join the collection here.</p>
@@ -41,8 +44,8 @@ export function collectionPage({ products, cartCount }) {
 
 function featureCard(p, n) {
   const r = priceRange(p);
-  return html`<a class="feature-product" href="/collection/${p.slug}">
-    ${framed(p.images[0], { mount: true, sizes: '(max-width: 860px) 100vw, 56vw', eager: true })}
+  return html`<a class="feature-product${n % 2 === 0 ? ' is-reverse' : ''}" href="/collection/${p.slug}">
+    ${framed(p.images[0], { mount: true, sizes: '(max-width: 860px) 100vw, 56vw', eager: n === 1 })}
     <div class="info reveal">
       <p class="caption"><span class="numeral">No. ${String(n).padStart(2, '0')}</span></p>
       <h2>${p.name}</h2>

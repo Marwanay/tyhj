@@ -116,3 +116,38 @@ export const PRODUCT_MEDIA = {
     "alt": "The cream gerbera arrangement at the head of the tray"
   }
 };
+
+export const ROUND_TRAY_MEDIA = {
+  "round-tray-studio": {
+    "width": 1312,
+    "height": 1199,
+    "widths": [
+      480,
+      760,
+      1080,
+      1312
+    ],
+    "placeholder": "rgb(248 232 216)",
+    "alt": "The Signature Round Tray: gold-flecked chocolate domes in a round clear tray, around a vase of cream gerberas"
+  },
+  "round-tray-detail": {
+    "width": 620,
+    "height": 400,
+    "widths": [
+      480,
+      620
+    ],
+    "placeholder": "rgb(248 232 216)",
+    "alt": "Close-up of the gold-flecked chocolate domes in the round tray"
+  },
+  "round-tray-flowers": {
+    "width": 640,
+    "height": 720,
+    "widths": [
+      480,
+      640
+    ],
+    "placeholder": "rgb(216 200 184)",
+    "alt": "Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray"
+  }
+};
