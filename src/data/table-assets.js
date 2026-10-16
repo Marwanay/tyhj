@@ -1,4 +1,6 @@
-{
+// Written by scripts/extract-table-desserts.py — do not edit by hand.
+// Each dessert render: where it sat on the table (rect, table pixels) and the serving footprint it stands on.
+export default {
   "chocolate-cake": {
     "src": "/media/table/desserts/chocolate-cake.webp",
     "source": "reference-arrangement-a",
@@ -305,4 +307,4 @@
       92.0
     ]
   }
-}
+};

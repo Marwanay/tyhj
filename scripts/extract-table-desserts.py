@@ -13,7 +13,7 @@
 # or flowers), colour-matched to the empty table and given a soft contact shadow.
 #
 # Output: public/media/table/desserts/<id>.webp (transparent, cropped) and
-#         src/data/table-assets.json (where each asset sits on its own serving surface).
+#         src/data/table-assets.js (where each asset sits on its own serving surface).
 import json, os
 import numpy as np
 import cv2
@@ -23,11 +23,11 @@ from rembg import remove, new_session
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'assets/source')
 OUT = os.path.join(ROOT, 'public/media/table/desserts')
-DATA = os.path.join(ROOT, 'src/data/table-assets.json')
+DATA = os.path.join(ROOT, 'src/data/table-assets.js')
 W, H = 1536, 1024
 os.makedirs(OUT, exist_ok=True)
 
-ZONES = {z['id']: z for z in json.load(open(os.path.join(ROOT, 'src/data/table-placement.json')))['zones']}
+ZONES = {z['id']: z for z in json.loads(open(os.path.join(ROOT, 'src/data/table-placement.js')).read().split('export default ', 1)[1].rstrip().rstrip(';'))['zones']}
 def zone_plate(zid):
     z = ZONES[zid]
     return [round(z['center']['x'] / 100 * W, 1), round(z['center']['y'] / 100 * H, 1),
@@ -137,5 +137,6 @@ for pid, (ref, box, surface) in ASSETS.items():
 
 os.makedirs(os.path.dirname(DATA), exist_ok=True)
 with open(DATA, 'w') as f:
-    json.dump(manifest, f, indent=2)
-    f.write('\n')
+    f.write('// Written by scripts/extract-table-desserts.py — do not edit by hand.\n'
+            '// Each dessert render: where it sat on the table (rect, table pixels) and the serving footprint it stands on.\n'
+            'export default ' + json.dumps(manifest, indent=2) + ';\n')

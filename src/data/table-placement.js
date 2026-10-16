@@ -1,4 +1,6 @@
-{
+// The serving surfaces of the empty overhead table (hand-mapped on the 1536 × 1024 photo;
+// coordinates are percentages of the image). Source: assets/source/table-zones-labelled.png.
+export default {
   "baseImage": "A7F6ACB0-B4EF-4C73-91FD-D4606EF3D1E0.jpeg",
   "imageWidth": 1536,
   "imageHeight": 1024,
@@ -500,4 +502,4 @@
     "Circular wedding cake variants require round stands; rectangular variants require rectangular trays.",
     "Dessert quantities and arrangement sizes need actual serving specifications."
   ]
-}
+};

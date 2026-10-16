@@ -5,18 +5,15 @@
 // is its own transparent image (public/media/table/desserts/<id>.webp) that appears on one
 // surface when chosen and disappears when removed.
 //
-// Surfaces:  src/data/table-placement.json  (R01–R07 cake stands, S01–S02 raised trays,
+// Surfaces:  src/data/table-placement.js  (R01–R07 cake stands, S01–S02 raised trays,
 //            P01–P02 scalloped bowls, T01–T04 gold trays, M01–M04 small stands)
-// Assets:    src/data/table-assets.json      (written by scripts/extract-table-desserts.py)
+// Assets:    src/data/table-assets.js      (written by scripts/extract-table-desserts.py)
 // Manifest:  public/media/table/manifest.json (written by scripts/build-table-manifest.mjs)
 //
 // Every position is stored normalised (0–1 of the table's width / height) so the browser, the
 // server-side preview and the manifest all share one coordinate system.
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const placement = require('../data/table-placement.json');
-const assets = require('../data/table-assets.json');
+import placement from '../data/table-placement.js';
+import assets from '../data/table-assets.js';
 
 const W = 1536, H = 1024;
 export const TABLE_IMAGE = { width: W, height: H };
