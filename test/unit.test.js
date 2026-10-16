@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-test-'));
+process.env.PGLITE_DIR = 'memory';
 process.env.PAYMENT_MODE = 'test';
 process.env.PAYMENT_PROVIDER = 'sandbox';
 
@@ -70,24 +71,23 @@ test('templates escape user content', () => {
 });
 
 test('webhook processing is idempotent and amount-checked', async () => {
-  const { run, one } = await import('../src/db.js');
+  const { run, one, insert } = await import('../src/db.js');
   const { processEvent } = await import('../src/services/payments.js');
-  const ins = run(`INSERT INTO orders (ref, access_hash, access_enc, customer_name, customer_phone, customer_email, fulfilment, requested_date, subtotal, delivery_fee, total, payment_mode)
+  const orderId = await insert(`INSERT INTO orders (ref, access_hash, access_enc, customer_name, customer_phone, customer_email, fulfilment, requested_date, subtotal, delivery_fee, total, payment_mode)
     VALUES ('CC-TEST-0001','h','e','A','+201012345678','a@b.co','delivery','2030-01-01',10000,0,10000,'test')`);
-  const orderId = Number(ins.lastInsertRowid);
-  run(`INSERT INTO payments (subject_type, subject_id, provider, mode, merchant_reference, provider_order_id, amount)
+  await run(`INSERT INTO payments (subject_type, subject_id, provider, mode, merchant_reference, provider_order_id, amount)
     VALUES ('order', ?, 'sandbox', 'test', 'CC-TEST-0001-P1', 'sbx_1', 10000)`, orderId);
   const evt = (o) => ({ eventKey: `t1:${o.outcome}`, providerOrderId: 'sbx_1', txnId: 't1', amount: 10000, currency: 'EGP', outcome: 'paid', detail: '', ...o });
 
-  assert.equal(processEvent('sandbox', evt({ amount: 1, eventKey: 'bad:paid' }), {}).result, 'amount_mismatch');
-  assert.equal(one('SELECT payment_status FROM orders WHERE id=?', orderId).payment_status, 'unpaid');
+  assert.equal((await processEvent('sandbox', evt({ amount: 1, eventKey: 'bad:paid' }), {})).result, 'amount_mismatch');
+  assert.equal((await one('SELECT payment_status FROM orders WHERE id=?', orderId)).payment_status, 'unpaid');
 
-  assert.equal(processEvent('sandbox', evt({}), {}).result, 'paid');
-  assert.equal(processEvent('sandbox', evt({}), {}).result, 'duplicate');
+  assert.equal((await processEvent('sandbox', evt({}), {})).result, 'paid');
+  assert.equal((await processEvent('sandbox', evt({}), {})).result, 'duplicate');
   // A late failure for the same order never downgrades a verified payment.
-  assert.equal(processEvent('sandbox', evt({ outcome: 'failed', eventKey: 't2:failed', txnId: 't2' }), {}).result, 'ignored');
-  const o = one('SELECT * FROM orders WHERE id=?', orderId);
+  assert.equal((await processEvent('sandbox', evt({ outcome: 'failed', eventKey: 't2:failed', txnId: 't2' }), {})).result, 'ignored');
+  const o = await one('SELECT * FROM orders WHERE id=?', orderId);
   assert.equal(o.payment_status, 'paid');
   assert.equal(o.status, 'confirmed');
-  assert.equal(processEvent('sandbox', evt({ providerOrderId: 'nope', eventKey: 'x:paid' }), {}).result, 'unknown_payment');
+  assert.equal((await processEvent('sandbox', evt({ providerOrderId: 'nope', eventKey: 'x:paid' }), {})).result, 'unknown_payment');
 });

@@ -1,8 +1,6 @@
 // Catering enquiries → itemised quotes → private acceptance & payment links.
 // An event is only "confirmed" once the required payment has actually been received.
-import fs from 'node:fs';
-import path from 'node:path';
-import { one, all, run, tx } from '../db.js';
+import { one, all, run, insert, tx } from '../db.js';
 import { config } from '../config.js';
 import { randomToken, sha256, seal, unseal, safeEqual } from '../lib/security.js';
 import { normalizeEgyptianMobile } from '../lib/phone.js';
@@ -46,28 +44,30 @@ export function validateEnquiry(input) {
 }
 
 export async function createEnquiry(v, files = []) {
-  const ref = uniqueRef('EV', 'enquiries');
-  const info = run(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
-    JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email);
-  const id = Number(info.lastInsertRowid);
-  const dir = path.join(config.uploadsDir, 'enquiries');
-  fs.mkdirSync(dir, { recursive: true });
+  // Re-encode images first (outside the transaction): this strips metadata and rejects non-images.
+  const images = [];
   for (const f of files.slice(0, 6)) {
-    const stored = `${ref}-${randomToken(8)}.jpg`;
-    const meta = await sanitizePrivateImage(f.buffer, path.join(dir, stored));
-    if (meta) run('INSERT INTO enquiry_files (enquiry_id, stored_name, original_name, width, height) VALUES (?,?,?,?,?)',
-      id, stored, str(f.originalname, 120), meta.width, meta.height);
+    const img = await sanitizePrivateImage(f.buffer);
+    if (img) images.push({ ...img, name: str(f.originalname, 120) });
   }
-  return getEnquiry(id);
+  return tx(async () => {
+    const ref = await uniqueRef('EV', 'enquiries');
+    const id = await insert(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
+      JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email);
+    for (const img of images) {
+      await run('INSERT INTO enquiry_files (enquiry_id, original_name, width, height, data) VALUES (?,?,?,?,?)', id, img.name, img.width, img.height, img.data);
+    }
+    return getEnquiry(id);
+  });
 }
 
-export function getEnquiry(id) {
-  const e = one('SELECT * FROM enquiries WHERE id = ?', id);
+export async function getEnquiry(id) {
+  const e = await one('SELECT * FROM enquiries WHERE id = ?', id);
   if (!e) return null;
   e.servicesList = JSON.parse(e.services);
-  e.files = all('SELECT * FROM enquiry_files WHERE enquiry_id = ?', id);
-  e.quotes = all('SELECT * FROM quotes WHERE enquiry_id = ? ORDER BY id DESC', id);
+  e.files = await all('SELECT id, original_name, width, height FROM enquiry_files WHERE enquiry_id = ? ORDER BY id', id);
+  e.quotes = await all('SELECT * FROM quotes WHERE enquiry_id = ? ORDER BY id DESC', id);
   return e;
 }
 
@@ -83,19 +83,19 @@ export const QUOTE_STATUSES = {
   paid_in_full: 'Paid in full', expired: 'Expired', withdrawn: 'Withdrawn',
 };
 
-export function createQuote(enquiryId) {
+export async function createQuote(enquiryId) {
   const q = getSetting('quotes');
-  const ref = uniqueRef('QT', 'quotes');
-  const info = run(`INSERT INTO quotes (enquiry_id, ref, terms, expires_at, deposit_percent, payment_mode) VALUES (?,?,?,?,?,?)`,
+  const ref = await uniqueRef('QT', 'quotes');
+  const id = await insert(`INSERT INTO quotes (enquiry_id, ref, terms, expires_at, deposit_percent, payment_mode) VALUES (?,?,?,?,?,?)`,
     enquiryId, ref, q.defaultTerms, addDays(cairoDate(), q.validityDays), q.defaultDepositPercent, config.payments.mode);
-  return getQuote(Number(info.lastInsertRowid));
+  return getQuote(id);
 }
 
-export function getQuote(id) {
-  const q = one('SELECT * FROM quotes WHERE id = ?', id);
+export async function getQuote(id) {
+  const q = await one('SELECT * FROM quotes WHERE id = ?', id);
   if (!q) return null;
-  q.items = all('SELECT * FROM quote_items WHERE quote_id = ? ORDER BY sort, id', id);
-  q.payments = all("SELECT * FROM payments WHERE subject_type='quote' AND subject_id=? ORDER BY id DESC", id);
+  q.items = await all('SELECT * FROM quote_items WHERE quote_id = ? ORDER BY sort, id', id);
+  q.payments = await all("SELECT * FROM payments WHERE subject_type='quote' AND subject_id=? ORDER BY id DESC", id);
   return withComputed(q);
 }
 
@@ -121,17 +121,19 @@ export function computeTotals(items, discount, option, depositPercent) {
   return { subtotal, total, deposit, pct };
 }
 
-export function saveQuote(id, { items, intro, terms, expiresAt, option, depositPercent, discount, allowBalance }) {
-  return tx(() => {
-    const q = getQuote(id);
+export async function saveQuote(id, { items, intro, terms, expiresAt, option, depositPercent, discount, allowBalance }) {
+  return tx(async () => {
+    await one('SELECT id FROM quotes WHERE id = ? FOR UPDATE', id);
+    const q = await getQuote(id);
     if (!q.editable) throw new Error('This quote has been accepted and can no longer be edited.');
     const t = computeTotals(items, discount, option, depositPercent);
-    run(`UPDATE quotes SET intro=?, terms=?, expires_at=?, payment_option=?, deposit_percent=?, discount=?, subtotal=?, total=?,
-         deposit_amount=?, allow_online_balance=?, updated_at=datetime('now') WHERE id=?`,
+    await run(`UPDATE quotes SET intro=?, terms=?, expires_at=?, payment_option=?, deposit_percent=?, discount=?, subtotal=?, total=?,
+         deposit_amount=?, allow_online_balance=?, updated_at=now() WHERE id=?`,
       intro, terms, expiresAt || null, option, t.pct, discount || 0, t.subtotal, t.total, t.deposit, allowBalance ? 1 : 0, id);
-    run('DELETE FROM quote_items WHERE quote_id = ?', id);
-    items.forEach((it, i) => run('INSERT INTO quote_items (quote_id, description, quantity, unit_price, sort) VALUES (?,?,?,?,?)',
-      id, it.description, it.quantity, it.unit_price, i));
+    await run('DELETE FROM quote_items WHERE quote_id = ?', id);
+    for (const [i, it] of items.entries()) {
+      await run('INSERT INTO quote_items (quote_id, description, quantity, unit_price, sort) VALUES (?,?,?,?,?)', id, it.description, it.quantity, it.unit_price, i);
+    }
     return getQuote(id);
   });
 }
@@ -147,12 +149,12 @@ export function quoteProblems(q) {
 }
 
 /** Issue (or re-issue) the private link. Re-issuing invalidates the previous link. */
-export function issueQuoteLink(id) {
+export async function issueQuoteLink(id) {
   const token = randomToken(32);
-  run(`UPDATE quotes SET token_hash=?, token_enc=?, status = CASE WHEN status='draft' THEN 'sent' ELSE status END,
-       sent_at = COALESCE(sent_at, datetime('now')), updated_at=datetime('now') WHERE id=?`, sha256(token), seal(token), id);
-  const q = getQuote(id);
-  run(`UPDATE enquiries SET status='quoted', updated_at=datetime('now') WHERE id=? AND status IN ('new','reviewing')`, q.enquiry_id);
+  await run(`UPDATE quotes SET token_hash=?, token_enc=?, status = CASE WHEN status='draft' THEN 'sent' ELSE status END,
+       sent_at = COALESCE(sent_at, now()), updated_at=now() WHERE id=?`, sha256(token), seal(token), id);
+  const q = await getQuote(id);
+  await run(`UPDATE enquiries SET status='quoted', updated_at=now() WHERE id=? AND status IN ('new','reviewing')`, q.enquiry_id);
   return q;
 }
 
@@ -161,46 +163,49 @@ export function quoteLink(q) {
   return token ? `${config.baseUrl}/q/${token}` : null;
 }
 
-export function getQuoteByToken(token) {
-  if (!token || token.length < 20) return null;
-  const q = one('SELECT id, token_hash FROM quotes WHERE token_hash = ?', sha256(token));
+export async function getQuoteByToken(token) {
+  if (typeof token !== 'string' || token.length < 20) return null;
+  const q = await one('SELECT id, token_hash FROM quotes WHERE token_hash = ?', sha256(token));
   if (!q || !safeEqual(q.token_hash, sha256(token))) return null;
   return getQuote(q.id);
 }
 
-export function acceptQuote(q, name) {
-  return tx(() => {
-    const fresh = getQuote(q.id);
+export async function acceptQuote(q, name) {
+  return tx(async () => {
+    await one('SELECT id FROM quotes WHERE id = ? FOR UPDATE', q.id);
+    const fresh = await getQuote(q.id);
     if (fresh.status !== 'sent' || fresh.isExpired) return fresh;
-    run(`UPDATE quotes SET status='accepted', accepted_at=datetime('now'), accepted_name=?, updated_at=datetime('now') WHERE id=?`, name, q.id);
-    run(`UPDATE enquiries SET status='accepted', updated_at=datetime('now') WHERE id=?`, q.enquiry_id);
+    await run(`UPDATE quotes SET status='accepted', accepted_at=now(), accepted_name=?, updated_at=now() WHERE id=?`, name, q.id);
+    await run(`UPDATE enquiries SET status='accepted', updated_at=now() WHERE id=?`, q.enquiry_id);
     return getQuote(q.id);
   });
 }
 
 /** Called inside the payment transaction once money is verified. */
-export function applyQuotePayment(payment) {
-  const q = getQuote(payment.subject_id);
-  const paid = q.amount_paid + payment.amount;
-  let status = q.status;
-  if (paid >= q.total) status = 'paid_in_full';
-  else if (paid >= q.deposit_amount) status = 'paid_deposit';
-  run(`UPDATE quotes SET amount_paid=?, status=?, updated_at=datetime('now') WHERE id=?`, paid, status, q.id);
+export async function applyQuotePayment(payment) {
+  // Atomic increment; the row lock serialises concurrent callbacks for the same quote.
+  const row = await one('UPDATE quotes SET amount_paid = amount_paid + ?, updated_at=now() WHERE id=? RETURNING amount_paid, total, deposit_amount, status',
+    payment.amount, payment.subject_id);
+  let status = row.status;
+  if (row.amount_paid >= row.total) status = 'paid_in_full';
+  else if (row.amount_paid >= row.deposit_amount) status = 'paid_deposit';
+  await run('UPDATE quotes SET status=? WHERE id=?', status, payment.subject_id);
+  const q = await getQuote(payment.subject_id);
   if (status === 'paid_deposit' || status === 'paid_in_full') {
-    run(`UPDATE enquiries SET status='confirmed', updated_at=datetime('now') WHERE id=? AND status NOT IN ('completed')`, q.enquiry_id);
+    await run(`UPDATE enquiries SET status='confirmed', updated_at=now() WHERE id=? AND status NOT IN ('completed')`, q.enquiry_id);
   }
-  return { quote: getQuote(q.id), enquiry: getEnquiry(q.enquiry_id) };
+  return { quote: q, enquiry: await getEnquiry(q.enquiry_id) };
 }
 
-export function applyQuoteRefund(payment) {
-  const q = getQuote(payment.subject_id);
-  const paid = Math.max(0, q.amount_paid - payment.amount);
-  const status = paid >= q.total ? 'paid_in_full' : paid >= q.deposit_amount && paid > 0 ? 'paid_deposit' : 'accepted';
-  run(`UPDATE quotes SET amount_paid=?, status=?, updated_at=datetime('now') WHERE id=?`, paid, status, q.id);
-  if (status === 'accepted') run(`UPDATE enquiries SET status='accepted', updated_at=datetime('now') WHERE id=? AND status='confirmed'`, q.enquiry_id);
+export async function applyQuoteRefund(payment) {
+  const row = await one('UPDATE quotes SET amount_paid = GREATEST(0, amount_paid - ?), updated_at=now() WHERE id=? RETURNING amount_paid, total, deposit_amount, enquiry_id',
+    payment.amount, payment.subject_id);
+  const status = row.amount_paid >= row.total ? 'paid_in_full' : row.amount_paid >= row.deposit_amount && row.amount_paid > 0 ? 'paid_deposit' : 'accepted';
+  await run('UPDATE quotes SET status=? WHERE id=?', status, payment.subject_id);
+  if (status === 'accepted') await run(`UPDATE enquiries SET status='accepted', updated_at=now() WHERE id=? AND status='confirmed'`, row.enquiry_id);
 }
 
-/** Expire sent quotes past their date (run on access and periodically). */
+/** Expire sent quotes past their date (run on access). */
 export function expireQuotes() {
-  run(`UPDATE quotes SET status='expired', updated_at=datetime('now') WHERE status='sent' AND expires_at IS NOT NULL AND expires_at < ?`, cairoDate());
+  return run(`UPDATE quotes SET status='expired', updated_at=now() WHERE status='sent' AND expires_at IS NOT NULL AND expires_at < ?`, cairoDate());
 }

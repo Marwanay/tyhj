@@ -3,7 +3,7 @@ import { formatEGP, toInputEGP } from '../lib/money.js';
 import { prettyDate, prettyDateTime, leadTimeLabel } from '../lib/dates.js';
 import { displayPhone } from '../lib/phone.js';
 import { config } from '../config.js';
-import { monogram, pill, button } from './components.js';
+import { monogram, pill, button, mediaUrl } from './components.js';
 import { ASSET_VERSION } from './layout.js';
 import { ORDER_STATUSES, PAYMENT_STATUSES } from '../services/orders.js';
 import { ENQUIRY_STATUSES, QUOTE_STATUSES, quoteProblems } from '../services/quotes.js';
@@ -47,7 +47,7 @@ export function adminLayout({ title, body, session, section, counts = {}, flash 
 <title>${title} — Cocoa Caramel admin</title>
 <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/css/site.css?v=${ASSET_VERSION}"><link rel="stylesheet" href="/css/admin.css?v=${ASSET_VERSION}">
-<script src="/js/boot.js?v=${ASSET_VERSION}"></script><script src="/js/admin.js?v=${ASSET_VERSION}" defer></script></head>
+<script src="/js/boot.js?v=${ASSET_VERSION}"></script><script src="/js/resize.js?v=${ASSET_VERSION}" defer></script><script src="/js/admin.js?v=${ASSET_VERSION}" defer></script></head>
 <body class="admin">
 ${config.payments.mode === 'test' ? html`<div class="test-ribbon">Test mode — payments are simulated</div>` : ''}
 <div class="admin-shell">
@@ -66,7 +66,7 @@ ${config.payments.mode === 'test' ? html`<div class="test-ribbon">Test mode — 
 </div></body></html>`;
 }
 
-export function loginPage({ error, email = '' }) {
+export function loginPage({ error, email = '', setup = false }) {
   return html`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow"><title>Sign in — Cocoa Caramel admin</title>
 <link rel="stylesheet" href="/css/site.css?v=${ASSET_VERSION}"><link rel="stylesheet" href="/css/admin.css?v=${ASSET_VERSION}"></head>
@@ -77,6 +77,25 @@ export function loginPage({ error, email = '' }) {
     <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" value="${email}" autocomplete="username" required autofocus></div>
     <div class="field"><label for="password">Password</label><input class="input" id="password" name="password" type="password" autocomplete="current-password" required></div>
     <button class="btn btn-block" type="submit">Sign in</button>
+    ${setup ? html`<p class="muted" style="margin-top:18px;text-align:center">First time here? <a href="/admin/setup">Create the owner account</a></p>` : ''}
+  </form>
+</main></body></html>`;
+}
+
+export function setupPage({ error, values = {} }) {
+  return html`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>Set up — Cocoa Caramel admin</title>
+<link rel="stylesheet" href="/css/site.css?v=${ASSET_VERSION}"><link rel="stylesheet" href="/css/admin.css?v=${ASSET_VERSION}"></head>
+<body class="admin"><main class="login-wrap">
+  <form class="login-card" method="post" action="/admin/setup">
+    ${monogram()}<h1>Create the owner account</h1>
+    <p class="muted" style="margin-top:-12px;margin-bottom:20px;text-align:center">This page works once, while no accounts exist.</p>
+    ${error ? html`<p class="flash err" role="alert">${error}</p>` : ''}
+    <div class="field"><label for="token">Setup code</label><p class="hint">The ADMIN_SETUP_TOKEN value set on the server.</p><input class="input" id="token" name="token" type="password" autocomplete="off" required></div>
+    <div class="field"><label for="name">Your name</label><input class="input" id="name" name="name" value="${values.name || ''}" autocomplete="name"></div>
+    <div class="field"><label for="email">Email</label><input class="input" id="email" name="email" type="email" value="${values.email || ''}" autocomplete="username" required></div>
+    <div class="field"><label for="password">Password</label><p class="hint">At least 12 characters.</p><input class="input" id="password" name="password" type="password" minlength="12" autocomplete="new-password" required></div>
+    <button class="btn btn-block" type="submit">Create account</button>
   </form>
 </main></body></html>`;
 }
@@ -110,7 +129,7 @@ export function productsView({ products, s }) {
     html`<form method="post" action="/admin/products/new">${csrfField(s)}<button class="btn btn-sm">New product</button></form>`)}
   <div class="card table-wrap"><table class="table"><thead><tr><th></th><th>Product</th><th>Status</th><th>Ready to sell</th><th class="num">Price</th></tr></thead><tbody>
   ${products.map(p => html`<tr>
-    <td style="width:64px">${p.images[0] ? html`<img src="/media/${p.images[0].media_key}-${p.images[0].widths[0]}.jpg" alt="" width="56" height="56" style="object-fit:cover;aspect-ratio:1">` : ''}</td>
+    <td style="width:64px">${p.images[0] ? html`<img src="${mediaUrl(p.images[0], p.images[0].widths[0])}" alt="" width="56" height="56" style="object-fit:cover;aspect-ratio:1">` : ''}</td>
     <td><a href="/admin/products/${p.id}">${p.name}</a><div class="muted">/collection/${p.slug}</div></td>
     <td>${pill(p.status, p.status === 'published' ? 'ok' : '')}</td>
     <td>${p.readiness.ready ? pill('Ready', 'ok') : html`${pill(`${p.readiness.missing.length} missing`, 'warn')}`}</td>
@@ -161,7 +180,7 @@ export function productEditView({ p, s }) {
       <div class="card"><h2>Images</h2>
         <p class="muted">The first image is the main image. Upload large originals (2000px+) — we create sharp, fast versions automatically.</p>
         <div class="img-list">${p.images.map((img, i) => html`<div class="img-item">
-          <img src="/media/${img.media_key}-${img.widths[0]}.jpg" alt="${img.alt}">
+          <img src="${mediaUrl(img, img.widths[0])}" alt="${img.alt}">
           <form method="post" action="/admin/products/${p.id}/images/${img.id}">${csrfField(s)}
             <input class="input" name="alt" value="${img.alt}" aria-label="Image description" placeholder="Describe the image">
             <div class="actions" style="margin-top:6px">

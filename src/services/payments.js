@@ -1,7 +1,7 @@
 // Payment orchestration. The only thing that can mark money as received is an
 // authenticated provider callback (or a staff member recording a manual payment).
 // Redirects back from the gateway are treated as navigation, never as proof.
-import { one, all, run, tx } from '../db.js';
+import { one, all, run, insert, tx, isUniqueViolation } from '../db.js';
 import { config } from '../config.js';
 import { getProvider, activeProviderStatus } from '../payments/index.js';
 import { formatEGP } from '../lib/money.js';
@@ -24,16 +24,19 @@ export async function startPayment({ subjectType, subject, purpose, amount, item
   if (!(amount > 0)) throw new PaymentError('There is nothing to pay.');
 
   const provider = getProvider();
-  const payment = tx(() => {
-    const open = one(`SELECT * FROM payments WHERE subject_type=? AND subject_id=? AND status='pending'`, subjectType, subject.id);
+  const table = subjectType === 'order' ? 'orders' : 'quotes';
+  const payment = await tx(async () => {
+    // Serialise attempts for the same order/quote.
+    await one(`SELECT id FROM ${table} WHERE id = ? FOR UPDATE`, subject.id);
+    const open = await one(`SELECT * FROM payments WHERE subject_type=? AND subject_id=? AND status='pending'`, subjectType, subject.id);
     if (open) throw new PaymentError('A payment for this is still being confirmed by the bank. Please wait a moment before trying again.');
     // Earlier unused checkout sessions are retired so only the newest one is live on our side.
-    run(`UPDATE payments SET status='cancelled', updated_at=datetime('now') WHERE subject_type=? AND subject_id=? AND status='created'`, subjectType, subject.id);
-    const n = one('SELECT COUNT(*) AS n FROM payments WHERE subject_type=? AND subject_id=?', subjectType, subject.id).n + 1;
-    const info = run(`INSERT INTO payments (subject_type, subject_id, purpose, provider, mode, merchant_reference, amount, currency)
+    await run(`UPDATE payments SET status='cancelled', updated_at=now() WHERE subject_type=? AND subject_id=? AND status='created'`, subjectType, subject.id);
+    const n = (await one('SELECT COUNT(*)::int AS n FROM payments WHERE subject_type=? AND subject_id=?', subjectType, subject.id)).n + 1;
+    const id = await insert(`INSERT INTO payments (subject_type, subject_id, purpose, provider, mode, merchant_reference, amount, currency)
                       VALUES (?,?,?,?,?,?,?,?)`, subjectType, subject.id, purpose, provider.name, config.payments.mode,
       `${subject.ref}-P${n}`, amount, config.currency);
-    return one('SELECT * FROM payments WHERE id = ?', info.lastInsertRowid);
+    return one('SELECT * FROM payments WHERE id = ?', id);
   });
 
   try {
@@ -42,10 +45,10 @@ export async function startPayment({ subjectType, subject, purpose, amount, item
       notificationUrl: `${config.baseUrl}/webhooks/${provider.name}`,
       redirectionUrl: `${config.baseUrl}${returnPath}`,
     });
-    run(`UPDATE payments SET provider_order_id=?, checkout_url=?, return_path=?, updated_at=datetime('now') WHERE id=?`, providerOrderId, checkoutUrl, returnPath, payment.id);
+    await run(`UPDATE payments SET provider_order_id=?, checkout_url=?, return_path=?, updated_at=now() WHERE id=?`, providerOrderId, checkoutUrl, returnPath, payment.id);
     return checkoutUrl;
   } catch (err) {
-    run(`UPDATE payments SET status='failed', detail=?, updated_at=datetime('now') WHERE id=?`, `Could not open checkout: ${err.message}`.slice(0, 500), payment.id);
+    await run(`UPDATE payments SET status='failed', detail=?, updated_at=now() WHERE id=?`, `Could not open checkout: ${err.message}`.slice(0, 500), payment.id);
     console.error('[payments] checkout creation failed', err);
     throw new PaymentError('We could not open the secure payment page. Please try again in a moment.');
   }
@@ -53,78 +56,81 @@ export async function startPayment({ subjectType, subject, purpose, amount, item
 
 /** Customer returned without paying (non-authoritative; a later "paid" callback still wins). */
 export function markReturnedWithoutPaying(subjectType, subjectId) {
-  run(`UPDATE payments SET status='cancelled', detail='Customer left the checkout', updated_at=datetime('now')
+  return run(`UPDATE payments SET status='cancelled', detail='Customer left the checkout', updated_at=now()
        WHERE subject_type=? AND subject_id=? AND status='created' AND provider_order_id IS NOT NULL`, subjectType, subjectId);
 }
 
 /**
  * Apply an authenticated provider event exactly once.
- * @returns {{result:string}} for logging and tests
+ * @returns {Promise<{result:string}>}
  */
-export function processEvent(providerName, evt, payload) {
+export async function processEvent(providerName, evt, payload) {
   const after = [];
-  const result = tx(() => {
-    const payment = one('SELECT * FROM payments WHERE provider = ? AND provider_order_id = ?', providerName, evt.providerOrderId);
-    let outcome = evt.outcome;
-    if (!payment) outcome = 'unknown_payment';
-    else if (evt.currency !== payment.currency || evt.amount !== payment.amount) outcome = 'amount_mismatch';
+  let result;
+  try {
+    result = await tx(async () => {
+      const payment = await one('SELECT * FROM payments WHERE provider = ? AND provider_order_id = ? FOR UPDATE', providerName, evt.providerOrderId);
+      let outcome = evt.outcome;
+      if (!payment) outcome = 'unknown_payment';
+      else if (evt.currency !== payment.currency || evt.amount !== payment.amount) outcome = 'amount_mismatch';
 
-    try {
-      run('INSERT INTO webhook_events (provider, event_key, payment_id, outcome, payload) VALUES (?,?,?,?,?)',
+      // The unique (provider, event_key) makes retries and replays no-ops.
+      await run('INSERT INTO webhook_events (provider, event_key, payment_id, outcome, payload) VALUES (?,?,?,?,?)',
         providerName, evt.eventKey, payment?.id ?? null, outcome, JSON.stringify(payload).slice(0, 20000));
-    } catch (err) {
-      if (/UNIQUE/.test(err.message)) return 'duplicate';
-      throw err;
-    }
-    if (!payment) return 'unknown_payment';
-    if (outcome === 'amount_mismatch') {
-      run(`UPDATE payments SET detail=?, updated_at=datetime('now') WHERE id=?`,
-        `Callback amount ${evt.amount} ${evt.currency} does not match ${payment.amount} ${payment.currency} — review required`, payment.id);
-      after.push(() => notifyTeam(`Payment needs review: ${payment.merchant_reference}`, `A ${evt.outcome} callback for ${payment.merchant_reference} reported ${evt.amount} ${evt.currency}, but ${payment.amount} ${payment.currency} was expected. It has NOT been applied.`));
-      return 'amount_mismatch';
-    }
-    return transition(payment, evt, after);
-  });
-  for (const fn of after) fn();
+      if (!payment) return 'unknown_payment';
+      if (outcome === 'amount_mismatch') {
+        await run(`UPDATE payments SET detail=?, updated_at=now() WHERE id=?`,
+          `Callback amount ${evt.amount} ${evt.currency} does not match ${payment.amount} ${payment.currency} — review required`, payment.id);
+        after.push(() => notifyTeam(`Payment needs review: ${payment.merchant_reference}`, `A ${evt.outcome} callback for ${payment.merchant_reference} reported ${evt.amount} ${evt.currency}, but ${payment.amount} ${payment.currency} was expected. It has NOT been applied.`));
+        return 'amount_mismatch';
+      }
+      return transition(payment, evt, after);
+    });
+  } catch (err) {
+    if (isUniqueViolation(err)) return { result: 'duplicate' };
+    throw err;
+  }
+  // Notifications are awaited so a serverless function doesn't stop before sending them.
+  await Promise.allSettled(after.map(fn => fn()));
   return { result };
 }
 
-function transition(payment, evt, after) {
-  const set = (status) => run(`UPDATE payments SET status=?, provider_txn_id=?, detail=?, updated_at=datetime('now') WHERE id=?`,
+async function transition(payment, evt, after) {
+  const set = (status) => run(`UPDATE payments SET status=?, provider_txn_id=?, detail=?, updated_at=now() WHERE id=?`,
     status, evt.txnId, evt.detail || '', payment.id);
 
   switch (evt.outcome) {
     case 'paid':
       if (payment.status === 'paid' || payment.status === 'refunded') return 'ignored';
-      set('paid');
-      applyPaid({ ...payment, status: 'paid' }, after);
+      await set('paid');
+      await applyPaid({ ...payment, status: 'paid' }, after);
       return 'paid';
     case 'pending':
       if (!['created', 'cancelled'].includes(payment.status)) return 'ignored';
-      set('pending');
+      await set('pending');
       if (payment.subject_type === 'order') {
-        run(`UPDATE orders SET payment_status='pending', updated_at=datetime('now') WHERE id=? AND payment_status IN ('unpaid','failed')`, payment.subject_id);
-        orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} pending with the bank`);
+        await run(`UPDATE orders SET payment_status='pending', updated_at=now() WHERE id=? AND payment_status IN ('unpaid','failed')`, payment.subject_id);
+        await orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} pending with the bank`);
       }
       return 'pending';
     case 'failed':
       if (!['created', 'pending', 'cancelled'].includes(payment.status)) return 'ignored';
-      set('failed');
+      await set('failed');
       if (payment.subject_type === 'order') {
-        run(`UPDATE orders SET payment_status='failed', updated_at=datetime('now') WHERE id=? AND payment_status IN ('unpaid','pending')`, payment.subject_id);
-        orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} failed${evt.detail ? ` (${evt.detail})` : ''}`);
-        const o = getOrder(payment.subject_id);
+        await run(`UPDATE orders SET payment_status='failed', updated_at=now() WHERE id=? AND payment_status IN ('unpaid','pending')`, payment.subject_id);
+        await orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} failed${evt.detail ? ` (${evt.detail})` : ''}`);
+        const o = await getOrder(payment.subject_id);
         if (o.payment_status === 'failed') after.push(() => notify(o.customer_email, ...templates.orderPaymentFailed(o, orderLink(o))));
       }
       return 'failed';
     case 'refunded':
       if (payment.status !== 'paid') return 'ignored';
-      set('refunded');
+      await set('refunded');
       if (payment.subject_type === 'order') {
-        run(`UPDATE orders SET payment_status='refunded', updated_at=datetime('now') WHERE id=?`, payment.subject_id);
-        orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} refunded or voided`);
+        await run(`UPDATE orders SET payment_status='refunded', updated_at=now() WHERE id=?`, payment.subject_id);
+        await orderEvent(payment.subject_id, `Payment ${payment.merchant_reference} refunded or voided`);
       } else {
-        applyQuoteRefund(payment);
+        await applyQuoteRefund(payment);
       }
       after.push(() => notifyTeam(`Refund recorded: ${payment.merchant_reference}`, `The provider reported a refund/void for ${payment.merchant_reference} (${formatEGP(payment.amount)}).`));
       return 'refunded';
@@ -134,65 +140,57 @@ function transition(payment, evt, after) {
 }
 
 /** Shared by verified callbacks and staff-recorded manual payments. */
-function applyPaid(payment, after) {
+async function applyPaid(payment, after) {
   if (payment.subject_type === 'order') {
-    const o = getOrder(payment.subject_id);
-    const alreadyPaid = all(`SELECT id FROM payments WHERE subject_type='order' AND subject_id=? AND status='paid' AND id != ?`, o.id, payment.id).length > 0;
+    await one('SELECT id FROM orders WHERE id = ? FOR UPDATE', payment.subject_id);
+    const o = await getOrder(payment.subject_id);
+    const alreadyPaid = (await all(`SELECT id FROM payments WHERE subject_type='order' AND subject_id=? AND status='paid' AND id != ?`, o.id, payment.id)).length > 0;
     if (alreadyPaid) {
-      orderEvent(o.id, `Duplicate payment ${payment.merchant_reference} received — refund required`);
+      await orderEvent(o.id, `Duplicate payment ${payment.merchant_reference} received — refund required`);
       after.push(() => notifyTeam(`Duplicate payment on ${o.ref}`, `Order ${o.ref} received a second successful payment (${payment.merchant_reference}, ${formatEGP(payment.amount)}). Please refund it from the payment dashboard.`));
       return;
     }
     if (o.status === 'cancelled') {
-      run(`UPDATE orders SET payment_status='paid', updated_at=datetime('now') WHERE id=?`, o.id);
-      orderEvent(o.id, `Payment ${payment.merchant_reference} received for a cancelled order — review/refund required`);
+      await run(`UPDATE orders SET payment_status='paid', updated_at=now() WHERE id=?`, o.id);
+      await orderEvent(o.id, `Payment ${payment.merchant_reference} received for a cancelled order — review/refund required`);
       after.push(() => notifyTeam(`Payment on cancelled order ${o.ref}`, `Please review order ${o.ref}.`));
       return;
     }
-    run(`UPDATE orders SET payment_status='paid', status = CASE WHEN status='awaiting_payment' THEN 'confirmed' ELSE status END,
-         updated_at=datetime('now') WHERE id=?`, o.id);
-    orderEvent(o.id, `Payment ${payment.merchant_reference} verified (${formatEGP(payment.amount)})`);
+    await run(`UPDATE orders SET payment_status='paid', status = CASE WHEN status='awaiting_payment' THEN 'confirmed' ELSE status END,
+         updated_at=now() WHERE id=?`, o.id);
+    await orderEvent(o.id, `Payment ${payment.merchant_reference} verified (${formatEGP(payment.amount)})`);
     if (!o.stock_committed) {
       for (const it of o.items) {
-        const v = it.variant_id ? one('SELECT stock FROM variants WHERE id = ?', it.variant_id) : null;
-        if (v && v.stock !== null) {
-          run('UPDATE variants SET stock = stock - ? WHERE id = ?', it.quantity, it.variant_id);
-          if (v.stock - it.quantity < 0) orderEvent(o.id, `Stock for ${it.name} (${it.variant_name}) is now below zero — please check`);
-        }
+        if (!it.variant_id) continue;
+        const v = await one('UPDATE variants SET stock = stock - ? WHERE id = ? AND stock IS NOT NULL RETURNING stock', it.quantity, it.variant_id);
+        if (v && v.stock < 0) await orderEvent(o.id, `Stock for ${it.name} (${it.variant_name}) is now below zero — please check`);
       }
-      run('UPDATE orders SET stock_committed = 1 WHERE id = ?', o.id);
+      await run('UPDATE orders SET stock_committed = 1 WHERE id = ?', o.id);
     }
     // The bag that produced this order is now spent.
-    for (const c of all('SELECT id FROM carts WHERE order_id = ?', o.id)) {
-      run('DELETE FROM cart_items WHERE cart_id = ?', c.id);
-      run('UPDATE carts SET order_id = NULL WHERE id = ?', c.id);
+    for (const c of await all('SELECT id FROM carts WHERE order_id = ?', o.id)) {
+      await run('DELETE FROM cart_items WHERE cart_id = ?', c.id);
+      await run('UPDATE carts SET order_id = NULL WHERE id = ?', c.id);
     }
-    const fresh = getOrder(o.id);
-    after.push(() => {
-      notify(fresh.customer_email, ...templates.orderPaid(fresh, orderLink(fresh)));
-      notifyTeam(`New paid order ${fresh.ref}`, `${fresh.customer_name} — ${formatEGP(fresh.total)} — ${fresh.fulfilment} on ${fresh.requested_date}.\n\n${config.baseUrl}/admin/orders/${fresh.id}`);
-    });
+    const fresh = await getOrder(o.id);
+    after.push(() => notify(fresh.customer_email, ...templates.orderPaid(fresh, orderLink(fresh))));
+    after.push(() => notifyTeam(`New paid order ${fresh.ref}`, `${fresh.customer_name} — ${formatEGP(fresh.total)} — ${fresh.fulfilment} on ${fresh.requested_date}.\n\n${config.baseUrl}/admin/orders/${fresh.id}`));
   } else {
-    const { quote, enquiry } = applyQuotePayment(payment);
-    after.push(() => {
-      notify(enquiry.email, ...templates.quotePaid(quote, enquiry, formatEGP(payment.amount), quoteLink(quote)));
-      notifyTeam(`Payment received for ${quote.ref}`, `${enquiry.name} paid ${formatEGP(payment.amount)} (${payment.purpose}). Quote status: ${quote.status}.\n\n${config.baseUrl}/admin/enquiries/${enquiry.id}`);
-    });
+    const { quote, enquiry } = await applyQuotePayment(payment);
+    after.push(() => notify(enquiry.email, ...templates.quotePaid(quote, enquiry, formatEGP(payment.amount), quoteLink(quote))));
+    after.push(() => notifyTeam(`Payment received for ${quote.ref}`, `${enquiry.name} paid ${formatEGP(payment.amount)} (${payment.purpose}). Quote status: ${quote.status}.\n\n${config.baseUrl}/admin/enquiries/${enquiry.id}`));
   }
 }
 
 /** Staff-recorded payment (cash, bank transfer, InstaPay…). */
-export function recordManualPayment(subjectType, subject, amount, note, actor) {
+export async function recordManualPayment(subjectType, subject, amount, note, actor) {
   const after = [];
-  tx(() => {
-    const n = one('SELECT COUNT(*) AS n FROM payments WHERE subject_type=? AND subject_id=?', subjectType, subject.id).n + 1;
-    const info = run(`INSERT INTO payments (subject_type, subject_id, purpose, provider, mode, merchant_reference, amount, currency, status, detail)
+  await tx(async () => {
+    const n = (await one('SELECT COUNT(*)::int AS n FROM payments WHERE subject_type=? AND subject_id=?', subjectType, subject.id)).n + 1;
+    const id = await insert(`INSERT INTO payments (subject_type, subject_id, purpose, provider, mode, merchant_reference, amount, currency, status, detail)
                       VALUES (?,?,?,?,?,?,?,?,'paid',?)`, subjectType, subject.id, 'manual', 'manual', 'live',
       `${subject.ref}-M${n}`, amount, config.currency, `Recorded by ${actor}: ${note}`.slice(0, 500));
-    applyPaid(one('SELECT * FROM payments WHERE id = ?', info.lastInsertRowid), after);
+    await applyPaid(await one('SELECT * FROM payments WHERE id = ?', id), after);
   });
-  for (const fn of after) fn();
+  await Promise.allSettled(after.map(fn => fn()));
 }
-
-export const latestPayment = (subjectType, id) =>
-  one('SELECT * FROM payments WHERE subject_type=? AND subject_id=? ORDER BY id DESC LIMIT 1', subjectType, id);

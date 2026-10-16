@@ -1,33 +1,38 @@
 {
   "name": "cocoa-caramel",
   "version": "1.0.0",
-  "description": "Cocoa Caramel — dessert, chocolate gifting and catering e-commerce",
+  "description": "Cocoa Caramel \u2014 dessert, chocolate gifting and catering e-commerce",
   "main": "src/server.js",
   "scripts": {
-    "setup": "node scripts/build-media.mjs && node --disable-warning=ExperimentalWarning scripts/seed.js",
-    "start": "node --disable-warning=ExperimentalWarning src/server.js",
-    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
-    "build:media": "node scripts/build-media.mjs",
-    "admin:create": "node --disable-warning=ExperimentalWarning scripts/create-admin.js",
-    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js",
-    "e2e": "node --disable-warning=ExperimentalWarning scripts/e2e.mjs"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "build": "node scripts/build-media.mjs --if-missing",
+    "setup": "node scripts/build-brand.mjs && node scripts/build-media.mjs && node scripts/seed.js",
+    "admin:create": "node scripts/create-admin.js",
+    "test": "node --test test/*.test.js",
+    "test:postgres": "node scripts/with-postgres.mjs node --test test/paymob.test.js",
+    "e2e": "node scripts/e2e.mjs",
+    "e2e:postgres": "node scripts/with-postgres.mjs node scripts/e2e.mjs"
   },
   "license": "UNLICENSED",
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/poppins": "^5.3.0",
-    "express": "^4.22.3",
+    "express": "^5.3.0",
     "multer": "^2.4.0",
     "nodemailer": "^10.1.1",
+    "pg": "^8.23.1",
     "sharp": "^0.35.5"
   },
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.13"
+    "node": "22.x"
   },
   "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17",
     "playwright": "^1.56.1"
   }
 }

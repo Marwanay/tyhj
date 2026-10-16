@@ -6,9 +6,9 @@ import { config } from '../config.js';
 import { layout } from './layout.js';
 import {
   framed, picture, button, eyebrow, monogram, price, input, textarea, select, errorSummary, pill,
-  lockIcon, clockIcon, giftIcon, truckIcon, zoomIcon, arrow,
+  lockIcon, clockIcon, giftIcon, truckIcon, zoomIcon, arrow, mediaUrl,
 } from './components.js';
-import { priceRange, fulfilmentOptions, getProduct } from '../services/catalog.js';
+import { priceRange } from '../services/catalog.js';
 import { getSetting } from '../services/content.js';
 import { ORDER_STATUSES, PAYMENT_STATUSES } from '../services/orders.js';
 
@@ -68,7 +68,7 @@ function productCard(p, n) {
 export function productPage({ product: p, cartCount, error }) {
   const sellable = p.variants.filter(v => v.active && v.price > 0);
   const firstAvailable = sellable.find(v => v.stock === null || v.stock > 0);
-  const f = fulfilmentOptions(p);
+  const f = p.fulfilment;
   const site = getSetting('site');
   const r = priceRange(p);
 
@@ -81,10 +81,10 @@ export function productPage({ product: p, cartCount, error }) {
     </button>
     ${p.images.length > 1 ? html`<div class="thumbs" role="group" aria-label="Product images">
       ${p.images.map((img, i) => html`<button class="thumb" type="button" data-thumb="${i}" aria-current="${i === 0 ? 'true' : 'false'}" aria-label="Show image ${i + 1} of ${p.images.length}">
-        <img src="/media/${img.media_key}-${img.widths[0]}.jpg" alt="" width="76" height="76" loading="lazy">
+        <img src="${mediaUrl(img, img.widths[0])}" alt="" width="76" height="76" loading="lazy">
       </button>`)}
     </div>` : ''}
-    <template data-zoom-sources>${p.images.map(img => html`<img data-src="/media/${img.media_key}-${img.widths.at(-1)}.jpg" alt="${img.alt || p.name}">`)}</template>
+    <template data-zoom-sources>${p.images.map(img => html`<img data-src="${mediaUrl(img, img.widths.at(-1))}" alt="${img.alt || p.name}">`)}</template>
   </div>`;
 
   const buyBox = p.purchasable && firstAvailable ? html`
@@ -179,7 +179,7 @@ export function productPage({ product: p, cartCount, error }) {
   return layout({
     title: p.name, description: (p.tagline || p.description).slice(0, 160), body, page: 'collection', cartCount,
     bodyClass: p.purchasable ? 'has-sticky-buy' : '', canonical: `/collection/${p.slug}`,
-    ogImage: p.images[0] ? `/media/${p.images[0].media_key}-${p.images[0].widths.find(w => w >= 1000) || p.images[0].widths.at(-1)}.jpg` : undefined,
+    ogImage: p.images[0] ? mediaUrl(p.images[0], p.images[0].widths.find(w => w >= 1000) || p.images[0].widths.at(-1)) : undefined,
   });
 }
 
@@ -335,8 +335,8 @@ export function checkoutPage({ priced, areas, values = {}, errors = {}, minDate,
 
 // ---- Checkout: review & pay -------------------------------------------------------
 
-export function paymentPage({ order: o, token, error, providerReady, cartCount }) {
-  const lines = o.items.map(i => ({ name: i.name, variantName: i.variant_name, quantity: i.quantity, total: i.unit_price * i.quantity, image: (i.product_id && getProduct(i.product_id)?.images[0]) || null }));
+export function paymentPage({ order: o, token, error, providerReady, cartCount, images = {} }) {
+  const lines = o.items.map(i => ({ name: i.name, variantName: i.variant_name, quantity: i.quantity, total: i.unit_price * i.quantity, image: images[i.product_id] || null }));
   const a = o.addressObj;
   const body = html`
 <div class="wrap" style="padding-top:40px">

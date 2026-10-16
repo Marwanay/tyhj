@@ -4,6 +4,7 @@
 import { one, run, all } from '../db.js';
 
 export const DEFAULTS = {
+  system: { seeded: false },
   site: {
     tagline: 'Bringing sweet moments to life',
     phone: '',
@@ -59,26 +60,27 @@ export const DEFAULTS = {
   },
 };
 
-const cache = new Map();
+// Settings are read synchronously by views, so they are held in memory and reloaded
+// from the database at the start of every request (one small query). That keeps every
+// serverless instance consistent with the latest admin edits.
+let stored = {};
+
+export async function loadSettings() {
+  const rows = await all('SELECT key, value FROM settings');
+  stored = Object.fromEntries(rows.map(r => [r.key, JSON.parse(r.value)]));
+}
 
 export function getSetting(key) {
-  if (cache.has(key)) return cache.get(key);
-  const row = one('SELECT value FROM settings WHERE key = ?', key);
-  const stored = row ? JSON.parse(row.value) : {};
-  const value = { ...(DEFAULTS[key] || {}), ...stored };
-  cache.set(key, value);
-  return value;
+  return { ...(DEFAULTS[key] || {}), ...(stored[key] || {}) };
 }
 
-export function setSetting(key, patch) {
+export async function setSetting(key, patch) {
   const next = { ...getSetting(key), ...patch };
-  run(`INSERT INTO settings (key, value) VALUES (?, ?)
-       ON CONFLICT(key) DO UPDATE SET value = excluded.value`, key, JSON.stringify(next));
-  cache.delete(key);
+  await run(`INSERT INTO settings (key, value) VALUES (?, ?)
+       ON CONFLICT (key) DO UPDATE SET value = excluded.value`, key, JSON.stringify(next));
+  stored[key] = next;
   return next;
 }
-
-export const clearSettingsCache = () => cache.clear();
 
 // ---- Policy & information pages -------------------------------------------------
 
@@ -162,11 +164,11 @@ Quotes are valid until the expiry date shown. An event booking is confirmed only
   },
 ];
 
-export function ensurePages() {
-  for (const p of POLICY_PAGES) {
-    run('INSERT OR IGNORE INTO pages (slug, title, body, needs_review) VALUES (?, ?, ?, 1)', p.slug, p.title, p.body);
+export async function ensurePages() {
+  for (const [i, p] of POLICY_PAGES.entries()) {
+    await run('INSERT INTO pages (slug, title, body, needs_review, sort) VALUES (?, ?, ?, 1, ?) ON CONFLICT (slug) DO NOTHING', p.slug, p.title, p.body, i);
   }
 }
 
 export const getPage = (slug) => one('SELECT * FROM pages WHERE slug = ?', slug);
-export const listPages = () => all('SELECT slug, title, needs_review, updated_at FROM pages ORDER BY rowid');
+export const listPages = () => all('SELECT slug, title, needs_review, updated_at FROM pages ORDER BY sort, slug');

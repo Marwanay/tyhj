@@ -34,6 +34,7 @@ ${canonical ? html`<link rel="canonical" href="${config.baseUrl}${canonical}">` 
 <link rel="preload" href="/fonts/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/site.css?v=${ASSET_VERSION}">
 <script src="/js/boot.js?v=${ASSET_VERSION}"></script>
+<script src="/js/resize.js?v=${ASSET_VERSION}" defer></script>
 <script src="/js/site.js?v=${ASSET_VERSION}" defer></script>
 </head>
 <body class="${bodyClass}" data-page="${page}">
@@ -137,4 +138,5 @@ function socialUrl(network, handle) {
   return { instagram: `https://instagram.com/${h}`, tiktok: `https://www.tiktok.com/@${h}`, facebook: `https://facebook.com/${h}` }[network];
 }
 
-export const ASSET_VERSION = Date.now().toString(36);
+// Stable per deployment so CDN-cached CSS/JS is reused across serverless instances.
+export const ASSET_VERSION = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 8) || Date.now().toString(36);

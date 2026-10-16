@@ -1,0 +1,6 @@
+data
+.env
+.env.*
+!.env.example
+.vercel
+test-results

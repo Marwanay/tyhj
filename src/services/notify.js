@@ -1,6 +1,6 @@
 // Notifications go through an outbox so every message is recorded and visible in the
 // admin. If SMTP_URL is configured they are emailed; otherwise they are logged only.
-import { run } from '../db.js';
+import { run, insert } from '../db.js';
 import { config } from '../config.js';
 import { getSetting } from './content.js';
 
@@ -18,26 +18,26 @@ export const notificationChannel = () => (config.mail.smtpUrl ? 'smtp' : 'log');
 
 export async function sendEmail(to, subject, text) {
   if (!to) return;
-  const info = run('INSERT INTO outbox (recipient, subject, body) VALUES (?, ?, ?)', to, subject, text);
-  const id = info.lastInsertRowid;
+  const id = await insert('INSERT INTO outbox (recipient, subject, body) VALUES (?, ?, ?)', to, subject, text);
   try {
     const t = await getTransport();
-    if (!t) { run("UPDATE outbox SET status = 'logged' WHERE id = ?", id); return; }
+    if (!t) { await run("UPDATE outbox SET status = 'logged' WHERE id = ?", id); return; }
     await t.sendMail({ from: config.mail.from, to, subject, text });
-    run("UPDATE outbox SET status = 'sent' WHERE id = ?", id);
+    await run("UPDATE outbox SET status = 'sent' WHERE id = ?", id);
   } catch (err) {
-    run("UPDATE outbox SET status = 'failed', error = ? WHERE id = ?", String(err.message).slice(0, 500), id);
+    await run("UPDATE outbox SET status = 'failed', error = ? WHERE id = ?", String(err.message).slice(0, 500), id).catch(() => {});
   }
 }
 
-/** Fire-and-forget so a slow mail server never blocks a payment callback. */
+/** Never throws: a mail problem must not undo an order or payment. Callers await it so
+ *  serverless functions don't stop before the message is recorded and sent. */
 export function notify(to, subject, text) {
-  sendEmail(to, subject, text).catch(() => {});
+  return sendEmail(to, subject, text).catch((err) => console.error('[notify]', err.message));
 }
 
 export function notifyTeam(subject, text) {
   const to = getSetting('site').notifyEmail;
-  if (to) notify(to, subject, text);
+  return to ? notify(to, subject, text) : Promise.resolve();
 }
 
 const signoff = '\n\nWith warmth,\nCocoa Caramel';

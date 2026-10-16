@@ -2,34 +2,37 @@
 import { one, all, run } from '../db.js';
 import { getSetting } from './content.js';
 
-function hydrate(p) {
+async function hydrate(p, areaCount) {
   if (!p) return null;
-  p.images = all('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort, id', p.id)
+  p.images = (await all('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort, id', p.id))
     .map(i => ({ ...i, widths: JSON.parse(i.widths) }));
-  p.variants = all('SELECT * FROM variants WHERE product_id = ? ORDER BY sort, id', p.id);
+  p.variants = await all('SELECT * FROM variants WHERE product_id = ? ORDER BY sort, id', p.id);
+  if (areaCount === undefined) areaCount = await activeAreaCount();
+  p.fulfilment = fulfilmentOptions(p, areaCount);
   p.readiness = readiness(p);
   p.purchasable = p.status === 'published' && p.readiness.ready;
   return p;
 }
 
-export const getProductBySlug = (slug) => hydrate(one('SELECT * FROM products WHERE slug = ?', slug));
-export const getProduct = (id) => hydrate(one('SELECT * FROM products WHERE id = ?', id));
+export const getProductBySlug = async (slug) => hydrate(await one('SELECT * FROM products WHERE slug = ?', slug));
+export const getProduct = async (id) => hydrate(await one('SELECT * FROM products WHERE id = ?', id));
 
-export function listProducts({ includeDrafts = false } = {}) {
+export async function listProducts({ includeDrafts = false } = {}) {
   const rows = includeDrafts
-    ? all("SELECT * FROM products WHERE status != 'archived' OR ? ORDER BY sort, id", 1)
-    : all("SELECT * FROM products WHERE status = 'published' ORDER BY featured DESC, sort, id");
-  return rows.map(hydrate);
+    ? await all("SELECT * FROM products ORDER BY (status = 'archived'), sort, id")
+    : await all("SELECT * FROM products WHERE status = 'published' ORDER BY featured DESC, sort, id");
+  const areas = await activeAreaCount();
+  return Promise.all(rows.map(r => hydrate(r, areas)));
 }
 
-export const activeDeliveryAreas = () =>
-  all('SELECT * FROM delivery_areas WHERE active = 1 ORDER BY sort, name');
+export const activeDeliveryAreas = () => all('SELECT * FROM delivery_areas WHERE active = 1 ORDER BY sort, name');
+const activeAreaCount = async () => (await one('SELECT COUNT(*)::int AS n FROM delivery_areas WHERE active = 1')).n;
 
 /** Which fulfilment methods can actually be offered for a product right now. */
-export function fulfilmentOptions(p) {
+export function fulfilmentOptions(p, areaCount) {
   const site = getSetting('site');
   return {
-    delivery: !!p.delivery_enabled && activeDeliveryAreas().length > 0,
+    delivery: !!p.delivery_enabled && areaCount > 0,
     collection: !!p.collection_enabled && !!site.collectionAddress.trim(),
   };
 }
@@ -48,7 +51,7 @@ export function readiness(p) {
   if (!p.storage.trim()) missing.push('Storage guidance');
   if (p.lead_time_hours === null || p.lead_time_hours === undefined) missing.push('Preparation lead time');
   if (!(p.images || []).length) missing.push('At least one image');
-  const f = fulfilmentOptions(p);
+  const f = p.fulfilment;
   if (!f.delivery && !f.collection) {
     missing.push(p.delivery_enabled
       ? 'Delivery is enabled but no active delivery area is configured'
@@ -63,10 +66,11 @@ export function variantSellable(p, v) {
   return v.stock === null || v.stock > 0;
 }
 
-export function getVariantWithProduct(variantId) {
-  const v = one('SELECT * FROM variants WHERE id = ?', variantId);
+export async function getVariantWithProduct(variantId) {
+  if (!Number.isInteger(variantId) || variantId <= 0) return null;
+  const v = await one('SELECT * FROM variants WHERE id = ?', variantId);
   if (!v) return null;
-  return { variant: v, product: getProduct(v.product_id) };
+  return { variant: v, product: await getProduct(v.product_id) };
 }
 
 export function priceRange(p) {
@@ -80,12 +84,10 @@ export function slugify(s) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'product';
 }
 
-export function uniqueSlug(base, exceptId = 0) {
+export async function uniqueSlug(base, exceptId = 0) {
   let slug = slugify(base), n = 2;
-  while (one('SELECT 1 FROM products WHERE slug = ? AND id != ?', slug, exceptId)) slug = `${slugify(base)}-${n++}`;
+  while (await one('SELECT 1 FROM products WHERE slug = ? AND id != ?', slug, exceptId)) slug = `${slugify(base)}-${n++}`;
   return slug;
 }
 
-export function touchProduct(id) {
-  run("UPDATE products SET updated_at = datetime('now') WHERE id = ?", id);
-}
+export const touchProduct = (id) => run('UPDATE products SET updated_at = now() WHERE id = ?', id);

@@ -22,6 +22,8 @@ await new Promise(r => mock.listen(0, r));
 
 Object.assign(process.env, {
   DATA_DIR: fs.mkdtempSync(path.join(os.tmpdir(), 'cc-paymob-')),
+  PGLITE_DIR: process.env.TEST_DATABASE_URL ? undefined : 'memory',
+  ...(process.env.TEST_DATABASE_URL ? { DATABASE_URL: process.env.TEST_DATABASE_URL } : {}),
   PAYMENT_PROVIDER: 'paymob', PAYMENT_MODE: 'test',
   PAYMOB_BASE_URL: `http://127.0.0.1:${mock.address().port}/`,
   PAYMOB_SECRET_KEY: 'egy_sk_test_secret', PAYMOB_PUBLIC_KEY: 'egy_pk_test_public',
@@ -29,20 +31,24 @@ Object.assign(process.env, {
 });
 
 const { createApp } = await import('../src/server.js');
-const { run, one } = await import('../src/db.js');
+const { run, one, close } = await import('../src/db.js');
+const { bootstrap } = await import('../src/services/bootstrap.js');
 const { computeTransactionHmac } = await import('../src/payments/hmac.js');
 const { activeProviderStatus } = await import('../src/payments/index.js');
 const { config } = await import('../src/config.js');
 const app = createApp();
 const server = await new Promise(r => { const s = app.listen(0, () => r(s)); });
 const base = `http://127.0.0.1:${server.address().port}`;
-after(() => { server.close(); mock.close(); });
+after(async () => { server.close(); mock.close(); await close(); });
 
 // Fixture: a ready product, a delivery area, and an order placed through the real checkout.
-run("INSERT INTO products (slug, name, description, contents, ingredients, allergens, storage, lead_time_hours, status) VALUES ('t','Test tray','d','c','i','a','s',0,'published')");
-run("INSERT INTO product_images (product_id, media_key, alt, width, height, widths) VALUES (1, 'site-hero', '', 1254, 1254, '[480]')");
-run("INSERT INTO variants (product_id, name, price) VALUES (1, 'Std', 150000)");
-run("INSERT INTO delivery_areas (name, fee) VALUES ('Zamalek', 7500)");
+// Fixture: make the seeded launch product sellable with test values, plus one delivery area.
+await bootstrap();
+const product = await one("SELECT id FROM products WHERE slug = 'signature-chocolate-tray'");
+await run("UPDATE products SET contents='c', ingredients='i', allergens='a', storage='s', lead_time_hours=0 WHERE id = ?", product.id);
+const variant = await one('SELECT id FROM variants WHERE product_id = ?', product.id);
+await run('UPDATE variants SET price = 150000 WHERE id = ?', variant.id);
+const area = await one("INSERT INTO delivery_areas (name, fee) VALUES ('Zamalek', 7500) RETURNING id");
 
 test('provider reports ready in test mode with test keys', () => {
   assert.equal(activeProviderStatus().ready, true);
@@ -50,10 +56,10 @@ test('provider reports ready in test mode with test keys', () => {
 
 test('checkout creates a Paymob intention and redirects to Unified Checkout; signed callback confirms', async () => {
   const form = (o) => ({ method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: base, ...(o.cookie ? { cookie: o.cookie } : {}) }, body: new URLSearchParams(o.body) });
-  const add = await fetch(`${base}/bag/add`, form({ body: { variant_id: 1, quantity: 2 } }));
+  const add = await fetch(`${base}/bag/add`, form({ body: { variant_id: variant.id, quantity: 2 } }));
   const cookie = add.headers.get('set-cookie').split(';')[0];
   const date = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
-  const co = await fetch(`${base}/checkout`, form({ cookie, body: { name: 'Nour Ahmed', phone: '01012345678', email: 'n@example.test', fulfilment: 'delivery', area_id: 1, street: '1 St', building: '2', date, agree: 'on' } }));
+  const co = await fetch(`${base}/checkout`, form({ cookie, body: { name: 'Nour Ahmed', phone: '01012345678', email: 'n@example.test', fulfilment: 'delivery', area_id: area.id, street: '1 St', building: '2', date, agree: 'on' } }));
   assert.equal(co.status, 303);
   const payPath = co.headers.get('location');
   const t = new URL(payPath, base).searchParams.get('t');
@@ -87,7 +93,7 @@ test('checkout creates a Paymob intention and redirects to Unified Checkout; sig
   const replay = await hook(obj, computeTransactionHmac(obj, 'hmac_test_secret'));
   assert.equal((await replay.json()).result, 'duplicate');
 
-  const order = one('SELECT * FROM orders ORDER BY id DESC LIMIT 1');
+  const order = await one('SELECT * FROM orders ORDER BY id DESC LIMIT 1');
   assert.equal(order.payment_status, 'paid');
   assert.equal(order.total, 307500);
 });
@@ -99,4 +105,17 @@ test('mismatched key and mode is refused', () => {
   config.payments.paymob.secretKey = before;
   assert.equal(s.ready, false);
   assert.match(s.problems.join(' '), /live key/);
+});
+
+test('concurrent duplicate callbacks are applied exactly once', async () => {
+  const { insert } = await import('../src/db.js');
+  const { processEvent } = await import('../src/services/payments.js');
+  const orderId = await insert(`INSERT INTO orders (ref, access_hash, access_enc, customer_name, customer_phone, customer_email, fulfilment, requested_date, subtotal, delivery_fee, total, payment_mode)
+    VALUES ('CC-RACE-0001','h','e','A','+201012345678','a@b.co','delivery','2030-01-01',5000,0,5000,'test')`);
+  await run(`INSERT INTO payments (subject_type, subject_id, provider, mode, merchant_reference, provider_order_id, amount)
+    VALUES ('order', ?, 'paymob', 'test', 'CC-RACE-0001-P1', 'race-1', 5000)`, orderId);
+  const evt = { eventKey: 'race:paid', providerOrderId: 'race-1', txnId: 'race', amount: 5000, currency: 'EGP', outcome: 'paid', detail: '' };
+  const results = (await Promise.all(Array.from({ length: 5 }, () => processEvent('paymob', evt, {})))).map(r => r.result).sort();
+  assert.deepEqual(results, ['duplicate', 'duplicate', 'duplicate', 'duplicate', 'paid']);
+  assert.equal((await one("SELECT COUNT(*)::int AS n FROM order_events WHERE order_id = ? AND message LIKE 'Payment % verified%'", orderId)).n, 1);
 });

@@ -90,6 +90,24 @@ try {
     await snap(admin, 'admin-product');
   });
 
+  await step('Admin uploads a product photo; it is stored and served with long caching', async () => {
+    await admin.goto(`${BASE}/admin/products/1`);
+    await admin.setInputFiles('input[name=images]', path.join(root, 'assets/source/signature-tray-studio.png'));
+    await admin.waitForFunction(() => !document.querySelector('input[name=images]').dataset.resizing);
+    await admin.click('button:has-text("Upload")');
+    await see(admin, '1 image added.');
+    const src = await admin.locator('.img-item img').last().getAttribute('src');
+    assert.match(src, /^\/m\/signature-chocolate-tray-[a-z0-9]+-480\.jpg$/);
+    const r = await fetch(BASE + src);
+    assert.equal(r.status, 200);
+    assert.equal(r.headers.get('content-type'), 'image/jpeg');
+    assert.match(r.headers.get('cache-control'), /immutable/);
+    // Remove it again so the shopper sees the approved gallery only.
+    await admin.locator('.img-item').last().locator('button[value=delete]').click();
+    await see(admin, 'Images updated.');
+    assert.equal((await fetch(BASE + src)).status, 404);
+  });
+
   const shopper = await browser.newContext({ ...iphone });
   const page = await shopper.newPage(); watch(page);
 

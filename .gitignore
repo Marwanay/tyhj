@@ -4,6 +4,5 @@ data/
 *.db
 *.db-wal
 *.db-shm
-# Product images uploaded through the admin are generated at runtime; site imagery is committed.
-public/media/*
-!public/media/site-*
+# public/media is generated from assets/source by `npm run build` and committed.
+.vercel

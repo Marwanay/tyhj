@@ -1,17 +1,11 @@
 // Reusable view components. All return escaped HTML (Raw) via the html`` tag.
-import fs from 'node:fs';
-import path from 'node:path';
-import { createRequire } from 'node:module';
 import { html, raw, cx, escape } from '../lib/html.js';
-import { config } from '../config.js';
 import { formatEGP } from '../lib/money.js';
+import { config } from '../config.js';
+import { SITE_MEDIA } from './media.js';
+import { WORDMARK, MONOGRAM, STACKED } from './brand.js';
 
-const require = createRequire(import.meta.url);
-export const SITE_MEDIA = require('./media.json');
-
-// Brand marks traced from the identity PDF — inlined so they inherit currentColor.
-const svg = (name) => fs.readFileSync(path.join(config.root, 'public/brand', `${name}.svg`), 'utf8');
-const WORDMARK = svg('wordmark'), MONOGRAM = svg('monogram'), STACKED = svg('logo-stacked');
+export { SITE_MEDIA };
 const titled = (s, label) => s.replace('<svg ', `<svg role="img" aria-label="${escape(label)}" `);
 
 export const wordmark = (label = 'Cocoa Caramel') => raw(titled(WORDMARK, label));
@@ -29,15 +23,19 @@ export const zoomIcon = raw('<svg viewBox="0 0 16 16" width="14" fill="none" str
  * Responsive <picture> for an entry in media.json or a product image row.
  * @param {{media_key?:string,key?:string,widths:number[],width:number,height:number,alt?:string,placeholder?:string}} img
  */
+/** URL of one rendered variant: build-time images live in /media, admin uploads in /m. */
+export function mediaUrl(img, width, ext = 'jpg') {
+  return `${img.source === 'db' ? '/m/' : '/media/'}${img.media_key || img.key}-${width}.${ext}`;
+}
+
 export function picture(img, { sizes = '100vw', alt, eager = false, cls = '' } = {}) {
   if (!img) return html`<div class=${raw(`"frame ${cls}"`)}></div>`;
-  const key = img.media_key || img.key;
-  const srcset = (ext) => img.widths.map(w => `/media/${key}-${w}.${ext} ${w}w`).join(', ');
+  const srcset = (ext) => img.widths.map(w => `${mediaUrl(img, w, ext)} ${w}w`).join(', ');
   const largest = img.widths.at(-1);
   return html`<picture>
     <source type="image/avif" srcset="${srcset('avif')}" sizes="${sizes}">
     <source type="image/webp" srcset="${srcset('webp')}" sizes="${sizes}">
-    <img src="/media/${key}-${largest}.jpg" srcset="${srcset('jpg')}" sizes="${sizes}"
+    <img src="${mediaUrl(img, largest)}" srcset="${srcset('jpg')}" sizes="${sizes}"
       width="${img.width}" height="${img.height}" alt="${alt ?? img.alt ?? ''}"
       ${raw(eager ? 'fetchpriority="high"' : 'loading="lazy"')} decoding="async">
   </picture>`;

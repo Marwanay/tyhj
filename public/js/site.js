@@ -268,10 +268,12 @@
         previews.innerHTML = '';
         Array.from(fileInput.files).slice(0, 6).forEach(f => { const im = document.createElement('img'); im.alt = f.name; im.src = URL.createObjectURL(f); previews.appendChild(im); });
       };
+      fileInput.addEventListener('cc-resized', render);
       fileInput.addEventListener('change', render);
+      window.ccResizeInput && window.ccResizeInput(fileInput, { max: 1800, quality: 0.85 });
       ['dragenter', 'dragover'].forEach(t => dz.addEventListener(t, (e) => { e.preventDefault(); dz.classList.add('is-over'); }));
       ['dragleave', 'drop'].forEach(t => dz.addEventListener(t, () => dz.classList.remove('is-over')));
-      dz.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer?.files?.length) { fileInput.files = e.dataTransfer.files; render(); } });
+      dz.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer?.files?.length) { fileInput.files = e.dataTransfer.files; fileInput.dispatchEvent(new Event('change')); } });
     }
   }
 

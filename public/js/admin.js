@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  document.querySelectorAll('input[type=file][name=images]').forEach(i => window.ccResizeInput && window.ccResizeInput(i, { max: 2400, quality: 0.92 }));
   // Confirmation for destructive or outward-facing actions.
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-confirm]');
