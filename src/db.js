@@ -318,6 +318,10 @@ async function pgDriver(url) {
     connectionTimeoutMillis: 10_000,
     ssl: /sslmode=disable|localhost|127\.0\.0\.1/.test(url) ? undefined : { rejectUnauthorized: true },
   });
+  // Neon closes idle connections when the database scales to zero. An idle client's error is
+  // emitted on the pool; unhandled, it would crash the whole function. The pool drops that client
+  // and opens a fresh one on the next query.
+  pool.on('error', (err) => console.error('[db] idle connection closed:', err.message));
   const wrap = (c) => ({
     async query(sql, params) { const r = await c.query(sql, params); return { rows: normalize(r.rows), rowCount: r.rowCount }; },
     exec: (sql) => c.query(sql),
