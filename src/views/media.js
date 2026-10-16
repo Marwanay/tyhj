@@ -117,37 +117,73 @@ export const PRODUCT_MEDIA = {
   }
 };
 
-export const ROUND_TRAY_MEDIA = {
-  "round-tray-studio": {
-    "width": 1312,
-    "height": 1199,
-    "widths": [
-      480,
-      760,
-      1080,
-      1312
-    ],
-    "placeholder": "rgb(248 232 216)",
-    "alt": "The Signature Round Tray: gold-flecked chocolate domes in a round clear tray, around a vase of cream gerberas"
+export const COLLECTION_MEDIA = {
+  "signature-round-tray": {
+    "round-tray-studio": {
+      "width": 1312,
+      "height": 1199,
+      "widths": [
+        480,
+        760,
+        1080,
+        1312
+      ],
+      "placeholder": "rgb(248 232 216)",
+      "alt": "The Signature Round Tray: gold-flecked chocolate domes in a round clear tray, around a vase of cream gerberas"
+    },
+    "round-tray-detail": {
+      "width": 620,
+      "height": 400,
+      "widths": [
+        480,
+        620
+      ],
+      "placeholder": "rgb(248 232 216)",
+      "alt": "Close-up of the gold-flecked chocolate domes in the round tray"
+    },
+    "round-tray-flowers": {
+      "width": 640,
+      "height": 720,
+      "widths": [
+        480,
+        640
+      ],
+      "placeholder": "rgb(216 200 184)",
+      "alt": "Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray"
+    }
   },
-  "round-tray-detail": {
-    "width": 620,
-    "height": 400,
-    "widths": [
-      480,
-      620
-    ],
-    "placeholder": "rgb(248 232 216)",
-    "alt": "Close-up of the gold-flecked chocolate domes in the round tray"
-  },
-  "round-tray-flowers": {
-    "width": 640,
-    "height": 720,
-    "widths": [
-      480,
-      640
-    ],
-    "placeholder": "rgb(216 200 184)",
-    "alt": "Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray"
+  "signature-tiered-tray": {
+    "tiered-tray-studio": {
+      "width": 1312,
+      "height": 1199,
+      "widths": [
+        480,
+        760,
+        1080,
+        1312
+      ],
+      "placeholder": "rgb(200 168 152)",
+      "alt": "The Signature Tiered Tray: three clear square tiers of gold-flecked chocolate domes around a vase of white lilies"
+    },
+    "tiered-tray-detail": {
+      "width": 660,
+      "height": 420,
+      "widths": [
+        480,
+        660
+      ],
+      "placeholder": "rgb(248 232 200)",
+      "alt": "Close-up of the gold-flecked chocolate domes on the lowest tier"
+    },
+    "tiered-tray-flowers": {
+      "width": 700,
+      "height": 560,
+      "widths": [
+        480,
+        700
+      ],
+      "placeholder": "rgb(200 168 152)",
+      "alt": "White lilies and buds in the clear square vase at the top of the tiers"
+    }
   }
 };
