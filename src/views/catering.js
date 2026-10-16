@@ -98,7 +98,8 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
       ${eyebrow('Catering & private events', 'reveal')}
       <h1 class="reveal d1">A private <em>consultation.</em></h1>
       <p class="lede reveal d2" style="max-width:24em">${c.intro}</p>
-      <div class="reveal d3" style="margin-top:32px;display:flex;flex-wrap:wrap;gap:12px">${button('Build your dessert table', { href: '/build-your-table', withArrow: true })}${button('Begin your enquiry', { href: '#enquire', variant: 'ghost', cls: 'on-dark' })}</div>
+      <div class="reveal d3" style="margin-top:32px">${button('Begin your enquiry', { href: '#enquire', withArrow: true })}</div>
+      <p class="fine reveal d3 optional-builder">Optional: <a href="/build-your-table">design your dessert table visually</a> before you enquire.</p>
     </div>
     <div class="art">${framed(site('site-table-tray'), { mount: true, sizes: '(max-width: 960px) 70vw, 30vw', eager: true, style: 'aspect-ratio:3/4' })}</div>
   </div>
@@ -161,7 +162,7 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
           ${errors.services ? html`<p class="error">${errors.services}</p>` : ''}
         </fieldset>
         ${select('budget', 'Budget range', c.budgetRanges.map(b => ({ value: b, label: b })), { value: v.budget, errors, optional: true, placeholder: 'Prefer not to say' })}`)}
-      ${step(3, 'Your menu', 'Choose from our menu — chocolates by the kilo, everything else by quantity. A table of your selection appears as you go. Prefer to decide together? Simply continue.', html`<p class="design-cta"><a href="/build-your-table">Prefer to see it? <strong>Build your dessert table</strong> — arrange each dessert on our table, then send it with your enquiry.</a></p>${menuPicker(v.menu)}`)}
+      ${step(3, 'Your menu', 'Choose from our menu — chocolates by the kilo, everything else by quantity. A table of your selection appears as you go. Prefer to decide together? Simply continue.', html`<p class="design-cta">Optional: you can also <a href="/build-your-table">design your dessert table visually</a> and send it with your enquiry.</p>${menuPicker(v.menu)}`)}
       ${step(4, 'Your style', 'Colours, themes, flavours and anything we should know.', html`
         ${textarea('styling', 'Styling preferences & special requests', { value: v.styling, errors, rows: 5, maxlength: 2000, hint: 'Colour palette, theme, dietary needs, allergies, timings…' })}
         <div class="field">

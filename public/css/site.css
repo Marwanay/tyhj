@@ -988,3 +988,5 @@ body.has-sticky-buy .toast { bottom: 96px; }
 .design-cta { margin: -12px 0 22px; font-size: 14px; }
 .design-cta a { color: var(--plum); }
 .design-attached { margin: 0 0 22px; }
+.optional-builder { margin-top: 16px; color: var(--muted); }
+.optional-builder a { color: var(--ivory); }
