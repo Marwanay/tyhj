@@ -378,7 +378,7 @@ try {
     await tp.locator('.tb-item[data-zone="S01"]').waitFor();
     // A dessert whose render is still being made shows a labelled place card, never a stand-in image.
     await tp.click('[data-tb-zone="T02"]');
-    await tp.click('[data-tb-add="tiramisu-tray"]');
+    await tp.click('[data-tb-add="tres-leches-classic"]');
     await tp.locator('.tb-item.mode-pending[data-zone="T02"]', { hasText: 'Preview coming soon' }).waitFor();
     await tp.click('[data-tb-zone="T02"]');
     await tp.click('[data-pop-remove]');
