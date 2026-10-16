@@ -10,7 +10,7 @@ import { getSetting } from '../services/content.js';
 import { homePage } from '../views/home.js';
 import { collectionPage, productPage, bagPage, checkoutPage, paymentPage, orderPage } from '../views/shop.js';
 import { messagePage } from '../views/catering.js';
-import { mediaUrl } from '../views/components.js';
+import { mediaUrl, withFilling } from '../views/components.js';
 
 export const shop = express.Router();
 
@@ -50,11 +50,11 @@ shop.get('/collection/:slug', async (req, res, next) => {
 shop.post('/bag/add', async (req, res) => {
   const cart = await cartFor(req, res);
   try {
-    const { product, variant, quantity } = await addItem(cart.id, req.body?.variant_id, req.body?.quantity);
+    const { product, variant, filling, quantity } = await addItem(cart.id, req.body?.variant_id, req.body?.quantity, req.body?.filling);
     const count = await cartCount(cart.id);
     if (wantsJson(req)) {
       const img = product.images[0];
-      return res.json({ ok: true, count, name: product.name, variant: variant.name, quantity,
+      return res.json({ ok: true, count, name: product.name, variant: withFilling(variant.name, filling), quantity,
         image: img ? mediaUrl(img, img.widths[0]) : null });
     }
     res.redirect(303, '/bag');
@@ -71,7 +71,7 @@ shop.get('/bag', privatePage, async (req, res) => {
 });
 
 shop.post('/bag/update', async (req, res) => {
-  if (await findCart(req.cartId)) await setQuantity(req.cartId, req.body?.variant_id, req.body?.quantity);
+  if (await findCart(req.cartId)) await setQuantity(req.cartId, req.body?.line_id, req.body?.quantity);
   if (wantsJson(req)) return res.json({ ok: true, count: await cartCount(req.cartId) });
   res.redirect(303, '/bag');
 });
@@ -134,7 +134,7 @@ shop.post('/checkout/pay/:ref', privatePage, async (req, res, next) => {
   const token = tokenOf(req);
   if (o.payment_status === 'paid' || o.status !== 'awaiting_payment') return res.redirect(303, `/orders/${o.ref}?t=${encodeURIComponent(token)}`);
   try {
-    const items = o.items.map(i => ({ name: `${i.name} — ${i.variant_name}`, unitAmount: i.unit_price, quantity: i.quantity }));
+    const items = o.items.map(i => ({ name: `${i.name} — ${withFilling(i.variant_name, i.filling)}`, unitAmount: i.unit_price, quantity: i.quantity }));
     if (o.delivery_fee) items.push({ name: `Delivery — ${o.delivery_area_name}`, unitAmount: o.delivery_fee, quantity: 1 });
     const url = await startPayment({
       subjectType: 'order', subject: o, purpose: 'full', amount: o.total, items,

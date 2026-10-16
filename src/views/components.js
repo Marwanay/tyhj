@@ -43,6 +43,9 @@ export function picture(img, { sizes = '100vw', alt, eager = false, cls = '' } =
 
 export const site = (key) => ({ ...SITE_MEDIA[key], key });
 
+/** "Signature size · Pecan caramel filling" — a bag or order line's size with its chosen filling. */
+export const withFilling = (variantName, filling) => (filling ? `${variantName} · ${filling} filling` : variantName);
+
 export function framed(img, { mount = false, reveal = true, cls = '', style = '', ...opts } = {}) {
   const ph = img?.placeholder ? `--ph:${img.placeholder}` : '';
   return html`<div class="${cx('frame', mount && 'mount', reveal && 'reveal-img', cls)}" style="${[ph, style].filter(Boolean).join(';')}">${picture(img, opts)}</div>`;

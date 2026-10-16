@@ -114,6 +114,7 @@ try {
   async function buyToSandbox({ qty = 1 } = {}) {
     await page.goto(`${BASE}/collection/signature-chocolate-tray`);
     if (qty > 1) await page.fill('input[name=quantity]', String(qty));
+    await page.click('label.filling:has-text("Hazelnut praline")');
     await page.click('[data-add-button]');
     await page.waitForSelector('.toast.is-visible');
     await page.goto(`${BASE}/bag`);
@@ -137,10 +138,20 @@ try {
   await step('Mobile shopper: product → bag → delivery → hosted payment → verified confirmation', async () => {
     await page.goto(`${BASE}/collection/signature-chocolate-tray`);
     await snap(page, 'product-mobile');
+    // A filling must be chosen first: without one, nothing is added.
+    await page.click('[data-add-button]');
+    await page.waitForTimeout(400);
+    assert.equal(await page.locator('.toast.is-visible').count(), 0);
+    await page.click('label.filling:has-text("Pistachio cream")');
     await page.click('[data-add-button]');
     await page.waitForSelector('.toast.is-visible');
     assert.equal(await page.textContent('[data-bag-count]'), '1');
+    await see(page, 'Pistachio cream filling');
+    // The server refuses a filling the product does not offer.
+    const bad = await page.evaluate(async (base) => (await fetch(`${base}/bag/add`, { method: 'POST', headers: { accept: 'application/json', 'content-type': 'application/x-www-form-urlencoded' }, body: 'variant_id=1&quantity=1&filling=Strawberry' })).status, BASE);
+    assert.equal(bad, 409);
     await page.goto(`${BASE}/bag`);
+    await see(page, 'Pistachio cream filling');
     await snap(page, 'bag-mobile');
     await page.click('text=Continue to delivery');
     // Server-side validation: an invalid phone is rejected with a helpful message.
@@ -163,6 +174,7 @@ try {
     await page.click('text=Approve payment');
     await page.waitForURL(/\/orders\//);
     await page.waitForSelector('text=Your order is confirmed');
+    await see(page, 'Pistachio cream filling');
     await snap(page, 'order-confirmed');
     const s = await orderState(page);
     assert.equal(s.payment, 'paid'); assert.equal(s.status, 'confirmed');
@@ -236,6 +248,7 @@ try {
     assert.equal(rows, 3);
     await admin.locator('table.table tbody tr a').first().click();
     await see(admin, 'verified');
+    await see(admin, 'praline filling');
     await admin.selectOption('#a-status', 'preparing');
     await admin.click('text=Update');
     await see(admin, 'Being prepared');

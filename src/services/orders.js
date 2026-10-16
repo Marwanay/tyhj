@@ -104,8 +104,8 @@ export async function placeOrder(cart, input) {
       await orderEvent(order.id, 'Order created — awaiting payment');
     }
     for (const l of priced.lines) {
-      await run(`INSERT INTO order_items (order_id, product_id, variant_id, name, variant_name, unit_price, quantity)
-           VALUES (?,?,?,?,?,?,?)`, order.id, l.product.id, l.variant.id, l.product.name, l.variant.name, l.unitPrice, l.quantity);
+      await run(`INSERT INTO order_items (order_id, product_id, variant_id, name, variant_name, filling, unit_price, quantity)
+           VALUES (?,?,?,?,?,?,?,?)`, order.id, l.product.id, l.variant.id, l.product.name, l.variant.name, l.filling, l.unitPrice, l.quantity);
     }
     return { order: await getOrder(order.id), token };
   });

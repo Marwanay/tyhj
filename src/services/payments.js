@@ -163,7 +163,7 @@ async function applyPaid(payment, after) {
       for (const it of o.items) {
         if (!it.variant_id) continue;
         const v = await one('UPDATE variants SET stock = stock - ? WHERE id = ? AND stock IS NOT NULL RETURNING stock', it.quantity, it.variant_id);
-        if (v && v.stock < 0) await orderEvent(o.id, `Stock for ${it.name} (${it.variant_name}) is now below zero — please check`);
+        if (v && v.stock < 0) await orderEvent(o.id, `Stock for ${it.name} (${it.variant_name}${it.filling ? `, ${it.filling}` : ''}) is now below zero — please check`);
       }
       await run('UPDATE orders SET stock_committed = 1 WHERE id = ?', o.id);
     }

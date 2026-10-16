@@ -450,6 +450,9 @@ legend { padding: 0; }
 .variant:has(input:disabled) { opacity: .5; cursor: not-allowed; }
 .variant .v-name { font-weight: 500; }
 .variant .v-desc { grid-column: 1; font-size: 13px; color: var(--muted); }
+.filling-field { margin-top: 18px; }
+.filling-options { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+.variant.filling { grid-template-columns: 1fr; align-items: center; padding: 12px 14px; min-height: 48px; }
 .qty-row { display: flex; gap: 12px; align-items: stretch; margin-top: 20px; }
 .stepper { display: inline-grid; grid-template-columns: 48px 52px 48px; border: 1px solid var(--rule-strong); height: 52px; }
 .stepper button { background: none; border: 0; cursor: pointer; font-size: 18px; color: var(--plum); }

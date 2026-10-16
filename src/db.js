@@ -293,6 +293,17 @@ const SCHEMA = [
   `ALTER TABLE enquiries ADD COLUMN menu TEXT NOT NULL DEFAULT '[]';`,
   // 3 — Build Your Dessert Table: the client's arrangement ([{ zone, id, qty }])
   `ALTER TABLE enquiries ADD COLUMN table_design TEXT NOT NULL DEFAULT '[]';`,
+  // 4 — chocolate fillings: the choices a product offers (one per line), and the one chosen per
+  // bag line / order line. A bag can hold the same size twice with different fillings.
+  `
+  ALTER TABLE products ADD COLUMN fillings TEXT NOT NULL DEFAULT '';
+  ALTER TABLE cart_items ADD COLUMN filling TEXT NOT NULL DEFAULT '';
+  ALTER TABLE cart_items DROP CONSTRAINT IF EXISTS cart_items_cart_id_variant_id_key;
+  CREATE UNIQUE INDEX cart_items_line ON cart_items (cart_id, variant_id, filling);
+  ALTER TABLE order_items ADD COLUMN filling TEXT NOT NULL DEFAULT '';
+  UPDATE products SET fillings = E'Pecan caramel\nHazelnut praline\nPistachio cream\nMixed nuts\nCroquant\nHalawa pistachio cream'
+    WHERE slug IN ('signature-chocolate-tray', 'signature-round-tray', 'signature-tiered-tray');
+  `,
 ];
 
 // ---- Drivers ------------------------------------------------------------------------

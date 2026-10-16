@@ -3,7 +3,7 @@ import { formatEGP, toInputEGP } from '../lib/money.js';
 import { prettyDate, prettyDateTime, leadTimeLabel } from '../lib/dates.js';
 import { displayPhone } from '../lib/phone.js';
 import { config } from '../config.js';
-import { monogram, pill, button, mediaUrl } from './components.js';
+import { monogram, pill, button, mediaUrl, withFilling } from './components.js';
 import { ASSET_VERSION } from './layout.js';
 import { ORDER_STATUSES, PAYMENT_STATUSES } from '../services/orders.js';
 import { ENQUIRY_STATUSES, QUOTE_STATUSES, quoteProblems, DESIGN_FILE } from '../services/quotes.js';
@@ -154,6 +154,7 @@ export function productEditView({ p, s }) {
       ${field('ingredients', 'Ingredients', { value: p.ingredients, type: 'textarea', rows: 3 })}
       ${field('allergens', 'Allergens', { value: p.allergens, type: 'textarea', rows: 2, hint: 'Contains / may contain.' })}
       ${field('storage', 'Storage guidance', { value: p.storage, type: 'textarea', rows: 2 })}
+      ${field('fillings', 'Fillings (one per line)', { value: p.fillings, type: 'textarea', rows: 6, hint: 'Customers choose one when adding this product to their bag. Leave empty if there is no choice.' })}
       ${field('lead_time_hours', 'Preparation lead time (hours)', { value: p.lead_time_hours ?? '', type: 'number', attrs: 'min="0" max="2000"', hint: p.lead_time_hours !== null ? `Shown to customers as “${leadTimeLabel(p.lead_time_hours)}”.` : 'Required before the product can be sold.' })}
       <h3>Options</h3>
       ${checkbox('gift_message_enabled', 'Offer an optional gift message at checkout', p.gift_message_enabled)}
@@ -227,7 +228,7 @@ export function orderView({ o, s }) {
     <div>
       <div class="card"><h2>Items</h2>
         <table class="table"><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Total</th></tr></thead><tbody>
-        ${o.items.map(i => html`<tr><td>${i.name}<div class="muted">${i.variant_name}</div></td><td class="num">${i.quantity}</td><td class="num">${formatEGP(i.unit_price)}</td><td class="num">${formatEGP(i.unit_price * i.quantity)}</td></tr>`)}
+        ${o.items.map(i => html`<tr><td>${i.name}<div class="muted">${withFilling(i.variant_name, i.filling)}</div></td><td class="num">${i.quantity}</td><td class="num">${formatEGP(i.unit_price)}</td><td class="num">${formatEGP(i.unit_price * i.quantity)}</td></tr>`)}
         <tr><td colspan="3">Delivery ${o.delivery_area_name ? `— ${o.delivery_area_name}` : '(collection)'}</td><td class="num">${formatEGP(o.delivery_fee)}</td></tr>
         <tr><td colspan="3"><strong>Total</strong></td><td class="num"><strong>${formatEGP(o.total)}</strong></td></tr></tbody></table>
         ${o.gift_message ? html`<h3>Gift message</h3><p><em>“${o.gift_message}”</em></p>` : ''}

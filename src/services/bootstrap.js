@@ -21,6 +21,9 @@ export function bootstrap() {
 // piece count, lead time) are deliberately left empty, so a product is visible but cannot
 // be purchased until the team completes them in the admin. Each is seeded only once, ever, so a
 // product the team deletes does not come back.
+// The fillings every chocolate tray in the collection offers (customers choose one per tray).
+const TRAY_FILLINGS = ['Pecan caramel', 'Hazelnut praline', 'Pistachio cream', 'Mixed nuts', 'Croquant', 'Halawa pistachio cream'].join('\n');
+
 const COLLECTION = [
   {
     flag: 'seeded', lock: 724502, slug: 'signature-chocolate-tray', name: 'The Signature Chocolate Tray', featured: 1, media: PRODUCT_MEDIA,
@@ -43,15 +46,15 @@ async function seedCollection() {
   for (const p of COLLECTION) await seedProduct({ media: COLLECTION_MEDIA[p.slug], ...p });
 }
 
-async function seedProduct({ flag, lock, slug, name, tagline, description, featured, media }) {
+async function seedProduct({ flag, lock, slug, name, tagline, description, featured, media, fillings = TRAY_FILLINGS }) {
   if (getSetting('system')[flag]) return;
   await tx(async () => {
     await one('SELECT pg_advisory_xact_lock(?)', lock);
     await loadSettings();
     if (getSetting('system')[flag]) return;
     if (!(await one('SELECT 1 FROM products WHERE slug = ?', slug))) {
-      const id = await insert(`INSERT INTO products (slug, name, tagline, description, status, featured, gift_message_enabled, delivery_enabled, collection_enabled)
-        VALUES (?, ?, ?, ?, 'published', ?, 1, 1, 0)`, slug, name, tagline, description, featured);
+      const id = await insert(`INSERT INTO products (slug, name, tagline, description, fillings, status, featured, gift_message_enabled, delivery_enabled, collection_enabled)
+        VALUES (?, ?, ?, ?, ?, 'published', ?, 1, 1, 0)`, slug, name, tagline, description, fillings, featured);
       await run('INSERT INTO variants (product_id, name, price, stock, sort) VALUES (?, ?, NULL, NULL, 0)', id, 'Signature size');
       let i = 0;
       for (const [key, m] of Object.entries(media)) {

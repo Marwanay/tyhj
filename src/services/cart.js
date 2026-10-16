@@ -21,31 +21,37 @@ export const findCart = async (cartId) => (validId(cartId) ? one('SELECT * FROM 
 
 export class CartError extends Error {}
 
-export async function addItem(cartId, variantId, quantity) {
+export async function addItem(cartId, variantId, quantity, filling = '') {
   const found = await getVariantWithProduct(Number(variantId));
   if (!found || !variantSellable(found.product, found.variant)) {
     throw new CartError('Sorry, this item is not available to order right now.');
   }
+  // Products with fillings need one of theirs; others take none.
+  const options = found.product.fillingOptions;
+  filling = String(filling || '').trim();
+  if (options.length && !options.includes(filling)) throw new CartError('Please choose a filling.');
+  if (!options.length) filling = '';
   const qty = clampQty(quantity);
   return tx(async () => {
-    const existing = await one('SELECT quantity FROM cart_items WHERE cart_id = ? AND variant_id = ? FOR UPDATE', cartId, found.variant.id);
+    const existing = await one('SELECT quantity FROM cart_items WHERE cart_id = ? AND variant_id = ? AND filling = ? FOR UPDATE', cartId, found.variant.id, filling);
     const next = Math.min((existing?.quantity || 0) + qty, found.variant.max_per_order, found.variant.stock ?? Infinity);
     if (next < 1) throw new CartError('Sorry, this item has just sold out.');
-    await run(`INSERT INTO cart_items (cart_id, variant_id, quantity) VALUES (?, ?, ?)
-         ON CONFLICT (cart_id, variant_id) DO UPDATE SET quantity = excluded.quantity`, cartId, found.variant.id, next);
+    await run(`INSERT INTO cart_items (cart_id, variant_id, filling, quantity) VALUES (?, ?, ?, ?)
+         ON CONFLICT (cart_id, variant_id, filling) DO UPDATE SET quantity = excluded.quantity`, cartId, found.variant.id, filling, next);
     await run('UPDATE carts SET updated_at = ? WHERE id = ?', Date.now(), cartId);
-    return { product: found.product, variant: found.variant, quantity: next };
+    return { product: found.product, variant: found.variant, filling, quantity: next };
   });
 }
 
-export async function setQuantity(cartId, variantId, quantity) {
-  const vid = Number(variantId);
-  if (!Number.isInteger(vid)) return;
+/** Change one bag line (identified by its id, as the same size can appear with different fillings). */
+export async function setQuantity(cartId, lineId, quantity) {
+  const line = Number.isInteger(Number(lineId)) ? await one('SELECT * FROM cart_items WHERE id = ? AND cart_id = ?', Number(lineId), cartId) : null;
+  if (!line) return;
   const q = Number(quantity);
-  if (!q || q < 1) return run('DELETE FROM cart_items WHERE cart_id = ? AND variant_id = ?', cartId, vid);
-  const found = await getVariantWithProduct(vid);
+  if (!q || q < 1) return run('DELETE FROM cart_items WHERE id = ?', line.id);
+  const found = await getVariantWithProduct(line.variant_id);
   const cap = Math.min(found?.variant.max_per_order ?? 10, found?.variant.stock ?? Infinity);
-  await run('UPDATE cart_items SET quantity = ? WHERE cart_id = ? AND variant_id = ?', Math.max(1, Math.min(clampQty(q), cap)), cartId, vid);
+  await run('UPDATE cart_items SET quantity = ? WHERE id = ?', Math.max(1, Math.min(clampQty(q), cap)), line.id);
 }
 
 const clampQty = (q) => Math.max(1, Math.min(50, Math.floor(Number(q) || 1)));
@@ -68,7 +74,7 @@ export async function priceCart(cartId) {
       await run('UPDATE cart_items SET quantity = ? WHERE id = ?', quantity, r.id);
       problems.push(`Only ${variant.stock} of ${product.name} (${variant.name}) remain — your bag was updated.`);
     }
-    lines.push({ product, variant, quantity, unitPrice: variant.price, lineTotal: variant.price * quantity, image: product.images[0] || null });
+    lines.push({ id: r.id, product, variant, filling: r.filling, quantity, unitPrice: variant.price, lineTotal: variant.price * quantity, image: product.images[0] || null });
   }
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
   const count = lines.reduce((s, l) => s + l.quantity, 0);

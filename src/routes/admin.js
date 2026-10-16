@@ -8,7 +8,7 @@ import { parseEGP } from '../lib/money.js';
 import { cairoDate, addDays, isIsoDate } from '../lib/dates.js';
 import { renderVariants, MIME } from '../lib/images.js';
 import { ADMIN_COOKIE, login, logout, createAdmin, setPassword, adminCount } from '../services/auth.js';
-import { listProducts, getProduct, uniqueSlug, slugify, touchProduct, activeDeliveryAreas } from '../services/catalog.js';
+import { listProducts, getProduct, uniqueSlug, slugify, touchProduct, activeDeliveryAreas, parseFillings } from '../services/catalog.js';
 import { getOrder, orderEvent, ORDER_STATUSES } from '../services/orders.js';
 import { getEnquiry, createQuote, getQuote, saveQuote, issueQuoteLink, quoteLink, quoteProblems, expireQuotes, ENQUIRY_STATUSES } from '../services/quotes.js';
 import { recordManualPayment } from '../services/payments.js';
@@ -154,9 +154,10 @@ admin.post('/admin/products/:id', productOr404, async (req, res) => {
   const lead = leadRaw === '' ? null : Math.max(0, Math.min(2000, Math.floor(Number(leadRaw))));
   const status = ['draft', 'published', 'archived'].includes(b.status) ? b.status : 'draft';
   await run(`UPDATE products SET name=?, slug=?, tagline=?, description=?, contents=?, piece_count=?, ingredients=?, allergens=?, storage=?,
-       lead_time_hours=?, gift_message_enabled=?, delivery_enabled=?, collection_enabled=?, featured=?, status=?, updated_at=now() WHERE id=?`,
+       lead_time_hours=?, fillings=?, gift_message_enabled=?, delivery_enabled=?, collection_enabled=?, featured=?, status=?, updated_at=now() WHERE id=?`,
     t('name', 120) || p.name, await uniqueSlug(slugify(t('slug', 80) || t('name')), p.id), t('tagline', 200), t('description'), t('contents', 2000), t('piece_count', 80),
     t('ingredients', 3000), t('allergens', 1000), t('storage', 1000), Number.isFinite(lead) ? lead : null,
+    parseFillings(t('fillings', 2000)).map(f => f.slice(0, 60)).join('\n'),
     b.gift_message_enabled ? 1 : 0, b.delivery_enabled ? 1 : 0, b.collection_enabled ? 1 : 0, b.featured ? 1 : 0, status, p.id);
   const fresh = await getProduct(p.id);
   back(res, `/admin/products/${p.id}`, status === 'published' && !fresh.readiness.ready

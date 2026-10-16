@@ -6,7 +6,7 @@ import { config } from '../config.js';
 import { layout } from './layout.js';
 import {
   framed, picture, button, eyebrow, monogram, price, input, textarea, select, errorSummary, pill,
-  lockIcon, clockIcon, giftIcon, truckIcon, zoomIcon, arrow, mediaUrl,
+  lockIcon, clockIcon, giftIcon, truckIcon, zoomIcon, arrow, mediaUrl, withFilling,
 } from './components.js';
 import { priceRange } from '../services/catalog.js';
 import { getSetting } from '../services/content.js';
@@ -107,6 +107,15 @@ export function productPage({ product: p, cartCount, error }) {
           })}
         </div>
       </fieldset>
+      ${p.fillingOptions.length ? html`<fieldset class="filling-field">
+        <legend class="label">Choose your filling</legend>
+        <div class="variant-options filling-options">
+          ${p.fillingOptions.map(f => html`<label class="variant filling">
+            <input type="radio" name="filling" value="${f}" required>
+            <span class="v-name">${f}</span>
+          </label>`)}
+        </div>
+      </fieldset>` : ''}
       <div class="qty-row">
         <div class="stepper" data-stepper>
           <button type="button" data-step="-1" aria-label="Decrease quantity">−</button>
@@ -157,6 +166,7 @@ export function productPage({ product: p, cartCount, error }) {
         <details open><summary>Description</summary><div class="body">
           ${paragraphs(p.description)}
           ${p.contents ? html`<h4>Contents</h4>${paragraphs(p.contents)}` : ''}
+          ${p.fillingOptions.length ? html`<h4>Fillings</h4><p>${p.fillingOptions.join(' · ')}</p>` : ''}
         </div></details>
         <details><summary>Ingredients & allergens</summary><div class="body">
           <h4>Ingredients</h4>${p.ingredients ? paragraphs(p.ingredients) : tbc('Ingredients')}
@@ -213,9 +223,9 @@ export function bagPage({ priced, cartCount, notice }) {
           ${framed(l.image, { reveal: false, sizes: '120px' })}
           <div>
             <h3><a href="/collection/${l.product.slug}" style="text-decoration:none">${l.product.name}</a></h3>
-            <p class="meta">${l.variant.name} · ${formatEGP(l.unitPrice)} each</p>
+            <p class="meta">${withFilling(l.variant.name, l.filling)} · ${formatEGP(l.unitPrice)} each</p>
             <form method="post" action="/bag/update" class="controls" data-qty-form>
-              <input type="hidden" name="variant_id" value="${l.variant.id}">
+              <input type="hidden" name="line_id" value="${l.id}">
               <div class="stepper" data-stepper data-autosubmit>
                 <button type="button" data-step="-1" aria-label="Decrease quantity of ${l.product.name}">−</button>
                 <input type="number" name="quantity" value="${l.quantity}" min="1" max="${Math.min(l.variant.max_per_order, l.variant.stock ?? 99)}" inputmode="numeric" aria-label="Quantity of ${l.product.name}">
@@ -261,7 +271,7 @@ function orderSummary(lines, { subtotal, deliveryFee, total, areaName }) {
   </aside>`;
 }
 
-const bagLinesForSummary = (priced) => priced.lines.map(l => ({ name: l.product.name, variantName: l.variant.name, quantity: l.quantity, total: l.lineTotal, image: l.image }));
+const bagLinesForSummary = (priced) => priced.lines.map(l => ({ name: l.product.name, variantName: withFilling(l.variant.name, l.filling), quantity: l.quantity, total: l.lineTotal, image: l.image }));
 
 // ---- Checkout: delivery details ---------------------------------------------------
 
@@ -339,7 +349,7 @@ export function checkoutPage({ priced, areas, values = {}, errors = {}, minDate,
 // ---- Checkout: review & pay -------------------------------------------------------
 
 export function paymentPage({ order: o, token, error, providerReady, cartCount, images = {} }) {
-  const lines = o.items.map(i => ({ name: i.name, variantName: i.variant_name, quantity: i.quantity, total: i.unit_price * i.quantity, image: images[i.product_id] || null }));
+  const lines = o.items.map(i => ({ name: i.name, variantName: withFilling(i.variant_name, i.filling), quantity: i.quantity, total: i.unit_price * i.quantity, image: images[i.product_id] || null }));
   const a = o.addressObj;
   const body = html`
 <div class="wrap" style="padding-top:40px">
@@ -413,7 +423,7 @@ export function orderPage({ order: o, token, cartCount, returned, cancelled }) {
       <h2>Your order</h2>
       <table class="items">
         <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Total</th></tr></thead>
-        <tbody>${o.items.map(i => html`<tr><td>${i.name}<div class="fine">${i.variant_name}</div></td><td class="num">${i.quantity}</td><td class="num">${formatEGP(i.unit_price * i.quantity)}</td></tr>`)}</tbody>
+        <tbody>${o.items.map(i => html`<tr><td>${i.name}<div class="fine">${withFilling(i.variant_name, i.filling)}</div></td><td class="num">${i.quantity}</td><td class="num">${formatEGP(i.unit_price * i.quantity)}</td></tr>`)}</tbody>
         <tfoot>
           <tr><td colspan="2">Subtotal</td><td class="num">${formatEGP(o.subtotal)}</td></tr>
           <tr><td colspan="2">${o.fulfilment === 'delivery' ? `Delivery — ${o.delivery_area_name}` : 'Collection'}</td><td class="num">${o.delivery_fee ? formatEGP(o.delivery_fee) : 'No charge'}</td></tr>

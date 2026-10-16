@@ -7,6 +7,7 @@ async function hydrate(p, areaCount) {
   p.images = (await all('SELECT * FROM product_images WHERE product_id = ? ORDER BY sort, id', p.id))
     .map(i => ({ ...i, widths: JSON.parse(i.widths) }));
   p.variants = await all('SELECT * FROM variants WHERE product_id = ? ORDER BY sort, id', p.id);
+  p.fillingOptions = parseFillings(p.fillings);
   if (areaCount === undefined) areaCount = await activeAreaCount();
   p.fulfilment = fulfilmentOptions(p, areaCount);
   p.readiness = readiness(p);
@@ -72,6 +73,9 @@ export async function getVariantWithProduct(variantId) {
   if (!v) return null;
   return { variant: v, product: await getProduct(v.product_id) };
 }
+
+/** The fillings a product offers, from the admin's one-per-line list. */
+export const parseFillings = (text) => [...new Set(String(text || '').split('\n').map(s => s.trim()).filter(Boolean))];
 
 export function priceRange(p) {
   const prices = p.variants.filter(v => v.active && v.price > 0).map(v => v.price);

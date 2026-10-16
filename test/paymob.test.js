@@ -56,7 +56,7 @@ test('provider reports ready in test mode with test keys', () => {
 
 test('checkout creates a Paymob intention and redirects to Unified Checkout; signed callback confirms', async () => {
   const form = (o) => ({ method: 'POST', redirect: 'manual', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: base, ...(o.cookie ? { cookie: o.cookie } : {}) }, body: new URLSearchParams(o.body) });
-  const add = await fetch(`${base}/bag/add`, form({ body: { variant_id: variant.id, quantity: 2 } }));
+  const add = await fetch(`${base}/bag/add`, form({ body: { variant_id: variant.id, quantity: 2, filling: 'Croquant' } }));
   const cookie = add.headers.get('set-cookie').split(';')[0];
   const date = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
   const co = await fetch(`${base}/checkout`, form({ cookie, body: { name: 'Nour Ahmed', phone: '01012345678', email: 'n@example.test', fulfilment: 'delivery', area_id: area.id, street: '1 St', building: '2', date, agree: 'on' } }));
