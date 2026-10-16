@@ -3,12 +3,8 @@ import { paragraphs } from '../lib/html.js';
 import { layout } from './layout.js';
 import { site, framed, picture, button, eyebrow, titleLines, monogram, price } from './components.js';
 import { getSetting } from '../services/content.js';
+import { EVENT_PHOTOS } from './events-media.js';
 import { priceRange } from '../services/catalog.js';
-
-// Real event tables shown one after another in the gifting section. The cross-fade timing in
-// site.css (.gifting-slide, @keyframes gift-slide) is written for eight slides.
-const GIFTING_SLIDES = ['event-terrace', 'event-ballroom', 'event-pink-garden', 'event-garden', 'event-cart',
-  'event-macaron-tower', 'event-dusk', 'event-pink-detail'];
 
 export function homePage({ featured, cartCount }) {
   const h = getSetting('home');
@@ -72,7 +68,7 @@ export function homePage({ featured, cartCount }) {
   <div class="wrap gifting-grid">
     <div class="gifting-art">
       <div class="frame gifting-slides" style="--ph:${site('event-terrace').placeholder}">
-        ${GIFTING_SLIDES.map((key, i) => html`<div class="gifting-slide" style="--i:${i}">${picture(site(key), { sizes: '(max-width: 960px) 100vw, 64vw' })}</div>`)}
+        ${EVENT_PHOTOS.map(([key], i) => html`<div class="gifting-slide" style="--i:${i}">${picture(site(key), { sizes: '(max-width: 960px) 100vw, 64vw' })}</div>`)}
         <p class="gifting-slides-note label">From our events</p>
       </div>
     </div>

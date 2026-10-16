@@ -337,14 +337,14 @@ figure { margin: 0; }
 
 /* ---------- Home: story ---------- */
 .event-gallery { margin-top: clamp(56px, 8vw, 112px); }
-.event-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 32px); margin-top: 28px; }
+.event-photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(24px, 3vw, 48px) clamp(16px, 2vw, 32px); margin-top: 28px; }
 .event-photos figure { margin: 0; }
-.event-photos figure:nth-child(2) { margin-top: clamp(24px, 4vw, 64px); }
+.event-photos figure:nth-child(even) { margin-top: clamp(24px, 4vw, 64px); }
 .event-photos figcaption { margin-top: 12px; }
 @media (max-width: 760px) {
   .event-photos { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
   .event-photos figure { scroll-snap-align: start; }
-  .event-photos figure:nth-child(2) { margin-top: 0; }
+  .event-photos figure:nth-child(even) { margin-top: 0; }
 }
 .story { text-align: center; }
 .story .monogram { width: 56px; margin: 0 auto 32px; }

@@ -8,6 +8,7 @@ import { getSetting } from '../services/content.js';
 import { QUOTE_STATUSES } from '../services/quotes.js';
 import { MENU, itemLabel, formatQuantity } from '../services/menu.js';
 import { notificationChannel } from '../services/notify.js';
+import { EVENT_PHOTOS } from './events-media.js';
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const unitWord = (unit) => unit === 'kg' ? 'kg' : unit === 'piece' ? 'pcs' : `${unit}s`;
@@ -119,9 +120,9 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
     <div class="event-gallery">
       ${eyebrow('From our events')}
       <div class="event-photos">
-        ${[['event-terrace', 'An evening terrace'], ['event-garden', 'A garden celebration'], ['event-dusk', 'Éclairs at dusk']].map(([key, cap], i) => html`<figure>
-          ${framed(site(key), { mount: true, sizes: '(max-width: 760px) 78vw, 30vw', style: 'aspect-ratio:3/4' })}
-          <figcaption class="caption"><span class="numeral">${['i.', 'ii.', 'iii.'][i]}</span> ${cap}</figcaption>
+        ${EVENT_PHOTOS.map(([key, cap], i) => html`<figure>
+          ${framed(site(key), { mount: true, sizes: '(max-width: 760px) 78vw, 23vw', style: 'aspect-ratio:3/4' })}
+          <figcaption class="caption"><span class="numeral">${ROMAN[i].toLowerCase()}.</span> ${cap}</figcaption>
         </figure>`)}
       </div>
     </div>
