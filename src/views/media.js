@@ -66,6 +66,41 @@ export const SITE_MEDIA = {
     ],
     "placeholder": "rgb(248 232 216)",
     "alt": "The chocolate tray and flowers at the centre of a set table"
+  },
+  "event-terrace": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      480,
+      760,
+      1080,
+      1086
+    ],
+    "placeholder": "rgb(8 8 8)",
+    "alt": "A Cocoa Caramel dessert table on an evening terrace: layered cakes, chocolates, tartlets and a Cocoa Caramel place card"
+  },
+  "event-dusk": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      480,
+      760,
+      1080,
+      1086
+    ],
+    "placeholder": "rgb(8 8 8)",
+    "alt": "A garden dessert table at dusk: rows of éclairs, cherry tartlets and a macaron tower dressed with flowers and orchids"
+  },
+  "event-garden": {
+    "width": 1023,
+    "height": 1537,
+    "widths": [
+      480,
+      760,
+      1023
+    ],
+    "placeholder": "rgb(8 8 8)",
+    "alt": "An evening garden dessert table: macaron, chocolate and strawberry towers among white roses, with chocolates and fruit tarts"
   }
 };
 

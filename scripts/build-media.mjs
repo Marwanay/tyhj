@@ -23,6 +23,10 @@ const SITE = {
   'site-table':         { file: TABLE, alt: 'The Signature Chocolate Tray set on a dining table with blush napkins and crystal glasses' },
   'site-table-setting': { file: TABLE, crop: { left: 960, top: 0, width: 576, height: 1024 }, alt: 'A place setting with blush linen beside the chocolate tray' },
   'site-table-tray':    { file: TABLE, crop: { left: 200, top: 250, width: 1150, height: 720 }, alt: 'The chocolate tray and flowers at the centre of a set table' },
+  // Real Cocoa Caramel event tables.
+  'event-terrace': { file: src('event-terrace.png'), alt: 'A Cocoa Caramel dessert table on an evening terrace: layered cakes, chocolates, tartlets and a Cocoa Caramel place card' },
+  'event-dusk':    { file: src('event-dusk.png'), alt: 'A garden dessert table at dusk: rows of éclairs, cherry tartlets and a macaron tower dressed with flowers and orchids' },
+  'event-garden':  { file: src('event-garden.png'), alt: 'An evening garden dessert table: macaron, chocolate and strawberry towers among white roses, with chocolates and fruit tarts' },
 };
 
 // Gallery for the launch product (inserted into the database by the seed).

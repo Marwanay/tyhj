@@ -101,7 +101,7 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
       <div class="reveal d3" style="margin-top:32px">${button('Begin your enquiry', { href: '#enquire', withArrow: true })}</div>
       <p class="fine reveal d3 optional-builder">Optional: <a href="/build-your-table">design your dessert table visually</a> before you enquire.</p>
     </div>
-    <div class="art">${framed(site('site-table-tray'), { mount: true, sizes: '(max-width: 960px) 70vw, 30vw', eager: true, style: 'aspect-ratio:3/4' })}</div>
+    <div class="art">${framed(site('event-dusk'), { mount: true, sizes: '(max-width: 960px) 70vw, 30vw', eager: true, style: 'aspect-ratio:3/4' })}</div>
   </div>
 </section>
 
@@ -115,6 +115,15 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
       <ul class="services catering-list">
         ${c.services.map(s => html`<li><strong>${s.name}</strong><span>${s.body}</span></li>`)}
       </ul>
+    </div>
+    <div class="event-gallery">
+      ${eyebrow('From our events')}
+      <div class="event-photos">
+        ${[['event-terrace', 'An evening terrace'], ['event-garden', 'A garden celebration'], ['event-dusk', 'Éclairs at dusk']].map(([key, cap], i) => html`<figure>
+          ${framed(site(key), { mount: true, sizes: '(max-width: 760px) 78vw, 30vw', style: 'aspect-ratio:3/4' })}
+          <figcaption class="caption"><span class="numeral">${['i.', 'ii.', 'iii.'][i]}</span> ${cap}</figcaption>
+        </figure>`)}
+      </div>
     </div>
   </div>
 </section>

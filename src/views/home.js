@@ -91,7 +91,7 @@ export function homePage({ featured, cartCount }) {
       <h2 id="cater-title" class="reveal d1">${titleLines(h.cateringTitle.replace(', ', ',\n'))}</h2>
     </div>
     <div class="catering-art">
-      ${framed(site('site-table-setting'), { mount: true, sizes: '(max-width: 960px) 80vw, 30vw' })}
+      ${framed(site('event-terrace'), { mount: true, sizes: '(max-width: 960px) 80vw, 30vw' })}
     </div>
     <div class="catering-body">
       <div class="reveal">
