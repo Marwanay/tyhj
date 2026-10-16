@@ -126,3 +126,15 @@ test('dessert table: both reference arrangements are valid designs', async () =>
   const [one, two] = ARRANGEMENTS.map(a => new Set(a.items.map(i => i.id)));
   assert.ok([...two].every(id => !one.has(id)), 'arrangement 2 only holds desserts not in arrangement 1');
 });
+
+test('.vercelignore never drops server code from the deployment', () => {
+  const root = new URL('..', import.meta.url).pathname;
+  const rules = fs.readFileSync(path.join(root, '.vercelignore'), 'utf8').split('\n').map(s => s.trim()).filter(s => s && !s.startsWith('#'));
+  const toRe = (r) => {
+    const g = r.replace(/^\//, '').replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*');
+    return new RegExp((r.startsWith('/') ? '^' : '(^|/)') + g + '(/|$)');
+  };
+  const ignored = (f) => rules.reduce((out, r) => (toRe(r.replace(/^!/, '')).test(f) ? !r.startsWith('!') : out), false);
+  const files = ['api', 'src'].flatMap(d => fs.readdirSync(path.join(root, d), { recursive: true }).map(f => `${d}/${f}`));
+  assert.deepEqual(files.filter(ignored), []);
+});
