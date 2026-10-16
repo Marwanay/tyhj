@@ -2,7 +2,7 @@ import { html, raw, cx, paragraphs, markdown } from '../lib/html.js';
 import { formatEGP } from '../lib/money.js';
 import { prettyDate, cairoDate, addDays } from '../lib/dates.js';
 import { config } from '../config.js';
-import { layout } from './layout.js';
+import { layout, ASSET_VERSION } from './layout.js';
 import { site, framed, button, eyebrow, monogram, input, textarea, select, errorSummary, pill, lockIcon } from './components.js';
 import { getSetting } from '../services/content.js';
 import { QUOTE_STATUSES } from '../services/quotes.js';
@@ -16,6 +16,15 @@ const unitWord = (unit) => unit === 'kg' ? 'kg' : unit === 'piece' ? 'pcs' : `${
 function menuPicker(selection = []) {
   const chosen = new Map(selection.map(s => [s.id, s.qty]));
   return html`<div class="menu-picker" data-menu>
+    <div class="table-scene" data-table-scene hidden aria-hidden="true">
+      <picture>
+        <source type="image/webp" srcset="/media/dessert-table-768.webp 768w, /media/dessert-table-1280.webp 1280w" sizes="(max-width: 960px) 92vw, 640px">
+        <img src="/media/dessert-table-768.jpg" srcset="/media/dessert-table-768.jpg 768w, /media/dessert-table-1280.jpg 1280w" sizes="(max-width: 960px) 92vw, 640px" width="1536" height="1024" alt="" loading="lazy" decoding="async">
+      </picture>
+      <div class="scene-layer" data-scene-layer></div>
+      <p class="scene-hint" data-scene-hint>Your table awaits — choose a dessert and watch it arrive.</p>
+      <span class="scene-more" data-scene-more hidden></span>
+    </div>
     <div class="menu-tabs" data-menu-tabs hidden>
       ${MENU.map((cat, i) => html`<button type="button" class="menu-tab" data-menu-tab="${cat.id}" aria-pressed="${i === 0 ? 'true' : 'false'}">${cat.name}<span class="menu-tab-count" data-menu-count="${cat.id}"></span></button>`)}
     </div>
@@ -28,8 +37,10 @@ function menuPicker(selection = []) {
       <ul class="menu-items">
         ${cat.items.map(i => {
           const q = chosen.get(i.id);
-          return html`<li class="${cx('menu-item', q && 'is-chosen')}" data-menu-item="${i.id}" data-name="${itemLabel(i)}" data-category="${cat.name}" data-unit="${i.unit}">
-            <span class="mi-text"><span class="mi-name">${i.name}</span>${i.note ? html`<span class="mi-note">${i.note}</span>` : ''}</span>
+          const photo = i.photo ? `${i.photo}?v=${ASSET_VERSION}` : '';
+          return html`<li class="${cx('menu-item', q && 'is-chosen', photo && 'has-photo')}" data-menu-item="${i.id}" data-name="${itemLabel(i)}" data-category="${cat.name}" data-unit="${i.unit}" data-place="${i.place}" data-photo="${photo}" data-glass="${i.glass ? i.glass.join(',') : ''}" data-in-photo="${i.inPhoto ? '1' : ''}">
+            ${photo ? html`<img class="mi-photo" src="${photo}" alt="" width="64" height="40" loading="lazy" decoding="async">` : ''}
+            <span class="mi-text"><span class="mi-name">${i.name}</span>${i.note ? html`<span class="mi-note">${i.note}</span>` : ''}${i.desc ? html`<span class="mi-desc">${i.desc}</span>` : ''}</span>
             <span class="mi-qty">
               <button type="button" class="mi-btn" data-menu-dec aria-label="Less ${itemLabel(i)}">−</button>
               <input class="mi-input" name="m_${i.id}" type="number" inputmode="decimal" min="0" max="${i.max}" step="${i.step}" value="${q ?? ''}" placeholder="0" aria-label="${itemLabel(i)} — quantity in ${i.unit === 'kg' ? 'kilos' : unitWord(i.unit)}">

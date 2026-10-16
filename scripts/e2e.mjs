@@ -263,6 +263,8 @@ try {
     await cp.click('[data-step="2"] [data-next]');
     // Menu: the selection table appears only once something is chosen; chocolates go in half kilos.
     assert.equal(await cp.locator('[data-menu-summary]').isVisible(), false);
+    await cp.locator('[data-table-scene]').waitFor({ state: 'visible' });
+    assert.equal(await cp.locator('.scene-item').count(), 0);
     const cake = cp.locator('[data-menu-item="chocolate-cake"]');
     await cake.locator('[data-menu-inc]').click(); await cake.locator('[data-menu-inc]').click();
     await cp.click('[data-menu-tab="chocolate-delights"]');
@@ -272,6 +274,13 @@ try {
     await see(cp, '1.5 kg');
     assert.equal(await cp.locator('[data-menu-rows] tr').count(), 2);
     assert.equal(await cp.locator('[data-menu-count="chocolate-delights"]').innerText(), '1');
+    // Each chosen dessert pops onto the live dessert table; removing it takes it off again.
+    assert.equal(await cp.locator('.scene-item img').count(), 2);
+    await cp.click('[data-menu-tab="dessert-bowls"]');
+    await cp.locator('[data-menu-item="trifle"] [data-menu-inc]').click();
+    assert.equal(await cp.locator('.scene-item.has-glass').count(), 1);
+    await cp.click('[data-menu-remove="trifle"]');
+    await cp.locator('.scene-item.has-glass').waitFor({ state: 'detached' });
     await snap(cp, 'catering-menu');
     await cp.click('[data-step="3"] [data-next]');
     await cp.fill('#f-styling', 'Blush and ivory palette, gold accents.');
@@ -314,6 +323,8 @@ try {
     await see(admin, 'Total EGP 26,000');
     await admin.click('text=Save & send to client');
     quoteUrl = await admin.inputValue('[data-copy-source]');
+    const waQuote = decodeURIComponent(await admin.locator('[data-quote-whatsapp]').getAttribute('href'));
+    assert.ok(waQuote.startsWith('https://wa.me/201223456789?text=') && waQuote.includes(quoteUrl), 'WhatsApp link carries the client number and private link');
     assert.match(quoteUrl, /\/q\/[A-Za-z0-9_-]{40,}$/);
     await snap(admin, 'admin-quote');
   });

@@ -274,8 +274,99 @@
         }
       };
       const esc = (s) => s.replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+
+      // ---- Live dessert table: each chosen dessert pops onto a stand, tray or bowl in the photo ----
+      const scene = $('[data-table-scene]', menu), layer = $('[data-scene-layer]', menu);
+      const hint = $('[data-scene-hint]', menu), more = $('[data-scene-more]', menu);
+      // Spots in the 1536×1024 table photo: [centre x, surface y, usable width].
+      const SPOTS = {
+        stand: [[795, 471, 170], [338, 482, 170], [640, 516, 160], [947, 512, 160], [1133, 512, 150], [470, 585, 190], [1090, 580, 190], [490, 512, 110], [205, 557, 100]],
+        tray: [[680, 735, 190], [862, 735, 190], [667, 652, 190], [870, 652, 195], [275, 728, 160], [445, 728, 160], [1130, 738, 170], [1305, 738, 160]],
+        bowl: [[390, 652, 80], [1018, 660, 72], [185, 652, 110], [1210, 652, 150], [260, 682, 60], [532, 668, 60]],
+        tower: [[1240, 600, 150]],
+      };
+      const FALLBACK = { stand: ['tray', 'bowl'], tray: ['stand', 'bowl'], bowl: ['tray', 'stand'], tower: ['stand', 'tray'] };
+      const placed = new Map(); // item id → { el, spot }
+      const taken = new Set();
+      const spotFor = (kind) => {
+        for (const k of [kind, ...(FALLBACK[kind] || [])]) {
+          const i = (SPOTS[k] || []).findIndex((_, n) => !taken.has(`${k}:${n}`));
+          if (i >= 0) return { key: `${k}:${i}`, kind: k, xyw: SPOTS[k][i] };
+        }
+        return null;
+      };
+      const sparkle = (host) => {
+        if (reduceMotion) return;
+        for (let i = 0; i < 10; i++) {
+          const s = document.createElement('i');
+          s.className = 'spark';
+          const a = (i / 10) * Math.PI * 2 + Math.random() * 0.5, d = 28 + Math.random() * 34;
+          s.style.setProperty('--dx', `${Math.cos(a) * d}px`); s.style.setProperty('--dy', `${Math.sin(a) * d - 18}px`);
+          s.style.animationDelay = `${Math.random() * 90}ms`;
+          host.appendChild(s);
+          setTimeout(() => s.remove(), 900);
+        }
+      };
+      // The name card shows as a dessert lands or changes quantity, then fades so the table stays uncluttered.
+      const flashCard = (p) => {
+        clearTimeout(p.timer);
+        p.el.classList.add('show-card');
+        p.timer = setTimeout(() => p.el.classList.remove('show-card'), 2600);
+      };
+      // A small verrine with layered fillings, for desserts served in glasses.
+      const glassSVG = ([a, b, c]) => `<svg viewBox="0 0 40 56" aria-hidden="true">` +
+        `<path d="M9.3 34h21.4l-1 14.2a3 3 0 0 1-3 2.8H13.3a3 3 0 0 1-3-2.8z" fill="${a}"/>` +
+        `<path d="M8.4 22h23.2l-.9 12H9.3z" fill="${b}"/>` +
+        `<path d="M7.8 14h24.4l-.6 8H8.4z" fill="${a}" opacity=".85"/>` +
+        `<circle cx="16" cy="12.5" r="3.4" fill="${c}"/><circle cx="23" cy="11.5" r="2.6" fill="${c}" opacity=".85"/>` +
+        `<path d="M6 4h28l-3.1 44.3A4 4 0 0 1 26.9 52H13.1a4 4 0 0 1-4-3.7z" fill="rgb(255 255 255 / .18)" stroke="rgb(255 255 255 / .95)" stroke-width="1.3"/>` +
+        `<path d="M10.5 9l1.6 36" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+      const syncScene = (chosen) => {
+        if (!scene) return;
+        const ids = new Set(chosen.map(li => li.dataset.menuItem));
+        for (const [id, p] of placed) if (!ids.has(id)) {   // taken off the table
+          placed.delete(id); taken.delete(p.spot.key);
+          p.el.classList.add('is-leaving');
+          setTimeout(() => p.el.remove(), reduceMotion ? 0 : 380);
+        }
+        let overflow = 0;
+        chosen.forEach(li => {
+          const id = li.dataset.menuItem, qty = fmt(qtyOf(li), li.dataset.unit);
+          const p = placed.get(id);
+          if (p) {
+            const tag = $('.scene-qty', p.el);
+            if (tag.textContent !== qty) { tag.textContent = qty; flashCard(p); }
+            return;
+          }
+          const spot = spotFor(li.dataset.place || 'tray');
+          if (!spot) { overflow++; return; }
+          taken.add(spot.key);
+          const [x, y, w] = spot.xyw, photo = li.dataset.photo, glass = li.dataset.glass, inPhoto = li.dataset.inPhoto === '1';
+          const look = inPhoto ? 'in-photo' : photo ? 'has-photo' : glass ? 'has-glass' : 'no-photo';
+          const el = document.createElement('div');
+          el.className = `scene-item on-${spot.kind} ${look}`;
+          el.style.left = `${(x / 1536) * 100}%`; el.style.top = `${(y / 1024) * 100}%`;
+          el.style.setProperty('--w', `${(w / 1536) * 100}cqw`);
+          el.style.zIndex = String(y);
+          const art = inPhoto ? '<span class="scene-glow"></span>'
+            : photo ? `<img src="${esc(photo)}" alt="">`
+            : glass ? `<span class="scene-glasses">${glassSVG(glass.split(','))}${glassSVG(glass.split(','))}${glassSVG(glass.split(','))}</span>` : '';
+          el.innerHTML = `<div class="scene-pop">${art}<span class="scene-card"><span class="scene-name">${esc(li.dataset.name)}</span><span class="scene-qty">${esc(qty)}</span></span></div>`;
+          layer.appendChild(el);
+          placed.set(id, { el, spot });
+          sparkle($('.scene-pop', el));
+          flashCard(placed.get(id));
+        });
+        // Anything beyond the table's spots is still in the selection table below; say so here.
+        more.hidden = !overflow;
+        more.textContent = overflow ? `+ ${overflow} more on your list` : '';
+        hint.hidden = chosen.length > 0;
+        scene.classList.toggle('is-set', chosen.length > 0);
+      };
+
       const render = () => {
         const chosen = items.filter(li => qtyOf(li) > 0);
+        syncScene(chosen);
         items.forEach(li => li.classList.toggle('is-chosen', qtyOf(li) > 0));
         cats.forEach(c => {
           const n = $$('[data-menu-item]', c).filter(li => qtyOf(li) > 0).length;
@@ -320,6 +411,7 @@
         render();
       });
       $('[data-menu-tabs]', menu).hidden = false;
+      if (scene) scene.hidden = false;
       const firstChosen = items.find(li => qtyOf(li) > 0);
       show(firstChosen ? firstChosen.closest('[data-menu-cat]').dataset.menuCat : cats[0].dataset.menuCat);
       render();

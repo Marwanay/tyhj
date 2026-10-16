@@ -715,3 +715,94 @@ body.has-sticky-buy .toast { bottom: 96px; }
 .thanks-menu .label { display: block; text-align: center; margin-bottom: 12px; color: var(--muted); }
 .thanks-whatsapp { max-width: 34em; margin: 32px auto 0; padding: 24px; border: 1px solid var(--rule-strong); }
 .thanks-whatsapp p { margin: 0 0 16px; }
+
+/* ---------- Catering: live dessert table ---------- */
+/* Sticks to the top of the menu step so every choice can be seen landing on the table. */
+.table-scene {
+  position: sticky; top: calc(var(--header-h) + 8px); z-index: 6; container-type: inline-size;
+  aspect-ratio: 1536 / 1024; margin: 0 0 24px; overflow: hidden; background: var(--ivory-2);
+  box-shadow: 0 18px 40px -24px rgb(38 8 27 / .55), inset 0 0 0 1px var(--rule);
+}
+.table-scene picture, .table-scene picture img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.table-scene picture img { transition: filter .8s var(--ease); filter: saturate(.92) brightness(.98); }
+.table-scene.is-set picture img { filter: none; }
+.scene-layer { position: absolute; inset: 0; }
+.scene-item { position: absolute; width: var(--w); transform: translate(-50%, -100%); pointer-events: none; }
+.scene-item.on-stand { width: calc(var(--w) * .9); }
+.scene-pop { position: relative; transform-origin: 50% 100%; animation: scene-drop .75s var(--ease-out) both; }
+.scene-pop::after { /* soft contact shadow */
+  content: ''; position: absolute; left: 12%; right: 12%; bottom: -2%; height: 9%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(38 8 27 / .28), transparent); z-index: -1;
+}
+.scene-pop img { display: block; width: 100%; height: auto; filter: drop-shadow(0 2px 2px rgb(38 8 27 / .18)); }
+.scene-item.is-leaving .scene-pop { animation: scene-leave .38s var(--ease) forwards; }
+@keyframes scene-drop {
+  0% { opacity: 0; transform: translateY(-70%) scale(.35); }
+  55% { opacity: 1; transform: translateY(5%) scale(1.07); }
+  75% { transform: translateY(-3%) scale(.97); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes scene-leave { to { opacity: 0; transform: translateY(-20%) scale(.6); } }
+.spark {
+  position: absolute; left: 50%; bottom: 45%; width: 6px; height: 6px; border-radius: 50%; z-index: 2;
+  background: radial-gradient(circle, #fff6dc 0 30%, var(--gold-soft) 60%, transparent 72%);
+  animation: spark .8s var(--ease-out) forwards;
+}
+@keyframes spark {
+  from { opacity: 1; transform: translate(-50%, 0) scale(1.2); }
+  to { opacity: 0; transform: translate(calc(-50% + var(--dx)), var(--dy)) scale(.2); }
+}
+
+/* Place cards: a quantity tag under every dessert; the name joins it when the table is large enough to read. */
+.scene-card {
+  position: absolute; left: 50%; top: 100%; transform: translate(-50%, 3px); white-space: nowrap;
+  display: inline-flex; align-items: baseline; gap: .45em; padding: .25em .6em; border-radius: 2px;
+  background: rgb(253 247 244 / .94); box-shadow: 0 0 0 1px rgb(200 134 10 / .55), 0 4px 10px -4px rgb(38 8 27 / .35);
+  font-size: clamp(8px, 1.45cqw, 12px); line-height: 1.2; color: var(--plum);
+}
+.scene-name { font-family: var(--font-display); font-size: 1.2em; }
+.scene-qty { font-family: var(--font-label); font-stretch: 112%; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; font-size: .85em; color: var(--gold); }
+/* Photos, glasses and the glowing tower show their card briefly (and on hover); plain place cards stay. */
+.scene-item:not(.no-photo) .scene-card { opacity: 0; transform: translate(-50%, 8px); transition: opacity .35s var(--ease), transform .45s var(--ease-out); }
+.scene-item.show-card .scene-card, .scene-item:not(.no-photo):hover .scene-card { opacity: 1; transform: translate(-50%, 3px); }
+.scene-item.show-card { z-index: 2000 !important; }
+.scene-item:not(.no-photo) .scene-pop > :first-child { pointer-events: auto; }
+.scene-glasses { display: flex; align-items: flex-end; justify-content: center; }
+.scene-glasses svg { width: 40%; height: auto; filter: drop-shadow(0 2px 2px rgb(38 8 27 / .25)); }
+.scene-glasses svg:nth-child(2) { width: 46%; margin: 0 -8%; position: relative; z-index: 1; }
+.scene-item.in-photo .scene-pop::after { display: none; }
+.scene-glow {
+  display: block; width: 100%; aspect-ratio: 1 / 1.9; border-radius: 50%;
+  background: radial-gradient(ellipse 50% 50% at 50% 55%, rgb(255 222 160 / .6), rgb(255 222 160 / .18) 55%, transparent 72%);
+  mix-blend-mode: screen; animation: glow-pulse 2.6s var(--ease) infinite;
+}
+@keyframes glow-pulse { 50% { opacity: .55; transform: scale(.96); } }
+/* Desserts without a photo arrive as a standing place card on their spot. */
+.scene-item.no-photo { width: auto; }
+.scene-item.no-photo .scene-card { position: relative; left: auto; top: auto; transform: none; flex-direction: column; align-items: center; gap: 1px; padding: .4em .7em; font-size: clamp(7px, 1.2cqw, 11px); }
+.scene-item.no-photo .scene-pop::after { left: 0; right: 0; bottom: -8%; height: 20%; }
+
+.scene-hint {
+  position: absolute; left: 50%; bottom: 5%; transform: translateX(-50%); margin: 0; max-width: 90%; text-align: center;
+  padding: .55em 1.1em; background: rgb(253 247 244 / .9); box-shadow: 0 0 0 1px rgb(200 134 10 / .45);
+  font-family: var(--font-display); font-style: italic; font-size: clamp(13px, 2.4cqw, 18px); color: var(--plum); text-wrap: balance;
+  animation: hint-breathe 3.2s var(--ease) infinite;
+}
+@keyframes hint-breathe { 50% { box-shadow: 0 0 0 1px rgb(200 134 10 / .45), 0 0 0 6px rgb(200 134 10 / .12); } }
+.scene-more {
+  position: absolute; right: 2.5%; top: 3.5%; padding: .4em .8em; background: var(--plum); color: var(--ivory);
+  font-family: var(--font-label); font-stretch: 112%; font-size: clamp(8px, 1.4cqw, 11px); letter-spacing: .14em; text-transform: uppercase;
+}
+@media (prefers-reduced-motion: reduce) { .scene-pop, .scene-item.is-leaving .scene-pop, .scene-hint, .scene-glow { animation: none; } }
+
+/* Dessert photos beside menu items */
+.menu-item.has-photo { grid-template-columns: 64px minmax(0, 1fr) auto; }
+.mi-photo { width: 64px; height: 48px; object-fit: contain; transition: transform .4s var(--ease-out); }
+.menu-item.is-chosen .mi-photo { transform: scale(1.08) rotate(-2deg); }
+.mi-desc { display: block; font-size: 12.5px; line-height: 1.45; color: var(--muted); margin-top: 4px; max-width: 34em; }
+@media (max-width: 520px) {
+  .menu-item.has-photo { grid-template-columns: 46px minmax(0, 1fr) auto; }
+  .mi-photo { width: 46px; height: 36px; }
+  .mi-desc { font-size: 12px; }
+}
+.scene-item.has-glass { width: calc(var(--w) * 1.5); }

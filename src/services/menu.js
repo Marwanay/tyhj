@@ -7,9 +7,63 @@
 const pieces = { unit: 'piece', step: 1, max: 2000 };
 const whole = (unit) => ({ unit, step: 1, max: 100 });
 
+// Cut-outs in /media/menu (built by scripts/cut-menu-art.py) that pop onto the live dessert table.
+const PHOTOS = {
+  'chocolate-cake': 'chocolate-cake', 'raspberry-cake': 'raspberry-cake', 'pistachio-cake': 'pistachio-cake',
+  'lemon-berry-cake': 'lemon-berry-cake', 'cherry-cake': 'cherry-cake', 'assorted-mini-cakes': 'assorted-mini-cakes',
+  'raspberry-wedding-round': 'raspberry-wedding', 'raspberry-wedding-rect': 'raspberry-wedding',
+  'tiramisu-wedding-round': 'tiramisu-wedding', 'tiramisu-wedding-rect': 'tiramisu-wedding',
+  'lemon-berry-tart': 'lemon-berry-tart', 'classic-cheesecake': 'classic-cheesecake', 'mini-cheesecakes': 'mini-cheesecakes',
+  'mini-tarts': 'mini-tarts', 'mini-chocolate-sticks': 'mini-chocolate-sticks', 'chocolate-pieces': 'chocolate-pieces',
+  'brownie-bar-pistachio': 'brownie-bar-pistachio', 'caramel-pecan': 'caramel-pecan', 'snickers-bites': 'snickers-bites',
+  'ferrero-rocher': 'ferrero-rocher',
+};
+
+// From the Cocoa Caramel menu cards.
+const DESCRIPTIONS = {
+  'chocolate-cake': 'A rich and moist chocolate cake layered with silky chocolate cream and topped with delicate chocolate shards.',
+  'raspberry-cake': 'Light and fruity raspberry cake with a creamy raspberry layer, finished with fresh raspberries.',
+  'pistachio-cake': 'A delicate pistachio cake with a smooth pistachio cream, topped with roasted pistachios.',
+  'lemon-berry-cake': 'A refreshing lemon cake layered with berries and cream, finished with a mix of fresh berries.',
+  'cherry-cake': 'A luscious cake with a rich cherry layer, finished with fresh cherries.',
+  'assorted-mini-cakes': 'A selection of our mini signature cakes in various flavours.',
+  'raspberry-wedding-round': 'Our signature raspberry cake, perfect for weddings and special occasions.',
+  'raspberry-wedding-rect': 'Our signature raspberry cake, perfect for weddings and special occasions.',
+  'tiramisu-wedding-round': 'A classic tiramisu cake with coffee-soaked layers and a smooth mascarpone cream.',
+  'tiramisu-wedding-rect': 'A classic tiramisu cake with coffee-soaked layers and a smooth mascarpone cream.',
+  'lemon-berry-tart': 'A crisp tart shell filled with lemon cream and topped with fresh berries.',
+  'classic-cheesecake': 'A rich and creamy cheesecake, available in a variety of flavours.',
+  'mini-cheesecakes': 'Our classic cheesecake in individual portions, in a variety of flavours.',
+  'mini-tarts': 'A selection of mini tarts in assorted flavours.',
+  'mini-chocolate-sticks': 'Elegant chocolate sticks in assorted flavours, finished with premium toppings.',
+  'chocolate-pieces': 'Assorted handcrafted chocolate pieces in various flavours and finishes.',
+  'brownie-bar-pistachio': 'A rich and fudgy brownie bar topped with roasted pistachios.',
+  'caramel-pecan': 'A smooth caramel centre finished with crunchy pecans.',
+  'snickers-bites': 'A delightful bite with the perfect combination of chocolate, caramel and nuts.',
+  'ferrero-rocher': 'Our take on the classic Ferrero Rocher, with a crunchy hazelnut coating and a rich chocolate centre.',
+};
+
+// Desserts served in glasses (no photo yet) are drawn on the table as layered glasses: bottom → top, garnish.
+const GLASSES = {
+  'nutella-profiterole': ['#5a2d1a', '#f3e6d6', '#3b1d10'], 'meringue-berries': ['#f8f1ec', '#c2183c', '#ffffff'],
+  'trifle': ['#f2d9b8', '#c7233a', '#fbf3e6'], 'mango-bowl': ['#f4a522', '#fbe8c8', '#f7b733'],
+  'blueberry-bowl': ['#4b3a8c', '#efe6f5', '#6a54b3'], 'cherry-bowl': ['#8e0f22', '#f6e3e0', '#b3122e'],
+  'twix-mousse': ['#5b3218', '#c98a3e', '#3a1f10'], 'mousse-cups': ['#6b3a22', '#f1e2d0', '#a35d3a'],
+};
+// Already standing in the table photo: choosing it makes it glow instead of adding a second one.
+const IN_PHOTO = new Set(['macaron-tower']);
+
+// Where a chosen item appears on the live dessert table: cake stands, marble trays, glass bowls or the tower plinth.
+const PLACE = { stand: 'stand', tray: 'tray', bowl: 'bowl', tower: 'tower' };
+const PLACE_OVERRIDES = {
+  'assorted-mini-cakes': PLACE.tray, 'raspberry-wedding-round': PLACE.tray, 'raspberry-wedding-rect': PLACE.tray,
+  'tiramisu-wedding-round': PLACE.tray, 'tiramisu-wedding-rect': PLACE.tray, 'mini-cheesecakes': PLACE.tray, 'mini-tarts': PLACE.tray,
+  'mousse-cups': PLACE.bowl,
+};
+
 export const MENU = [
   {
-    id: 'signature-cakes', name: 'Signature Cakes', ...whole('cake'),
+    id: 'signature-cakes', place: PLACE.stand, name: 'Signature Cakes', ...whole('cake'),
     items: [
       ['chocolate-cake', 'Chocolate Cake'],
       ['raspberry-cake', 'Raspberry Cake'],
@@ -20,7 +74,7 @@ export const MENU = [
     ],
   },
   {
-    id: 'wedding-cakes', name: 'Big Cakes for Weddings', ...whole('cake'),
+    id: 'wedding-cakes', place: PLACE.stand, name: 'Big Cakes for Weddings', ...whole('cake'),
     items: [
       ['raspberry-wedding-round', 'Raspberry Cake', 'Round'],
       ['raspberry-wedding-rect', 'Raspberry Cake', 'Rectangle'],
@@ -29,7 +83,7 @@ export const MENU = [
     ],
   },
   {
-    id: 'tarts-cheesecakes', name: 'Tarts & Cheesecakes', ...pieces,
+    id: 'tarts-cheesecakes', place: PLACE.stand, name: 'Tarts & Cheesecakes', ...pieces,
     items: [
       ['lemon-berry-tart', 'Lemon & Berry Tart', '', whole('tart')],
       ['classic-cheesecake', 'Classic Cheesecake', 'Varieties', whole('cheesecake')],
@@ -38,7 +92,7 @@ export const MENU = [
     ],
   },
   {
-    id: 'chocolate-delights', name: 'Chocolate Delights', unit: 'kg', step: 0.5, max: 100,
+    id: 'chocolate-delights', place: PLACE.tray, name: 'Chocolate Delights', unit: 'kg', step: 0.5, max: 100,
     items: [
       ['mini-chocolate-sticks', 'Mini Chocolate Sticks', 'Assorted flavours'],
       ['chocolate-pieces', 'Chocolate Pieces'],
@@ -54,7 +108,7 @@ export const MENU = [
     ],
   },
   {
-    id: 'dessert-bowls', name: 'Dessert Bowls', ...pieces,
+    id: 'dessert-bowls', place: PLACE.bowl, name: 'Dessert Bowls', ...pieces,
     items: [
       ['nutella-profiterole', 'Nutella Profiterole'],
       ['meringue-berries', 'Meringue with Mixed Berries & Raspberry'],
@@ -66,7 +120,7 @@ export const MENU = [
     ],
   },
   {
-    id: 'mini-desserts', name: 'Mini Desserts & Cups', ...pieces,
+    id: 'mini-desserts', place: PLACE.tray, name: 'Mini Desserts & Cups', ...pieces,
     items: [
       ['mini-cupcakes', 'Mini Cupcakes', 'Assorted flavours'],
       ['mousse-cups', 'Mousse Cups', 'Various flavours'],
@@ -75,21 +129,21 @@ export const MENU = [
     ],
   },
   {
-    id: 'towers', name: 'Towers & Displays', ...whole('tower'),
+    id: 'towers', place: PLACE.tower, name: 'Towers & Displays', ...whole('tower'),
     items: [
       ['macaron-tower', 'Macaron Tower'],
       ['madeleine-tower', 'Madeleine Tower'],
     ],
   },
   {
-    id: 'cookies-slices', name: 'Cookies & Slices', ...pieces,
+    id: 'cookies-slices', place: PLACE.tray, name: 'Cookies & Slices', ...pieces,
     items: [
       ['florentine-cookies', 'Florentine Almond Cookies'],
       ['florentine-slices', 'Florentine Almond Slices'],
     ],
   },
   {
-    id: 'big-trays', name: 'Big Tray Desserts', ...whole('tray'),
+    id: 'big-trays', place: PLACE.tray, name: 'Big Tray Desserts', ...whole('tray'),
     items: [
       ['tiramisu-tray', 'Classic Tiramisu Tray'],
       ['tres-leches-classic', 'Tres Leches Tray', 'Classic'],
@@ -103,7 +157,11 @@ export const MENU = [
   ...cat,
   items: items.map(([id, name, note = '', override]) => {
     const u = { unit: cat.unit, step: cat.step, max: cat.max, ...override };
-    return { id, name, note, category: cat.id, categoryName: cat.name, ...u };
+    return {
+      id, name, note, category: cat.id, categoryName: cat.name, ...u,
+      desc: DESCRIPTIONS[id] || '', photo: PHOTOS[id] ? `/media/menu/${PHOTOS[id]}.webp` : '', place: PLACE_OVERRIDES[id] || cat.place,
+      glass: GLASSES[id] || null, inPhoto: IN_PHOTO.has(id),
+    };
   }),
 }));
 

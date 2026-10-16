@@ -335,6 +335,20 @@ export function enquiryView({ e, quote, link, s }) {
   </div>`;
 }
 
+/** Opens WhatsApp on the team's phone with the client's number and the private link filled in. */
+function quoteWhatsApp(e, q, link) {
+  const to = String(e.phone || '').replace(/\D/g, '');
+  if (!to) return '';
+  const text = [
+    `Hello ${e.name.split(' ')[0]},`,
+    `Your Cocoa Caramel proposal ${q.ref} for your ${e.event_type.toLowerCase()} on ${prettyDate(e.event_date)} is ready.`,
+    `Review, accept and pay securely here: ${link}`,
+    ...(q.expires_at ? [`The proposal is valid until ${prettyDate(q.expires_at)}.`] : []),
+    '', 'With warmth,', 'Cocoa Caramel',
+  ].join('\n');
+  return html`<p style="margin-top:12px"><a class="btn btn-sm" href="https://wa.me/${to}?text=${encodeURIComponent(text)}" target="_blank" rel="noopener" data-quote-whatsapp>Send on WhatsApp to ${displayPhone(e.phone)}</a></p>`;
+}
+
 function quoteEditor({ e, q, link, s }) {
   const problems = quoteProblems(q);
   const fromMenu = !q.items.length && e.menuList.length ? menuToQuoteLines(e.menuList) : null;
@@ -342,7 +356,8 @@ function quoteEditor({ e, q, link, s }) {
   return html`<div class="card" id="quote"><h2>Quote ${q.ref} ${pill(QUOTE_STATUSES[q.status], statusTone(q.status))}</h2>
     ${q.status !== 'draft' && link ? html`<h3>Private link</h3><div class="copy-row"><input class="input" readonly value="${link}" aria-label="Private quote link" data-copy-source>
       <button class="btn btn-sm btn-ghost" type="button" data-copy>Copy</button></div>
-      <p class="muted">Anyone with this link can view and pay the quote. Re-issuing creates a new link and disables the old one.</p>` : ''}
+      <p class="muted">Anyone with this link can view and pay the quote. Re-issuing creates a new link and disables the old one.</p>
+      ${quoteWhatsApp(e, q, link)}` : ''}
     ${q.editable ? html`<form method="post" action="/admin/quotes/${q.id}" data-quote-form>${csrfField(s)}
       ${field('intro', 'Personal note to the client', { type: 'textarea', value: q.intro, rows: 3 })}
       <h3>Line items</h3>
