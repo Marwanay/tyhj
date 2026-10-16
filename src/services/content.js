@@ -7,10 +7,10 @@ export const DEFAULTS = {
   system: { seeded: false },
   site: {
     tagline: 'Bringing sweet moments to life',
-    phone: '',
+    phone: '+201222111681',
     whatsapp: '',
     email: '',
-    instagram: '',
+    instagram: 'cocoacaramel.eg',
     tiktok: '',
     facebook: '',
     city: 'Egypt',
