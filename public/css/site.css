@@ -704,10 +704,14 @@ body.has-sticky-buy .toast { bottom: 96px; }
 .menu-table td:first-child { font-family: var(--font-display); font-size: 18px; color: var(--plum); line-height: 1.25; }
 .menu-table td:nth-child(2) { color: var(--muted); font-size: 13px; }
 .menu-table .num { text-align: right; white-space: nowrap; padding-right: 0; }
-.menu-table tbody tr { animation: step-in .4s var(--ease-out); }
+/* Only rows added live in the form animate; vertical so the table never overflows sideways. */
+[data-menu-rows] tr { animation: row-in .4s var(--ease-out); }
+@keyframes row-in { from { opacity: 0; transform: translateY(6px); } }
 .menu-table tr[data-row-for] { cursor: pointer; }
 .menu-remove { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--rule-strong); background: transparent; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; margin-left: 8px; }
 .menu-remove:hover { color: var(--plum); border-color: var(--plum); }
 @media (max-width: 520px) { .menu-table th:nth-child(2), .menu-table td:nth-child(2) { display: none; } }
 .thanks-menu { max-width: 40em; margin: 32px auto 8px; text-align: left; }
 .thanks-menu .label { display: block; text-align: center; margin-bottom: 12px; color: var(--muted); }
+.thanks-whatsapp { max-width: 34em; margin: 32px auto 0; padding: 24px; border: 1px solid var(--rule-strong); }
+.thanks-whatsapp p { margin: 0 0 16px; }

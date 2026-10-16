@@ -8,7 +8,7 @@ export const DEFAULTS = {
   site: {
     tagline: 'Bringing sweet moments to life',
     phone: '+201222111681',
-    whatsapp: '',
+    whatsapp: '+201222111681',
     email: '',
     instagram: 'cocoacaramel.eg',
     tiktok: '',

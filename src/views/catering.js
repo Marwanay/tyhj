@@ -7,6 +7,7 @@ import { site, framed, button, eyebrow, monogram, input, textarea, select, error
 import { getSetting } from '../services/content.js';
 import { QUOTE_STATUSES } from '../services/quotes.js';
 import { MENU, itemLabel, formatQuantity } from '../services/menu.js';
+import { notificationChannel } from '../services/notify.js';
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 const unitWord = (unit) => unit === 'kg' ? 'kg' : unit === 'piece' ? 'pcs' : `${unit}s`;
@@ -177,6 +178,14 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
 }
 
 export function enquiryThanksPage({ enquiry: e, shortNotice, cartCount }) {
+  // Sent by the client from their own WhatsApp, so the summary goes straight to the business number.
+  const wa = (getSetting('site').whatsapp || '').replace(/\D/g, '');
+  const waText = [
+    `Hello Cocoa Caramel! I have just sent an event enquiry, reference ${e.ref}.`,
+    `${e.event_type} on ${prettyDate(e.event_date)} · ${e.venue} · ${e.guest_count} guests`,
+    ...(e.menuList?.length ? ['', 'My selection:', ...e.menuList.map(m => `• ${m.name} — ${formatQuantity(m.qty, m.unit)}`)] : []),
+    '', e.name,
+  ].join('\n');
   const body = html`<div class="wrap status-hero" style="padding-bottom:clamp(72px,10vw,140px)">
     ${monogram()}
     <p class="ref">Reference ${e.ref}</p>
@@ -185,7 +194,11 @@ export function enquiryThanksPage({ enquiry: e, shortNotice, cartCount }) {
     <p style="max-width:34em;margin:0 auto">Our team will review availability and contact you with a proposal. <strong>Your date is not reserved yet</strong> — pricing and availability will be confirmed in your quote, and your booking is confirmed once the quote is accepted and payment is received.</p>
     ${e.menuList?.length ? html`<div class="thanks-menu"><h2 class="label">Your selection</h2>${menuTable(e.menuList)}</div>` : ''}
     ${shortNotice ? html`<p class="notice" style="max-width:34em;margin:24px auto 0">Your event is soon — we will be in touch as quickly as we can.</p>` : ''}
-    <p class="fine" style="margin-top:28px">A copy of your reference has been sent to ${e.email}.</p>
+    ${wa ? html`<div class="thanks-whatsapp">
+      <p>For the quickest reply, send your request to us on WhatsApp too.</p>
+      ${button('Send on WhatsApp', { href: `https://wa.me/${wa}?text=${encodeURIComponent(waText)}`, withArrow: true, attrs: 'target="_blank" rel="noopener" data-whatsapp-send' })}
+    </div>` : ''}
+    ${notificationChannel() === 'smtp' ? html`<p class="fine" style="margin-top:28px">A copy of your reference has been sent to ${e.email}.</p>` : ''}
     <div style="margin-top:32px">${button('Return home', { href: '/', variant: 'ghost' })}</div>
   </div>`;
   return layout({ title: 'Enquiry received', body, cartCount, noindex: true });

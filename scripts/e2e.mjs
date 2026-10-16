@@ -284,6 +284,10 @@ try {
     await see(cp, /Reference EV-/);
     await see(cp, 'Your date is not reserved yet');
     await see(cp, 'Your selection'); await see(cp, 'Chocolate Pieces'); await see(cp, '2 cakes');
+    // The client can forward the summary to the business WhatsApp themselves.
+    const wa = decodeURIComponent(await cp.locator('[data-whatsapp-send]').getAttribute('href'));
+    assert.match(wa, /^https:\/\/wa\.me\/201222111681\?text=/);
+    assert.match(wa, /reference EV-/); assert.match(wa, /Chocolate Pieces — 1\.5 kg/);
     await snap(cp, 'enquiry-received');
   });
 
