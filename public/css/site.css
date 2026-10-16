@@ -281,10 +281,23 @@ figure { margin: 0; }
 .gifting-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(16px, 2vw, 32px); align-items: center; }
 .gifting-art { grid-column: 1 / span 8; grid-row: 1; }
 .gifting-art .frame { aspect-ratio: 3 / 2; }
-/* Three real event tables, the middle one set lower */
-.gifting-photos { grid-column: 1 / span 7; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); align-items: start; }
-.gifting-photos .frame { aspect-ratio: 3 / 4; }
-.gifting-photos .frame:nth-child(2) { margin-top: clamp(28px, 5vw, 72px); }
+/* Three real event tables cross-fading in one frame, each slowly drifting closer */
+.gifting-art .gifting-slides { aspect-ratio: 4 / 3; }
+.gifting-slide { position: absolute; inset: 0; opacity: 0; animation: gift-slide 21s infinite; }
+.gifting-slide:nth-child(2) { animation-delay: 7s; }
+.gifting-slide:nth-child(3) { animation-delay: 14s; }
+.gifting-slide:first-child { opacity: 1; }
+.gifting-slide img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+@keyframes gift-slide {
+  0% { opacity: 0; transform: scale(1); }
+  6%, 33% { opacity: 1; }
+  40%, 100% { opacity: 0; transform: scale(1.07); }
+}
+.gifting-slides-note { position: absolute; left: 20px; bottom: 16px; margin: 0; z-index: 1; color: #fff; text-shadow: 0 1px 8px rgb(0 0 0 / .45); }
+@media (prefers-reduced-motion: reduce) {
+  .gifting-slide { animation: none; }
+  .gifting-slide:not(:first-child) { display: none; }
+}
 .gifting-card { grid-column: 8 / span 5; grid-row: 1; position: relative; z-index: 2; background: var(--ivory); padding: clamp(32px, 4.5vw, 64px); box-shadow: 0 40px 80px -60px rgb(71 35 12 / .5); }
 .gifting-card::before { content: ''; position: absolute; inset: 10px; border: 1px solid var(--rule); pointer-events: none; }
 .gifting-card h2 { font-size: clamp(36px, 4.2vw, 62px); color: var(--plum); margin: 22px 0 22px; }
@@ -295,9 +308,8 @@ figure { margin: 0; }
   .gifting-grid { grid-template-columns: 1fr; }
   .gifting-art, .gifting-card { grid-column: 1; grid-row: auto; }
   .gifting-art { margin-inline: calc(-1 * var(--gutter)); }
-  .gifting-photos { margin-inline: 0; gap: 8px; }
-  .gifting-photos .frame:nth-child(2) { margin-top: 24px; }
-  .gifting-photos + .gifting-card { margin-top: -16px; }
+  .gifting-art .gifting-slides { aspect-ratio: 4 / 5; }
+  .gifting-slides-note { bottom: 80px; }
   .gifting-card { margin: -64px 0 0; }
 }
 

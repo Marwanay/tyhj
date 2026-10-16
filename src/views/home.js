@@ -1,7 +1,7 @@
 import { html } from '../lib/html.js';
 import { paragraphs } from '../lib/html.js';
 import { layout } from './layout.js';
-import { site, framed, button, eyebrow, titleLines, monogram, price } from './components.js';
+import { site, framed, picture, button, eyebrow, titleLines, monogram, price } from './components.js';
 import { getSetting } from '../services/content.js';
 import { priceRange } from '../services/catalog.js';
 
@@ -65,8 +65,11 @@ export function homePage({ featured, cartCount }) {
 <!-- 3 · Gifting & celebrations -->
 <section class="section gifting on-blush" aria-labelledby="gift-title">
   <div class="wrap gifting-grid">
-    <div class="gifting-art gifting-photos">
-      ${['event-terrace', 'event-garden', 'event-dusk'].map(key => framed(site(key), { sizes: '(max-width: 960px) 34vw, 20vw' }))}
+    <div class="gifting-art">
+      <div class="frame gifting-slides" style="--ph:${site('event-terrace').placeholder}">
+        ${['event-terrace', 'event-garden', 'event-dusk'].map(key => html`<div class="gifting-slide">${picture(site(key), { sizes: '(max-width: 960px) 100vw, 64vw' })}</div>`)}
+        <p class="gifting-slides-note label">From our events</p>
+      </div>
     </div>
     <div class="gifting-card reveal">
       ${eyebrow(h.giftingEyebrow)}
