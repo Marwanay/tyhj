@@ -225,10 +225,10 @@ html.intro-seen .intro-mark, html.no-js .intro-mark { display: none; }
 /* ---------- Home: hero ---------- */
 .hero { padding-block: clamp(28px, 5vw, 72px) clamp(64px, 9vw, 128px); overflow: hidden; }
 .hero-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 0 clamp(16px, 2vw, 32px); align-items: end; }
-.hero-copy { grid-column: 1 / span 6; grid-row: 1; position: relative; z-index: 2; padding-bottom: clamp(8px, 3vw, 48px); }
-.hero-title { font-size: clamp(52px, 8.4vw, 136px); color: var(--plum); line-height: .94; margin: 28px 0 32px; letter-spacing: -0.02em; }
+.hero-copy { grid-column: 1 / span 5; grid-row: 1; position: relative; z-index: 2; padding-bottom: clamp(8px, 3vw, 48px); }
+.hero-title { font-size: clamp(52px, 6.2vw, 96px); color: var(--plum); line-height: .94; margin: 28px 0 32px; letter-spacing: -0.02em; }
 .hero-title .line, h1 .line, h2 .line { display: block; }
-.hero-title .line + .line { padding-left: clamp(24px, 6vw, 112px); font-style: italic; }
+.hero-title .line + .line { padding-left: clamp(24px, 4vw, 72px); font-style: italic; }
 .hero-intro { max-width: 25em; color: var(--cocoa); margin-bottom: 36px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero-art { grid-column: 6 / span 7; grid-row: 1; position: relative; }
