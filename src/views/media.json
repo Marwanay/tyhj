@@ -1,0 +1,69 @@
+{
+  "site-hero": {
+    "width": 1254,
+    "height": 1254,
+    "widths": [
+      480,
+      760,
+      1080,
+      1254
+    ],
+    "placeholder": "rgb(216 200 184)",
+    "alt": "The Signature Chocolate Tray: gold-flecked chocolate domes in a clear tray beside cream gerberas"
+  },
+  "site-detail-gold": {
+    "width": 520,
+    "height": 390,
+    "widths": [
+      480,
+      520
+    ],
+    "placeholder": "rgb(232 216 184)",
+    "alt": "Close-up of glossy chocolate domes finished with flecks of gold"
+  },
+  "site-detail-flowers": {
+    "width": 560,
+    "height": 700,
+    "widths": [
+      480,
+      560
+    ],
+    "placeholder": "rgb(216 200 184)",
+    "alt": "Cream gerberas and folded leaves arranged at the head of the tray"
+  },
+  "site-table": {
+    "width": 1536,
+    "height": 1024,
+    "widths": [
+      480,
+      760,
+      1080,
+      1440,
+      1536
+    ],
+    "placeholder": "rgb(248 232 216)",
+    "alt": "The Signature Chocolate Tray set on a dining table with blush napkins and crystal glasses"
+  },
+  "site-table-setting": {
+    "width": 576,
+    "height": 1024,
+    "widths": [
+      480,
+      576
+    ],
+    "placeholder": "rgb(40 8 8)",
+    "alt": "A place setting with blush linen beside the chocolate tray"
+  },
+  "site-table-tray": {
+    "width": 1150,
+    "height": 720,
+    "widths": [
+      480,
+      760,
+      1080,
+      1150
+    ],
+    "placeholder": "rgb(248 232 216)",
+    "alt": "The chocolate tray and flowers at the centre of a set table"
+  }
+}

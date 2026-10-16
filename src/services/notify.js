@@ -1,0 +1,57 @@
+// Notifications go through an outbox so every message is recorded and visible in the
+// admin. If SMTP_URL is configured they are emailed; otherwise they are logged only.
+import { run } from '../db.js';
+import { config } from '../config.js';
+import { getSetting } from './content.js';
+
+let transport = null;
+async function getTransport() {
+  if (!config.mail.smtpUrl) return null;
+  if (!transport) {
+    const nodemailer = (await import('nodemailer')).default;
+    transport = nodemailer.createTransport(config.mail.smtpUrl);
+  }
+  return transport;
+}
+
+export const notificationChannel = () => (config.mail.smtpUrl ? 'smtp' : 'log');
+
+export async function sendEmail(to, subject, text) {
+  if (!to) return;
+  const info = run('INSERT INTO outbox (recipient, subject, body) VALUES (?, ?, ?)', to, subject, text);
+  const id = info.lastInsertRowid;
+  try {
+    const t = await getTransport();
+    if (!t) { run("UPDATE outbox SET status = 'logged' WHERE id = ?", id); return; }
+    await t.sendMail({ from: config.mail.from, to, subject, text });
+    run("UPDATE outbox SET status = 'sent' WHERE id = ?", id);
+  } catch (err) {
+    run("UPDATE outbox SET status = 'failed', error = ? WHERE id = ?", String(err.message).slice(0, 500), id);
+  }
+}
+
+/** Fire-and-forget so a slow mail server never blocks a payment callback. */
+export function notify(to, subject, text) {
+  sendEmail(to, subject, text).catch(() => {});
+}
+
+export function notifyTeam(subject, text) {
+  const to = getSetting('site').notifyEmail;
+  if (to) notify(to, subject, text);
+}
+
+const signoff = '\n\nWith warmth,\nCocoa Caramel';
+export const templates = {
+  orderReceived: (o, link) => [`Your order ${o.ref} — awaiting payment`,
+    `Hello ${o.customer_name},\n\nThank you for choosing Cocoa Caramel. Your order ${o.ref} has been created and is awaiting payment. It will be confirmed once your payment is verified.\n\nView your order: ${link}${signoff}`],
+  orderPaid: (o, link) => [`Order ${o.ref} confirmed`,
+    `Hello ${o.customer_name},\n\nYour payment has been received and your order ${o.ref} is confirmed. We will begin preparing it for ${o.requested_date}.\n\nView your order: ${link}${signoff}`],
+  orderPaymentFailed: (o, link) => [`Payment not completed for ${o.ref}`,
+    `Hello ${o.customer_name},\n\nYour payment for order ${o.ref} was not completed, so nothing has been charged. You can try again here: ${link}${signoff}`],
+  enquiryReceived: (e) => [`We received your enquiry ${e.ref}`,
+    `Hello ${e.name},\n\nThank you for telling us about your ${e.event_type.toLowerCase()} on ${e.event_date}. Your reference is ${e.ref}.\n\nOur team will review your request and contact you to confirm availability and pricing. Nothing is booked until you receive and accept a quote.${signoff}`],
+  quoteSent: (q, e, link) => [`Your Cocoa Caramel proposal ${q.ref}`,
+    `Hello ${e.name},\n\nYour proposal for ${e.event_type.toLowerCase()} on ${e.event_date} is ready to review.\n\nReview, accept and pay securely: ${link}\n\nThis link is private to you${q.expires_at ? ` and the proposal is valid until ${q.expires_at}` : ''}.${signoff}`],
+  quotePaid: (q, e, amount, link) => [`Payment received — ${q.ref}`,
+    `Hello ${e.name},\n\nWe have received your payment of ${amount} for proposal ${q.ref}. ${q.status === 'paid_in_full' ? 'Your booking is paid in full.' : 'Your date is now reserved.'}\n\nView your booking: ${link}${signoff}`],
+};
