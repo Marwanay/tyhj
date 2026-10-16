@@ -128,7 +128,8 @@ export function parseDesign(raw, menuItems) {
 }
 
 // The two reference arrangements, rebuilt from the individual renders on the empty table.
-// 1 follows reference arrangement A; 2 holds the menu items that are not in 1.
+// 1 follows reference arrangement A; 2 and 3 hold the rendered menu items that are not in 1
+// (one dessert per surface, so they don't all fit on one table).
 export const ARRANGEMENTS = [
   {
     id: 'arrangement-1', name: 'Reference arrangement 1',
@@ -141,6 +142,17 @@ export const ARRANGEMENTS = [
   },
   {
     id: 'arrangement-2', name: 'Reference arrangement 2',
-    items: [['R02', 'mini-cheesecakes'], ['P01', 'caramel-pecan'], ['T04', 'mini-macarons']],
+    items: [
+      ['R01', 'classic-cheesecake'], ['R02', 'mini-cheesecakes'], ['R03', 'raspberry-wedding-round'], ['R06', 'lemon-berry-tart'],
+      ['P01', 'meringue-berries'], ['P02', 'rocher-caramel'], ['S01', 'mango-bowl'], ['S02', 'blueberry-bowl'],
+      ['T01', 'mini-chocolate-sticks'], ['T02', 'tiramisu-tray'], ['T03', 'praline-truffles'], ['T04', 'pistachio-rocher'],
+    ],
+  },
+  {
+    id: 'arrangement-3', name: 'Reference arrangement 3 (the rest of the rendered menu)',
+    items: [
+      ['S01', 'cherry-bowl'], ['S02', 'twix-mousse'], ['P02', 'caramel-pecan'], ['T01', 'ferrero-rocher'],
+      ['T02', 'mini-macarons'], ['T03', 'snickers-bites'], ['T04', 'florentine-slices'],
+    ],
   },
 ].map(a => ({ ...a, items: a.items.map(([zone, id]) => ({ zone, id, qty: 1 })) }));

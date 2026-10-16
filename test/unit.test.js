@@ -123,8 +123,8 @@ test('dessert table: both reference arrangements are valid designs', async () =>
   const { MENU_ITEMS } = await import('../src/services/menu.js');
   const { ARRANGEMENTS, parseDesign } = await import('../src/services/table.js');
   for (const a of ARRANGEMENTS) assert.equal(parseDesign(JSON.stringify(a), MENU_ITEMS).length, a.items.length, a.id);
-  const [one, two] = ARRANGEMENTS.map(a => new Set(a.items.map(i => i.id)));
-  assert.ok([...two].every(id => !one.has(id)), 'arrangement 2 only holds desserts not in arrangement 1');
+  const ids = ARRANGEMENTS.flatMap(a => a.items.map(i => i.id));
+  assert.equal(new Set(ids).size, ids.length, 'no dessert appears in two arrangements');
 });
 
 test('.vercelignore never drops server code from the deployment', () => {

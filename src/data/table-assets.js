@@ -306,5 +306,287 @@ export default {
       316.0,
       92.0
     ]
+  },
+  "classic-cheesecake": {
+    "src": "/media/table/desserts/classic-cheesecake.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      347,
+      128,
+      188,
+      171
+    ],
+    "surface": "R01",
+    "plate": [
+      430.0,
+      221.0,
+      165.0,
+      115.0
+    ]
+  },
+  "raspberry-wedding-round": {
+    "src": "/media/table/desserts/raspberry-wedding-round.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      674,
+      119,
+      208,
+      186
+    ],
+    "surface": "R03",
+    "plate": [
+      783.0,
+      219.0,
+      194.0,
+      139.0
+    ]
+  },
+  "lemon-berry-tart": {
+    "src": "/media/table/desserts/lemon-berry-tart.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      197,
+      291,
+      191,
+      155
+    ],
+    "surface": "R06",
+    "plate": [
+      263.0,
+      379.0,
+      168.0,
+      124.0
+    ]
+  },
+  "meringue-berries": {
+    "src": "/media/table/desserts/meringue-berries.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      344,
+      454,
+      189,
+      152
+    ],
+    "surface": "P01",
+    "plate": [
+      430.0,
+      529.0,
+      149.0,
+      121.0
+    ]
+  },
+  "rocher-caramel": {
+    "src": "/media/table/desserts/rocher-caramel.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      1135,
+      445,
+      180,
+      150
+    ],
+    "surface": "P02",
+    "plate": [
+      1250.0,
+      529.0,
+      158.0,
+      117.0
+    ]
+  },
+  "tiramisu-tray": {
+    "src": "/media/table/desserts/tiramisu-tray.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      560,
+      573,
+      420,
+      120
+    ],
+    "surface": "T02",
+    "plate": [
+      769.0,
+      635.0,
+      416.0,
+      106.0
+    ]
+  },
+  "mango-bowl": {
+    "src": "/media/table/desserts/mango-bowl.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      617,
+      398,
+      58,
+      144
+    ],
+    "surface": null,
+    "servedOn": "S01",
+    "plate": [
+      648.0,
+      464.0,
+      189.0,
+      104.0
+    ]
+  },
+  "cherry-bowl": {
+    "src": "/media/table/desserts/cherry-bowl.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      667,
+      397,
+      102,
+      147
+    ],
+    "surface": null,
+    "servedOn": "S01",
+    "plate": [
+      720.0,
+      464.0,
+      189.0,
+      104.0
+    ]
+  },
+  "blueberry-bowl": {
+    "src": "/media/table/desserts/blueberry-bowl.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      849,
+      399,
+      67,
+      139
+    ],
+    "surface": null,
+    "servedOn": "S02",
+    "plate": [
+      880.0,
+      464.0,
+      191.0,
+      107.0
+    ]
+  },
+  "twix-mousse": {
+    "src": "/media/table/desserts/twix-mousse.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      792,
+      399,
+      66,
+      138
+    ],
+    "surface": null,
+    "servedOn": "S02",
+    "plate": [
+      825.0,
+      464.0,
+      191.0,
+      107.0
+    ]
+  },
+  "mini-chocolate-sticks": {
+    "src": "/media/table/desserts/mini-chocolate-sticks.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      178,
+      643,
+      230,
+      127
+    ],
+    "surface": null,
+    "servedOn": "T01",
+    "plate": [
+      290.0,
+      705.0,
+      321.0,
+      132.0
+    ]
+  },
+  "ferrero-rocher": {
+    "src": "/media/table/desserts/ferrero-rocher.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      393,
+      638,
+      101,
+      133
+    ],
+    "surface": null,
+    "servedOn": "T01",
+    "plate": [
+      446.0,
+      705.0,
+      321.0,
+      132.0
+    ]
+  },
+  "pistachio-rocher": {
+    "src": "/media/table/desserts/pistachio-rocher.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      620,
+      712,
+      97,
+      99
+    ],
+    "surface": null,
+    "servedOn": "T04",
+    "plate": [
+      667.0,
+      754.0,
+      316.0,
+      92.0
+    ]
+  },
+  "florentine-slices": {
+    "src": "/media/table/desserts/florentine-slices.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      713,
+      708,
+      217,
+      102
+    ],
+    "surface": null,
+    "servedOn": "T04",
+    "plate": [
+      821.0,
+      754.0,
+      316.0,
+      92.0
+    ]
+  },
+  "snickers-bites": {
+    "src": "/media/table/desserts/snickers-bites.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      1063,
+      653,
+      160,
+      132
+    ],
+    "surface": null,
+    "servedOn": "T03",
+    "plate": [
+      1140.0,
+      720.0,
+      360.0,
+      135.0
+    ]
+  },
+  "praline-truffles": {
+    "src": "/media/table/desserts/praline-truffles.webp",
+    "source": "reference-arrangement-c",
+    "rect": [
+      1207,
+      650,
+      245,
+      135
+    ],
+    "surface": null,
+    "servedOn": "T03",
+    "plate": [
+      1334.0,
+      720.0,
+      360.0,
+      135.0
+    ]
   }
 };

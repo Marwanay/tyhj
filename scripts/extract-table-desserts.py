@@ -55,10 +55,28 @@ ASSETS = {
     'mini-cheesecakes':      ('b', (528, 243, 652, 362), 'R02'),
     'caramel-pecan':         ('b', (1188, 292, 1352, 422), [1268, 360, 170, 114]),
     'mini-macarons':         ('b', (638, 716, 932, 802), 'T04'),
+    # Reference arrangement C. ('group', zone): one group of pieces on a shared tray — it gets a
+    # footprint the size of that tray, centred on the group, so it sits centred on any tray.
+    'classic-cheesecake':      ('c', (343, 122, 532, 288), 'R01'),
+    'raspberry-wedding-round': ('c', (672, 112, 878, 298), 'R03'),
+    'lemon-berry-tart':        ('c', (198, 288, 382, 432), 'R06'),
+    'meringue-berries':        ('c', (345, 448, 528, 600), 'P01'),
+    'rocher-caramel':          ('c', (1135, 440, 1322, 585), 'P02'),
+    'tiramisu-tray':           ('c', (558, 568, 978, 684), 'T02'),
+    'mango-bowl':              ('c', (622, 396, 674, 532), ('group', 'S01')),
+    'cherry-bowl':             ('c', (672, 396, 768, 532), ('group', 'S01')),
+    'blueberry-bowl':          ('c', (852, 396, 908, 532), ('group', 'S02')),
+    'twix-mousse':             ('c', (796, 396, 854, 532), ('group', 'S02')),
+    'mini-chocolate-sticks':   ('c', (180, 638, 400, 772), ('group', 'T01')),
+    'ferrero-rocher':          ('c', (398, 638, 494, 772), ('group', 'T01')),
+    'pistachio-rocher':        ('c', (618, 706, 716, 802), ('group', 'T04')),
+    'florentine-slices':       ('c', (716, 706, 926, 802), ('group', 'T04')),
+    'snickers-bites':          ('c', (1066, 648, 1214, 792), ('group', 'T03')),
+    'praline-truffles':        ('c', (1212, 648, 1456, 792), ('group', 'T03')),
 }
 
 # Cut-out model per dessert where u2net keeps a bit of table: isnet is tighter on those.
-MODEL = {'cherry-cake': 'isnet-general-use'}
+MODEL = {'cherry-cake': 'isnet-general-use', 'classic-cheesecake': 'both'}
 
 base = cv2.imread(os.path.join(SRC, 'dessert-table-overhead.png'))
 base = cv2.resize(base, (W, H), interpolation=cv2.INTER_AREA)
@@ -73,11 +91,13 @@ def register(img):
     hm, _ = cv2.findHomography(src, dst, cv2.RANSAC, 3.0)
     return cv2.warpPerspective(img, hm, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
 
-refs = {k: register(cv2.imread(os.path.join(SRC, f'reference-arrangement-{k}.png'))) for k in ('a', 'b')}
+refs = {k: register(cv2.imread(os.path.join(SRC, f'reference-arrangement-{k}.png'))) for k in ('a', 'b', 'c')}
 
 sessions = {}
 def cutout(rgb, model):
     """Dessert only (no plate, stand or table) with a soft alpha edge."""
+    if model == 'both':   # each model misses a different part of some pale cakes: keep both
+        return np.maximum(cutout(rgb, 'u2net'), cutout(rgb, 'isnet-general-use'))
     sessions.setdefault(model, new_session(model))
     out = np.array(remove(Image.fromarray(rgb), session=sessions[model], post_process_mask=False))
     a = out[..., 3].astype(np.float32) / 255
@@ -112,7 +132,13 @@ def with_shadow(rgb, alpha, pad=14):
     return np.clip(col, 0, 255).astype(np.uint8), out_a, pad
 
 manifest = {}
+def group_plate(box, zid):
+    """A tray-sized footprint centred on a group of pieces."""
+    _, _, w, h = zone_plate(zid)
+    return [round((box[0] + box[2]) / 2, 1), round((box[1] + box[3]) / 2, 1), w, h]
+
 for pid, (ref, box, surface) in ASSETS.items():
+    box0 = box
     x0, y0, x1, y1 = box
     crop = refs[ref][y0:y1, x0:x1]
     alpha = cutout(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB), MODEL.get(pid, 'u2net'))
@@ -130,8 +156,9 @@ for pid, (ref, box, surface) in ASSETS.items():
         # Where the asset sat in the reference, in table pixels: left, top, width, height.
         'rect': [x, y, int(cx1 - cx0), int(cy1 - cy0)],
         'surface': surface if isinstance(surface, str) else None,
+        **({'servedOn': surface[1]} if isinstance(surface, tuple) else {}),
         # The serving surface it stands on (centre x, centre y, width, height), used for scaling.
-        'plate': zone_plate(surface) if isinstance(surface, str) else surface,
+        'plate': zone_plate(surface) if isinstance(surface, str) else group_plate(box0, surface[1]) if isinstance(surface, tuple) else surface,
     }
     print(f'{pid:24s} {manifest[pid]["rect"]}')
 
