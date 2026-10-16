@@ -65,8 +65,8 @@ export function homePage({ featured, cartCount }) {
 <!-- 3 · Gifting & celebrations -->
 <section class="section gifting on-blush" aria-labelledby="gift-title">
   <div class="wrap gifting-grid">
-    <div class="gifting-art">
-      ${framed(site('site-table'), { sizes: '(max-width: 960px) 100vw, 64vw' })}
+    <div class="gifting-art gifting-photos">
+      ${['event-terrace', 'event-garden', 'event-dusk'].map(key => framed(site(key), { sizes: '(max-width: 960px) 34vw, 20vw' }))}
     </div>
     <div class="gifting-card reveal">
       ${eyebrow(h.giftingEyebrow)}

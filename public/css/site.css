@@ -281,6 +281,10 @@ figure { margin: 0; }
 .gifting-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: clamp(16px, 2vw, 32px); align-items: center; }
 .gifting-art { grid-column: 1 / span 8; grid-row: 1; }
 .gifting-art .frame { aspect-ratio: 3 / 2; }
+/* Three real event tables, the middle one set lower */
+.gifting-photos { grid-column: 1 / span 7; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); align-items: start; }
+.gifting-photos .frame { aspect-ratio: 3 / 4; }
+.gifting-photos .frame:nth-child(2) { margin-top: clamp(28px, 5vw, 72px); }
 .gifting-card { grid-column: 8 / span 5; grid-row: 1; position: relative; z-index: 2; background: var(--ivory); padding: clamp(32px, 4.5vw, 64px); box-shadow: 0 40px 80px -60px rgb(71 35 12 / .5); }
 .gifting-card::before { content: ''; position: absolute; inset: 10px; border: 1px solid var(--rule); pointer-events: none; }
 .gifting-card h2 { font-size: clamp(36px, 4.2vw, 62px); color: var(--plum); margin: 22px 0 22px; }
@@ -291,6 +295,9 @@ figure { margin: 0; }
   .gifting-grid { grid-template-columns: 1fr; }
   .gifting-art, .gifting-card { grid-column: 1; grid-row: auto; }
   .gifting-art { margin-inline: calc(-1 * var(--gutter)); }
+  .gifting-photos { margin-inline: 0; gap: 8px; }
+  .gifting-photos .frame:nth-child(2) { margin-top: 24px; }
+  .gifting-photos + .gifting-card { margin-top: -16px; }
   .gifting-card { margin: -64px 0 0; }
 }
 
