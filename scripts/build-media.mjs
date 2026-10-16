@@ -27,6 +27,11 @@ const SITE = {
   'event-terrace': { file: src('event-terrace.png'), alt: 'A Cocoa Caramel dessert table on an evening terrace: layered cakes, chocolates, tartlets and a Cocoa Caramel place card' },
   'event-dusk':    { file: src('event-dusk.png'), alt: 'A garden dessert table at dusk: rows of éclairs, cherry tartlets and a macaron tower dressed with flowers and orchids' },
   'event-garden':  { file: src('event-garden.png'), alt: 'An evening garden dessert table: macaron, chocolate and strawberry towers among white roses, with chocolates and fruit tarts' },
+  'event-ballroom':       { file: src('event-ballroom.png'), alt: 'A long dessert table in a ballroom with a mirrored wall: green macaron and meringue towers, white lilies, candles and silver trays' },
+  'event-macaron-tower':  { file: src('event-macaron-tower.png'), alt: 'A green ombré macaron tower tied with a ribbon, with tartlets, chocolate bark and white lilies' },
+  'event-cart':           { file: src('event-cart.png'), alt: 'A Sicilian-style dessert cart with a yellow awning: chocolates, mini cheesecakes and bonbons on marble tiers, with lemons and red roses' },
+  'event-pink-garden':    { file: src('event-pink-garden.png'), alt: 'A garden dessert table at sunset: a pink ombré macaron tower, éclairs, bonbons and truffles with cherries' },
+  'event-pink-detail':    { file: src('event-pink-detail.png'), alt: 'Close-up of a garden dessert table: mousse cups, truffles, candies and a meringue tower among orchids and gerberas' },
 };
 
 // Gallery for the launch product (inserted into the database by the seed).

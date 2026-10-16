@@ -101,6 +101,64 @@ export const SITE_MEDIA = {
     ],
     "placeholder": "rgb(8 8 8)",
     "alt": "An evening garden dessert table: macaron, chocolate and strawberry towers among white roses, with chocolates and fruit tarts"
+  },
+  "event-ballroom": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      480,
+      760,
+      1080,
+      1086
+    ],
+    "placeholder": "rgb(184 168 152)",
+    "alt": "A long dessert table in a ballroom with a mirrored wall: green macaron and meringue towers, white lilies, candles and silver trays"
+  },
+  "event-macaron-tower": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      480,
+      760,
+      1080,
+      1086
+    ],
+    "placeholder": "rgb(216 184 168)",
+    "alt": "A green ombré macaron tower tied with a ribbon, with tartlets, chocolate bark and white lilies"
+  },
+  "event-cart": {
+    "width": 1086,
+    "height": 1448,
+    "widths": [
+      480,
+      760,
+      1080,
+      1086
+    ],
+    "placeholder": "rgb(248 216 40)",
+    "alt": "A Sicilian-style dessert cart with a yellow awning: chocolates, mini cheesecakes and bonbons on marble tiers, with lemons and red roses"
+  },
+  "event-pink-garden": {
+    "width": 1025,
+    "height": 1535,
+    "widths": [
+      480,
+      760,
+      1025
+    ],
+    "placeholder": "rgb(216 200 200)",
+    "alt": "A garden dessert table at sunset: a pink ombré macaron tower, éclairs, bonbons and truffles with cherries"
+  },
+  "event-pink-detail": {
+    "width": 1025,
+    "height": 1535,
+    "widths": [
+      480,
+      760,
+      1025
+    ],
+    "placeholder": "rgb(216 184 168)",
+    "alt": "Close-up of a garden dessert table: mousse cups, truffles, candies and a meringue tower among orchids and gerberas"
   }
 };
 
