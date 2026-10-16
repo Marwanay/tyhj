@@ -88,6 +88,94 @@ export const POLICY_PAGES = [
   {
     slug: 'delivery',
     title: 'Delivery & Collection',
+    body: `## Where we deliver
+We deliver to the areas listed at checkout. The delivery fee for your area is shown at checkout before you pay.
+
+## Preparation time
+Every creation is made to order. The preparation time is shown on each product page, and checkout only offers delivery dates that leave us enough time to prepare your order.
+
+## Delivery day
+You choose your delivery date at checkout. We will contact you on the phone number you give at checkout to arrange a delivery time.
+
+## Collection
+Where collection is available for the items in your bag, you can choose it at checkout. The collection address and any collection notes are shown there.
+
+## Receiving your order
+Please make sure someone is available to receive your order. Chocolate is sensitive to heat: please refrigerate or store it as advised on the product page as soon as it arrives.
+
+If anything arrives damaged or is not what you ordered, please contact us the same day with your order reference and a photo, and we will replace it or refund it.`,
+  },
+  {
+    slug: 'cancellations-refunds',
+    title: 'Cancellations & Refunds',
+    body: `## Changing or cancelling an order
+You can change or cancel an order up to **48 hours before your delivery or collection date** for a full refund. Please contact us with your order reference.
+
+Because every order is made specially for you, orders cannot be cancelled or refunded within 48 hours of the delivery or collection date.
+
+## How refunds are paid
+Refunds are paid back to the original payment method. Depending on your bank or wallet provider, a refund can take **7–14 business days** to appear.
+
+## Damaged or incorrect orders
+If anything arrives damaged or is not what you ordered, please contact us **on the same day** with your order reference and a photo. We will replace the affected items or refund them.
+
+## Events & catering deposits
+Deposits paid to confirm an event are non-refundable. With at least **7 days' notice** before the event, you can move your booking to a new date once, and your deposit will be carried over.`,
+  },
+  {
+    slug: 'privacy',
+    title: 'Privacy Policy',
+    body: `## What we collect
+When you place an order or send an enquiry, we collect your name, phone number, email address, delivery address and any details you choose to share about your event, including inspiration images.
+
+## How we use it
+We use your information only to prepare, deliver and support your order or event, and to contact you about it.
+
+## Payments
+Card and wallet payments are processed by our payment provider, Paymob, on its secure hosted checkout. We never see or store your full card details.
+
+## Sharing
+We share delivery details with our delivery partners only as needed to deliver your order. We do not sell your information.
+
+## How long we keep it
+We keep order records for as long as we need them to support your order and to meet our legal and accounting obligations.
+
+## Your choices
+You can ask us to access, correct or delete your information at any time. Please contact us using the phone, WhatsApp or email details shown on this website.`,
+  },
+  {
+    slug: 'terms',
+    title: 'Terms of Sale',
+    // Stays flagged in the admin until the business's legal name and registration are added.
+    needsReview: true,
+    body: `## Orders
+An order is confirmed only once your payment has been verified by our payment provider. You will receive a confirmation with your order reference.
+
+## Prices
+All prices are in Egyptian Pounds (EGP). Delivery fees are shown at checkout before payment.
+
+## Allergens
+Our kitchen handles common allergens. Please read the allergen information on each product carefully, and contact us before ordering if you have an allergy.
+
+## Cancellations & refunds
+Orders can be changed or cancelled up to 48 hours before the delivery or collection date. Full details are in our [Cancellations & Refunds](/pages/cancellations-refunds) policy.
+
+## Events and quotes
+Quotes are valid until the expiry date shown. An event booking is confirmed only after the quote is accepted and the required deposit has been received.
+
+## Contact
+[To be completed: legal business name and commercial registration number.]
+
+You can reach us using the phone, WhatsApp or email details shown on this website.`,
+  },
+];
+
+// The first drafts shipped with the site. A stored page whose body still matches its
+// draft has never been edited, so ensurePages() replaces it with the current text.
+const DRAFT_PAGES = [
+  {
+    slug: 'delivery',
+    title: 'Delivery & Collection',
     body: `> Draft — the Cocoa Caramel team must review and complete this page before launch.
 
 ## Where we deliver
@@ -166,7 +254,13 @@ Quotes are valid until the expiry date shown. An event booking is confirmed only
 
 export async function ensurePages() {
   for (const [i, p] of POLICY_PAGES.entries()) {
-    await run('INSERT INTO pages (slug, title, body, needs_review, sort) VALUES (?, ?, ?, 1, ?) ON CONFLICT (slug) DO NOTHING', p.slug, p.title, p.body, i);
+    const needsReview = p.needsReview ? 1 : 0;
+    await run('INSERT INTO pages (slug, title, body, needs_review, sort) VALUES (?, ?, ?, ?, ?) ON CONFLICT (slug) DO NOTHING', p.slug, p.title, p.body, needsReview, i);
+    const draft = DRAFT_PAGES.find(d => d.slug === p.slug);
+    if (draft) {
+      await run('UPDATE pages SET title = ?, body = ?, needs_review = ?, updated_at = now() WHERE slug = ? AND body = ?',
+        p.title, p.body, needsReview, p.slug, draft.body);
+    }
   }
 }
 
