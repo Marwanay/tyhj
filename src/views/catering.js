@@ -41,11 +41,11 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
 <section class="section">
   <div class="wrap">
     <div class="catering-grid" style="align-items:start">
-      <div class="catering-head" style="grid-column:1 / span 5">
+      <div class="catering-head catering-head--narrow">
         ${eyebrow('What we prepare')}
         <h2 style="font-size:clamp(40px,5vw,72px);color:var(--plum);margin-top:20px">For engagements, weddings, birthdays & corporate occasions.</h2>
       </div>
-      <ul class="services" style="grid-column:7 / span 6">
+      <ul class="services catering-list">
         ${c.services.map(s => html`<li><strong>${s.name}</strong><span>${s.body}</span></li>`)}
       </ul>
     </div>
