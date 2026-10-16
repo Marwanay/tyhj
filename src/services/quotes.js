@@ -8,6 +8,7 @@ import { isIsoDate, cairoDate, addDays } from '../lib/dates.js';
 import { sanitizePrivateImage } from '../lib/images.js';
 import { uniqueRef, EMAIL_RE } from './orders.js';
 import { getSetting } from './content.js';
+import { parseMenuSelection } from './menu.js';
 
 const str = (v, max) => String(v ?? '').trim().slice(0, max);
 
@@ -28,6 +29,7 @@ export function validateEnquiry(input) {
     name: str(input.name, 80),
     phone: normalizeEgyptianMobile(input.phone),
     email: str(input.email, 120).toLowerCase(),
+    menu: parseMenuSelection(input),
   };
   if (!c.eventTypes.includes(v.eventType)) errors.event_type = 'Please choose the type of event.';
   const min = addDays(cairoDate(), c.minNoticeDays || 0);
@@ -52,9 +54,9 @@ export async function createEnquiry(v, files = []) {
   }
   return tx(async () => {
     const ref = await uniqueRef('EV', 'enquiries');
-    const id = await insert(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
-      JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email);
+    const id = await insert(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email, menu)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
+      JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email, JSON.stringify(v.menu || []));
     for (const img of images) {
       await run('INSERT INTO enquiry_files (enquiry_id, original_name, width, height, data) VALUES (?,?,?,?,?)', id, img.name, img.width, img.height, img.data);
     }
@@ -66,6 +68,7 @@ export async function getEnquiry(id) {
   const e = await one('SELECT * FROM enquiries WHERE id = ?', id);
   if (!e) return null;
   e.servicesList = JSON.parse(e.services);
+  e.menuList = JSON.parse(e.menu || '[]');
   e.files = await all('SELECT id, original_name, width, height FROM enquiry_files WHERE enquiry_id = ? ORDER BY id', id);
   e.quotes = await all('SELECT * FROM quotes WHERE enquiry_id = ? ORDER BY id DESC', id);
   return e;

@@ -7,6 +7,7 @@ import { monogram, pill, button, mediaUrl } from './components.js';
 import { ASSET_VERSION } from './layout.js';
 import { ORDER_STATUSES, PAYMENT_STATUSES } from '../services/orders.js';
 import { ENQUIRY_STATUSES, QUOTE_STATUSES, quoteProblems } from '../services/quotes.js';
+import { formatQuantity, menuToQuoteLines } from '../services/menu.js';
 
 // ---- Primitives ---------------------------------------------------------------------
 
@@ -306,6 +307,9 @@ export function enquiryView({ e, quote, link, s }) {
         <dl class="kv"><dt>Event</dt><dd>${e.event_type} on ${prettyDate(e.event_date)}</dd><dt>Venue</dt><dd>${e.venue}</dd><dt>Guests</dt><dd>${e.guest_count}</dd>
         <dt>Services</dt><dd>${e.servicesList.join(', ')}</dd><dt>Budget</dt><dd>${e.budget || '—'}</dd>
         <dt>Contact</dt><dd>${displayPhone(e.phone)} · <a href="mailto:${e.email}">${e.email}</a></dd></dl>
+        ${e.menuList.length ? html`<h3>Menu selection</h3>
+          <table class="table"><thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Quantity</th></tr></thead>
+          <tbody>${e.menuList.map(m => html`<tr><td>${m.name}</td><td class="muted">${m.category}</td><td style="text-align:right;white-space:nowrap">${formatQuantity(m.qty, m.unit)}</td></tr>`)}</tbody></table>` : ''}
         ${e.styling ? html`<h3>Styling & requests</h3><p style="white-space:pre-wrap">${e.styling}</p>` : ''}
         ${e.files.length ? html`<h3>Inspiration</h3><div class="img-list">${e.files.map(f => html`<a class="img-item" href="/admin/files/${f.id}" target="_blank"><img src="/admin/files/${f.id}" alt="${f.original_name}" loading="lazy"></a>`)}</div>` : ''}
       </div>
@@ -333,7 +337,8 @@ export function enquiryView({ e, quote, link, s }) {
 
 function quoteEditor({ e, q, link, s }) {
   const problems = quoteProblems(q);
-  const rows = q.items.length ? q.items : [{ description: '', quantity: 1, unit_price: null }];
+  const fromMenu = !q.items.length && e.menuList.length ? menuToQuoteLines(e.menuList) : null;
+  const rows = q.items.length ? q.items : fromMenu || [{ description: '', quantity: 1, unit_price: null }];
   return html`<div class="card" id="quote"><h2>Quote ${q.ref} ${pill(QUOTE_STATUSES[q.status], statusTone(q.status))}</h2>
     ${q.status !== 'draft' && link ? html`<h3>Private link</h3><div class="copy-row"><input class="input" readonly value="${link}" aria-label="Private quote link" data-copy-source>
       <button class="btn btn-sm btn-ghost" type="button" data-copy>Copy</button></div>
@@ -341,9 +346,10 @@ function quoteEditor({ e, q, link, s }) {
     ${q.editable ? html`<form method="post" action="/admin/quotes/${q.id}" data-quote-form>${csrfField(s)}
       ${field('intro', 'Personal note to the client', { type: 'textarea', value: q.intro, rows: 3 })}
       <h3>Line items</h3>
+      ${fromMenu ? html`<p class="muted">Pre-filled from the client's menu selection — add a unit price to each line, then save.</p>` : ''}
       <div class="quote-rows" data-quote-rows>
         <div class="q-row q-head"><span>Description</span><span>Qty</span><span>Unit price (EGP)</span><span></span></div>
-        ${[...rows, ...Array(q.items.length ? 0 : 2).fill({ description: '', quantity: 1, unit_price: null })].map(r => html`<div class="q-row" data-row>
+        ${[...rows, ...Array(q.items.length || fromMenu ? 0 : 2).fill({ description: '', quantity: 1, unit_price: null })].map(r => html`<div class="q-row" data-row>
           <input class="input" name="item_description" value="${r.description}" aria-label="Description">
           <input class="input" name="item_quantity" value="${r.quantity}" type="number" min="1" aria-label="Quantity">
           <input class="input" name="item_price" value="${toInputEGP(r.unit_price)}" inputmode="decimal" aria-label="Unit price">

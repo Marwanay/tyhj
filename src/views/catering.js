@@ -6,6 +6,60 @@ import { layout } from './layout.js';
 import { site, framed, button, eyebrow, monogram, input, textarea, select, errorSummary, pill, lockIcon } from './components.js';
 import { getSetting } from '../services/content.js';
 import { QUOTE_STATUSES } from '../services/quotes.js';
+import { MENU, itemLabel, formatQuantity } from '../services/menu.js';
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+const unitWord = (unit) => unit === 'kg' ? 'kg' : unit === 'piece' ? 'pcs' : `${unit}s`;
+
+/** The menu picker: quantities per item, posted as m_<id>. Works as plain number fields without JS. */
+function menuPicker(selection = []) {
+  const chosen = new Map(selection.map(s => [s.id, s.qty]));
+  return html`<div class="menu-picker" data-menu>
+    <div class="menu-tabs" data-menu-tabs hidden>
+      ${MENU.map((cat, i) => html`<button type="button" class="menu-tab" data-menu-tab="${cat.id}" aria-pressed="${i === 0 ? 'true' : 'false'}">${cat.name}<span class="menu-tab-count" data-menu-count="${cat.id}"></span></button>`)}
+    </div>
+    ${MENU.map((cat, ci) => html`<section class="menu-cat" data-menu-cat="${cat.id}" aria-labelledby="mc-${cat.id}">
+      <div class="menu-cat-head">
+        <span class="numeral">${ROMAN[ci] || ci + 1}.</span>
+        <h4 id="mc-${cat.id}">${cat.name}</h4>
+        <span class="menu-cat-unit">${cat.unit === 'kg' ? `By the kilo · ${cat.step} kg steps` : 'By quantity'}</span>
+      </div>
+      <ul class="menu-items">
+        ${cat.items.map(i => {
+          const q = chosen.get(i.id);
+          return html`<li class="${cx('menu-item', q && 'is-chosen')}" data-menu-item="${i.id}" data-name="${itemLabel(i)}" data-category="${cat.name}" data-unit="${i.unit}">
+            <span class="mi-text"><span class="mi-name">${i.name}</span>${i.note ? html`<span class="mi-note">${i.note}</span>` : ''}</span>
+            <span class="mi-qty">
+              <button type="button" class="mi-btn" data-menu-dec aria-label="Less ${itemLabel(i)}">−</button>
+              <input class="mi-input" name="m_${i.id}" type="number" inputmode="decimal" min="0" max="${i.max}" step="${i.step}" value="${q ?? ''}" placeholder="0" aria-label="${itemLabel(i)} — quantity in ${i.unit === 'kg' ? 'kilos' : unitWord(i.unit)}">
+              <span class="mi-unit">${unitWord(i.unit)}</span>
+              <button type="button" class="mi-btn" data-menu-inc aria-label="More ${itemLabel(i)}">+</button>
+            </span>
+          </li>`;
+        })}
+      </ul>
+    </section>`)}
+    <div class="menu-summary" data-menu-summary hidden aria-live="polite">
+      <div class="menu-summary-head">
+        <h4>Your selection</h4>
+        <p class="menu-totals" data-menu-totals></p>
+      </div>
+      <div class="table-scroll"><table class="menu-table">
+        <thead><tr><th scope="col">Item</th><th scope="col">Category</th><th scope="col" class="num">Quantity</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr></thead>
+        <tbody data-menu-rows></tbody>
+      </table></div>
+    </div>
+  </div>`;
+}
+
+/** Read-only table of a saved selection (thank-you page and emails). */
+export function menuTable(selection = []) {
+  if (!selection.length) return '';
+  return html`<div class="table-scroll"><table class="menu-table">
+    <thead><tr><th scope="col">Item</th><th scope="col">Category</th><th scope="col" class="num">Quantity</th></tr></thead>
+    <tbody>${selection.map(s => html`<tr><td>${s.name}</td><td>${s.category}</td><td class="num">${formatQuantity(s.qty, s.unit)}</td></tr>`)}</tbody>
+  </table></div>`;
+}
 
 // ---- Catering consultation ----------------------------------------------------------
 
@@ -14,7 +68,7 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
   const v = { services: [], ...values };
   const step = (n, title, sub, content, last = false) => html`
     <fieldset class="${cx('form-step', n === 1 && 'is-current', last && 'is-last')}" data-step="${n}" aria-labelledby="step-${n}-title">
-      <div class="progress-label"><span class="label">Step ${n} of 4</span><span class="numeral">${['I', 'II', 'III', 'IV'][n - 1]}</span></div>
+      <div class="progress-label"><span class="label">Step ${n} of 5</span><span class="numeral">${ROMAN[n - 1]}</span></div>
       <legend class="visually-hidden">${title}</legend>
       <h3 id="step-${n}-title">${title}</h3>
       <p class="fine">${sub}</p>
@@ -72,7 +126,7 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
       ${monogram()}
     </div>
     <form class="form-card" method="post" action="/catering" enctype="multipart/form-data" novalidate data-steps-form>
-      <div class="progress" aria-hidden="true">${[1, 2, 3, 4].map(n => html`<span class="${n === 1 ? 'current' : ''}" data-progress="${n}"></span>`)}</div>
+      <div class="progress" aria-hidden="true">${[1, 2, 3, 4, 5].map(n => html`<span class="${n === 1 ? 'current' : ''}" data-progress="${n}"></span>`)}</div>
       ${errorSummary(errors)}
       ${step(1, 'The occasion', 'What are we celebrating, and when?', html`
         <fieldset class="field ${errors.event_type ? 'has-error' : ''}" id="f-event_type">
@@ -95,7 +149,8 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
           ${errors.services ? html`<p class="error">${errors.services}</p>` : ''}
         </fieldset>
         ${select('budget', 'Budget range', c.budgetRanges.map(b => ({ value: b, label: b })), { value: v.budget, errors, optional: true, placeholder: 'Prefer not to say' })}`)}
-      ${step(3, 'Your style', 'Colours, themes, flavours and anything we should know.', html`
+      ${step(3, 'Your menu', 'Choose from our menu — chocolates by the kilo, everything else by quantity. A table of your selection appears as you go. Prefer to decide together? Simply continue.', menuPicker(v.menu))}
+      ${step(4, 'Your style', 'Colours, themes, flavours and anything we should know.', html`
         ${textarea('styling', 'Styling preferences & special requests', { value: v.styling, errors, rows: 5, maxlength: 2000, hint: 'Colour palette, theme, dietary needs, allergies, timings…' })}
         <div class="field">
           <span class="flabel">Inspiration images <span class="opt">(optional, up to 6)</span></span>
@@ -105,7 +160,7 @@ export function cateringPage({ values = {}, errors = {}, cartCount }) {
           </label>
           <div class="previews" data-previews></div>
         </div>`)}
-      ${step(4, 'Your contact', 'How should we reach you with your proposal?', html`
+      ${step(5, 'Your contact', 'How should we reach you with your proposal?', html`
         ${input('name', 'Full name', { value: v.name, errors, autocomplete: 'name' })}
         ${input('phone', 'Mobile number', { value: values.phoneRaw ?? v.phone, type: 'tel', errors, autocomplete: 'tel', inputmode: 'tel', hint: 'Egyptian mobile, e.g. 010 1234 5678' })}
         ${input('email', 'Email', { value: v.email, type: 'email', errors, autocomplete: 'email' })}
@@ -128,6 +183,7 @@ export function enquiryThanksPage({ enquiry: e, shortNotice, cartCount }) {
     <h1>Thank you, ${e.name.split(' ')[0]}.</h1>
     <p class="lede" style="max-width:28em;margin:0 auto 20px">We have received your enquiry for your ${e.event_type.toLowerCase()} on ${prettyDate(e.event_date)}.</p>
     <p style="max-width:34em;margin:0 auto">Our team will review availability and contact you with a proposal. <strong>Your date is not reserved yet</strong> — pricing and availability will be confirmed in your quote, and your booking is confirmed once the quote is accepted and payment is received.</p>
+    ${e.menuList?.length ? html`<div class="thanks-menu"><h2 class="label">Your selection</h2>${menuTable(e.menuList)}</div>` : ''}
     ${shortNotice ? html`<p class="notice" style="max-width:34em;margin:24px auto 0">Your event is soon — we will be in touch as quickly as we can.</p>` : ''}
     <p class="fine" style="margin-top:28px">A copy of your reference has been sent to ${e.email}.</p>
     <div style="margin-top:32px">${button('Return home', { href: '/', variant: 'ghost' })}</div>

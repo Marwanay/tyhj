@@ -9,7 +9,7 @@ import { seal, unseal } from '../lib/security.js';
 import { formatEGP } from '../lib/money.js';
 import { validateEnquiry, createEnquiry, getEnquiry, getQuoteByToken, acceptQuote, expireQuotes, getQuote } from '../services/quotes.js';
 import { startPayment, processEvent, PaymentError, markReturnedWithoutPaying } from '../services/payments.js';
-import { notify, notifyTeam, templates } from '../services/notify.js';
+import { notify, notifyTeam, templates, menuLines } from '../services/notify.js';
 import { getPage } from '../services/content.js';
 import { getProvider, activeProviderStatus } from '../payments/index.js';
 import { buildSandboxCallback } from '../payments/sandbox.js';
@@ -23,7 +23,7 @@ export const events = express.Router();
 // before upload; these limits are the server-side backstop.
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 4 * 1024 * 1024, files: 6, fields: 40 },
+  limits: { fileSize: 4 * 1024 * 1024, files: 6, fields: 120 },
   fileFilter: (req, file, cb) => cb(null, /^image\//.test(file.mimetype)),
 });
 
@@ -46,7 +46,7 @@ events.post('/catering', rateLimit({ windowMs: 10 * 60_000, max: 8 }), (req, res
   }
   const e = await createEnquiry(values, req.files || []);
   await notify(e.email, ...templates.enquiryReceived(e));
-  await notifyTeam(`New event enquiry ${e.ref}`, `${e.name} — ${e.event_type} on ${e.event_date} at ${e.venue}, ${e.guest_count} guests.\nServices: ${e.servicesList.join(', ')}\nBudget: ${e.budget || 'not given'}\n\n${config.baseUrl}/admin/enquiries/${e.id}`);
+  await notifyTeam(`New event enquiry ${e.ref}`, `${e.name} — ${e.event_type} on ${e.event_date} at ${e.venue}, ${e.guest_count} guests.\nServices: ${e.servicesList.join(', ')}\nBudget: ${e.budget || 'not given'}${e.menuList.length ? `\n\nMenu selection:\n${menuLines(e.menuList)}` : ''}\n\n${config.baseUrl}/admin/enquiries/${e.id}`);
   const receipt = seal(JSON.stringify({ id: e.id, s: shortNotice ? 1 : 0, exp: Date.now() + 3600_000 }));
   res.redirect(303, `/catering/received?r=${encodeURIComponent(receipt)}`);
 });

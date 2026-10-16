@@ -261,15 +261,29 @@ try {
     await cp.check('input[value="Dessert tables"]', { force: true });
     await cp.check('input[value="Chocolate trays"]', { force: true });
     await cp.click('[data-step="2"] [data-next]');
+    // Menu: the selection table appears only once something is chosen; chocolates go in half kilos.
+    assert.equal(await cp.locator('[data-menu-summary]').isVisible(), false);
+    const cake = cp.locator('[data-menu-item="chocolate-cake"]');
+    await cake.locator('[data-menu-inc]').click(); await cake.locator('[data-menu-inc]').click();
+    await cp.click('[data-menu-tab="chocolate-delights"]');
+    const choc = cp.locator('[data-menu-item="chocolate-pieces"]');
+    for (let i = 0; i < 3; i++) await choc.locator('[data-menu-inc]').click();
+    await cp.locator('[data-menu-summary]').waitFor({ state: 'visible' });
+    await see(cp, '1.5 kg');
+    assert.equal(await cp.locator('[data-menu-rows] tr').count(), 2);
+    assert.equal(await cp.locator('[data-menu-count="chocolate-delights"]').innerText(), '1');
+    await snap(cp, 'catering-menu');
+    await cp.click('[data-step="3"] [data-next]');
     await cp.fill('#f-styling', 'Blush and ivory palette, gold accents.');
     await cp.setInputFiles('[data-file-input]', path.join(root, 'public/media/site-detail-gold-480.jpg'));
-    await cp.click('[data-step="3"] [data-next]');
+    await cp.click('[data-step="4"] [data-next]');
     await cp.fill('#f-name', 'Test Client'); await cp.fill('#f-phone', '+20 122 345 6789'); await cp.fill('#f-email', 'client@example.test');
     await snap(cp, 'catering-step4');
     await cp.getByRole('button', { name: 'Request a Quote' }).click();
     await cp.waitForURL(/\/catering\/received/);
     await see(cp, /Reference EV-/);
     await see(cp, 'Your date is not reserved yet');
+    await see(cp, 'Your selection'); await see(cp, 'Chocolate Pieces'); await see(cp, '2 cakes');
     await snap(cp, 'enquiry-received');
   });
 
@@ -277,8 +291,14 @@ try {
     await admin.goto(`${BASE}/admin/enquiries`);
     await admin.locator('table.table tbody tr a').first().click();
     await admin.locator('.img-list img').first().waitFor({ state: 'visible' });
+    await see(admin, 'Menu selection');
     await admin.click('text=Prepare a quote');
     const rows = admin.locator('[data-row]');
+    // Lines arrive pre-filled from the client's menu selection; the team adds prices.
+    assert.equal(await rows.nth(0).locator('[name=item_description]').inputValue(), 'Chocolate Cake');
+    assert.equal(await rows.nth(0).locator('[name=item_quantity]').inputValue(), '2');
+    assert.equal(await rows.nth(1).locator('[name=item_description]').inputValue(), 'Chocolate Pieces — 1.5 kg');
+    await rows.nth(0).locator('[name=item_quantity]').fill('1');
     await rows.nth(0).locator('[name=item_description]').fill('[TEST] Dessert table for 120 guests');
     await rows.nth(0).locator('[name=item_price]').fill('20000');
     await rows.nth(1).locator('[name=item_description]').fill('[TEST] Signature chocolate trays');

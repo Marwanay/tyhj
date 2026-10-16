@@ -3,6 +3,10 @@
 import { run, insert } from '../db.js';
 import { config } from '../config.js';
 import { getSetting } from './content.js';
+import { formatQuantity } from './menu.js';
+
+/** A menu selection as plain-text lines for emails. */
+export const menuLines = (list = []) => list.map(m => `• ${m.name} — ${formatQuantity(m.qty, m.unit)}`).join('\n');
 
 let transport = null;
 async function getTransport() {
@@ -49,7 +53,7 @@ export const templates = {
   orderPaymentFailed: (o, link) => [`Payment not completed for ${o.ref}`,
     `Hello ${o.customer_name},\n\nYour payment for order ${o.ref} was not completed, so nothing has been charged. You can try again here: ${link}${signoff}`],
   enquiryReceived: (e) => [`We received your enquiry ${e.ref}`,
-    `Hello ${e.name},\n\nThank you for telling us about your ${e.event_type.toLowerCase()} on ${e.event_date}. Your reference is ${e.ref}.\n\nOur team will review your request and contact you to confirm availability and pricing. Nothing is booked until you receive and accept a quote.${signoff}`],
+    `Hello ${e.name},\n\nThank you for telling us about your ${e.event_type.toLowerCase()} on ${e.event_date}. Your reference is ${e.ref}.${e.menuList?.length ? `\n\nYour menu selection:\n${menuLines(e.menuList)}` : ''}\n\nOur team will review your request and contact you to confirm availability and pricing. Nothing is booked until you receive and accept a quote.${signoff}`],
   quoteSent: (q, e, link) => [`Your Cocoa Caramel proposal ${q.ref}`,
     `Hello ${e.name},\n\nYour proposal for ${e.event_type.toLowerCase()} on ${e.event_date} is ready to review.\n\nReview, accept and pay securely: ${link}\n\nThis link is private to you${q.expires_at ? ` and the proposal is valid until ${q.expires_at}` : ''}.${signoff}`],
   quotePaid: (q, e, amount, link) => [`Payment received — ${q.ref}`,

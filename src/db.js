@@ -289,6 +289,8 @@ const SCHEMA = [
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
   `,
+  // 2 — menu selection chosen while requesting a quote (JSON snapshot of names and quantities)
+  `ALTER TABLE enquiries ADD COLUMN menu TEXT NOT NULL DEFAULT '[]';`,
 ];
 
 // ---- Drivers ------------------------------------------------------------------------

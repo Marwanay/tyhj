@@ -257,6 +257,74 @@
     stepsForm.addEventListener('submit', (e) => {
       for (let i = 0; i < steps.length; i++) if (!validStep(steps[i])) { e.preventDefault(); go(i, false); validStep(steps[i]); return; }
     });
+    // Menu picker: one category at a time, live table of everything chosen.
+    const menu = $('[data-menu]', stepsForm);
+    if (menu) {
+      const items = $$('[data-menu-item]', menu), cats = $$('[data-menu-cat]', menu), tabs = $$('[data-menu-tab]', menu);
+      const summary = $('[data-menu-summary]', menu), rows = $('[data-menu-rows]', menu), totals = $('[data-menu-totals]', menu);
+      const fmt = (n, unit) => unit === 'kg' ? `${n} kg` : `${n} ${n === 1 ? (unit === 'piece' ? 'piece' : unit) : (unit === 'piece' ? 'pieces' : unit + 's')}`;
+      const qtyOf = (li) => { const n = Number(String($('input', li).value).replace(',', '.')); return Number.isFinite(n) && n > 0 ? n : 0; };
+      const show = (id) => {
+        cats.forEach(c => { c.hidden = c.dataset.menuCat !== id; });
+        tabs.forEach(t => t.setAttribute('aria-pressed', String(t.dataset.menuTab === id)));
+        const active = tabs.find(t => t.dataset.menuTab === id);
+        if (active && active.parentElement.scrollWidth > active.parentElement.clientWidth) {
+          const strip = active.parentElement;
+          strip.scrollTo({ left: active.offsetLeft - strip.clientWidth / 2 + active.offsetWidth / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      };
+      const esc = (s) => s.replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+      const render = () => {
+        const chosen = items.filter(li => qtyOf(li) > 0);
+        items.forEach(li => li.classList.toggle('is-chosen', qtyOf(li) > 0));
+        cats.forEach(c => {
+          const n = $$('[data-menu-item]', c).filter(li => qtyOf(li) > 0).length;
+          const badge = $(`[data-menu-count="${c.dataset.menuCat}"]`, menu);
+          if (badge) badge.textContent = n ? String(n) : '';
+        });
+        summary.hidden = !chosen.length;
+        rows.innerHTML = chosen.map(li => `<tr data-row-for="${li.dataset.menuItem}"><td>${esc(li.dataset.name)}</td><td>${esc(li.dataset.category)}</td>` +
+          `<td class="num">${fmt(qtyOf(li), li.dataset.unit)}</td><td class="num"><button type="button" class="menu-remove" data-menu-remove="${li.dataset.menuItem}" aria-label="Remove ${esc(li.dataset.name)}">×</button></td></tr>`).join('');
+        const kg = chosen.filter(li => li.dataset.unit === 'kg').reduce((t, li) => t + qtyOf(li), 0);
+        const parts = [`${chosen.length} ${chosen.length === 1 ? 'item' : 'items'}`];
+        if (kg) parts.push(`${kg} kg of chocolates`);
+        totals.textContent = parts.join(' · ');
+      };
+      const bump = (li, dir) => {
+        const input = $('input', li), step = Number(input.step) || 1, max = Number(input.max) || 9999;
+        const next = Math.max(0, Math.min(max, Math.round((qtyOf(li) + dir * step) / step) * step));
+        input.value = next ? String(next) : '';
+        render();
+        if (dir > 0 && next === step) { li.classList.remove('just-added'); void li.offsetWidth; li.classList.add('just-added'); }
+      };
+      menu.addEventListener('click', (e) => {
+        const tab = e.target.closest('[data-menu-tab]');
+        if (tab) return show(tab.dataset.menuTab);
+        const li = e.target.closest('[data-menu-item]');
+        if (li && e.target.closest('[data-menu-inc]')) return bump(li, 1);
+        if (li && e.target.closest('[data-menu-dec]')) return bump(li, -1);
+        const rm = e.target.closest('[data-menu-remove]');
+        if (rm) { const it = items.find(x => x.dataset.menuItem === rm.dataset.menuRemove); if (it) { $('input', it).value = ''; render(); } }
+        const row = e.target.closest('[data-row-for]');
+        if (row && !rm) { const it = items.find(x => x.dataset.menuItem === row.dataset.rowFor); if (it) { show(it.closest('[data-menu-cat]').dataset.menuCat); $('input', it).focus(); } }
+      });
+      menu.addEventListener('input', render);
+      // Enter in a quantity field confirms the number instead of submitting the whole form.
+      menu.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('.mi-input')) { e.preventDefault(); e.target.blur(); } });
+      // Snap typed values to the item's step (e.g. half kilos) when the field is left.
+      menu.addEventListener('change', (e) => {
+        const li = e.target.closest('[data-menu-item]'); if (!li) return;
+        const input = e.target, step = Number(input.step) || 1, max = Number(input.max) || 9999, q = qtyOf(li);
+        const snapped = q ? Math.min(max, Math.max(step, Math.round(q / step) * step)) : 0;
+        input.value = snapped ? String(snapped) : '';
+        render();
+      });
+      $('[data-menu-tabs]', menu).hidden = false;
+      const firstChosen = items.find(li => qtyOf(li) > 0);
+      show(firstChosen ? firstChosen.closest('[data-menu-cat]').dataset.menuCat : cats[0].dataset.menuCat);
+      render();
+    }
+
     // After a server-side validation error, open the first step with a problem.
     const errStep = steps.findIndex(s => $('.has-error', s));
     go(errStep > 0 ? errStep : 0, false);
