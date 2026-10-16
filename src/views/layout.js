@@ -63,6 +63,7 @@ ${s.announcement ? html`<div class="announcement">${s.announcement}</div>` : ''}
   <nav aria-label="Mobile">
     <a class="big" href="/">Home</a>
     ${NAV.map(n => html`<a class="big" href="${n.href}">${n.label}</a>`)}
+    <a class="big" href="/build-your-table">Build your table</a>
     <a class="big" href="/bag">Your bag</a>
   </nav>
   ${monogram()}

@@ -8,7 +8,11 @@ import { isIsoDate, cairoDate, addDays } from '../lib/dates.js';
 import { sanitizePrivateImage } from '../lib/images.js';
 import { uniqueRef, EMAIL_RE } from './orders.js';
 import { getSetting } from './content.js';
-import { parseMenuSelection } from './menu.js';
+import { parseMenuSelection, MENU_ITEMS } from './menu.js';
+import { parseDesign } from './table.js';
+import { renderTablePreview } from './table-preview.js';
+
+export const DESIGN_FILE = 'Dessert table design.jpg';
 
 const str = (v, max) => String(v ?? '').trim().slice(0, max);
 
@@ -30,6 +34,7 @@ export function validateEnquiry(input) {
     phone: normalizeEgyptianMobile(input.phone),
     email: str(input.email, 120).toLowerCase(),
     menu: parseMenuSelection(input),
+    tableDesign: parseDesign(input.table_design, MENU_ITEMS),
   };
   if (!c.eventTypes.includes(v.eventType)) errors.event_type = 'Please choose the type of event.';
   const min = addDays(cairoDate(), c.minNoticeDays || 0);
@@ -52,11 +57,16 @@ export async function createEnquiry(v, files = []) {
     const img = await sanitizePrivateImage(f.buffer);
     if (img) images.push({ ...img, name: str(f.originalname, 120) });
   }
+  // A design from Build Your Dessert Table is attached as a rendered picture for the team.
+  if (v.tableDesign?.length) {
+    try { images.unshift({ ...(await renderTablePreview(v.tableDesign)), name: DESIGN_FILE }); }
+    catch (err) { console.error('[enquiry] table preview failed:', err.message); }
+  }
   return tx(async () => {
     const ref = await uniqueRef('EV', 'enquiries');
-    const id = await insert(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email, menu)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
-      JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email, JSON.stringify(v.menu || []));
+    const id = await insert(`INSERT INTO enquiries (ref, event_type, event_date, venue, guest_count, services, budget, styling, name, phone, email, menu, table_design)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, ref, v.eventType, v.eventDate, v.venue, v.guests,
+      JSON.stringify(v.services), v.budget, v.styling, v.name, v.phone, v.email, JSON.stringify(v.menu || []), JSON.stringify(v.tableDesign || []));
     for (const img of images) {
       await run('INSERT INTO enquiry_files (enquiry_id, original_name, width, height, data) VALUES (?,?,?,?,?)', id, img.name, img.width, img.height, img.data);
     }
@@ -69,6 +79,7 @@ export async function getEnquiry(id) {
   if (!e) return null;
   e.servicesList = JSON.parse(e.services);
   e.menuList = JSON.parse(e.menu || '[]');
+  e.tableDesign = JSON.parse(e.table_design || '[]');
   e.files = await all('SELECT id, original_name, width, height FROM enquiry_files WHERE enquiry_id = ? ORDER BY id', id);
   e.quotes = await all('SELECT * FROM quotes WHERE enquiry_id = ? ORDER BY id DESC', id);
   return e;

@@ -46,7 +46,7 @@ const DESCRIPTIONS = {
 // Desserts served in glasses (no photo yet) are drawn on the table as layered glasses: bottom → top, garnish.
 const GLASSES = {
   'nutella-profiterole': ['#5a2d1a', '#f3e6d6', '#3b1d10'], 'meringue-berries': ['#f8f1ec', '#c2183c', '#ffffff'],
-  'trifle': ['#f2d9b8', '#c7233a', '#fbf3e6'], 'mango-bowl': ['#f4a522', '#fbe8c8', '#f7b733'],
+  'mango-bowl': ['#f4a522', '#fbe8c8', '#f7b733'],
   'blueberry-bowl': ['#4b3a8c', '#efe6f5', '#6a54b3'], 'cherry-bowl': ['#8e0f22', '#f6e3e0', '#b3122e'],
   'twix-mousse': ['#5b3218', '#c98a3e', '#3a1f10'], 'mousse-cups': ['#6b3a22', '#f1e2d0', '#a35d3a'],
 };
@@ -76,9 +76,9 @@ export const MENU = [
   {
     id: 'wedding-cakes', place: PLACE.stand, name: 'Big Cakes for Weddings', ...whole('cake'),
     items: [
-      ['raspberry-wedding-round', 'Raspberry Cake', 'Round'],
+      ['raspberry-wedding-round', 'Raspberry Cake', 'Circle'],
       ['raspberry-wedding-rect', 'Raspberry Cake', 'Rectangle'],
-      ['tiramisu-wedding-round', 'Tiramisu Cake', 'Round'],
+      ['tiramisu-wedding-round', 'Tiramisu Cake', 'Circle'],
       ['tiramisu-wedding-rect', 'Tiramisu Cake', 'Rectangle'],
     ],
   },
@@ -104,7 +104,7 @@ export const MENU = [
       ['raspberry-cheesecake-bites', 'Raspberry Cheesecake Bites'],
       ['rocher-caramel', 'Rocher Caramel'],
       ['pistachio-rocher', 'Pistachio Rocher'],
-      ['pecan-carrot-cake-bowls', 'Pecan Carrot Cake Bowls'],
+      ['pecan-carrot-cake-bowls', 'Pecan Carrot Cake Balls'],
     ],
   },
   {
@@ -112,10 +112,9 @@ export const MENU = [
     items: [
       ['nutella-profiterole', 'Nutella Profiterole'],
       ['meringue-berries', 'Meringue with Mixed Berries & Raspberry'],
-      ['trifle', 'Trifle'],
-      ['mango-bowl', 'Mango'],
-      ['blueberry-bowl', 'Blueberry'],
-      ['cherry-bowl', 'Cherry'],
+      ['mango-bowl', 'Trifle', 'Mango'],
+      ['blueberry-bowl', 'Trifle', 'Blueberry'],
+      ['cherry-bowl', 'Trifle', 'Cherry'],
       ['twix-mousse', 'Twix Chocolate Mousse'],
     ],
   },
@@ -124,7 +123,7 @@ export const MENU = [
     items: [
       ['mini-cupcakes', 'Mini Cupcakes', 'Assorted flavours'],
       ['mousse-cups', 'Mousse Cups', 'Various flavours'],
-      ['mini-eclairs', 'Mini Eclairs', 'Assorted flavours'],
+      ['mini-eclairs', 'Mini Éclairs', 'Assorted flavours'],
       ['mini-macarons', 'Mini Macarons'],
     ],
   },
@@ -132,7 +131,7 @@ export const MENU = [
     id: 'towers', place: PLACE.tower, name: 'Towers & Displays', ...whole('tower'),
     items: [
       ['macaron-tower', 'Macaron Tower'],
-      ['madeleine-tower', 'Madeleine Tower'],
+      ['madeleine-tower', 'Madlen Tower'],
     ],
   },
   {

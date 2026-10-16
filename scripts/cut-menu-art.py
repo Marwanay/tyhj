@@ -61,3 +61,29 @@ ga = Image.open(os.path.join(ROOT, 'assets/source/menu-grid-a.png')).convert('RG
 for name, (r, c, model) in A.items():
     x0, y0 = c * 307, r * 341
     save(clean(cut(ga.crop((x0 + 15, y0 + 85, x0 + 292, y0 + 270)), model), name), name)
+
+# ---- Build Your Dessert Table: overhead table + assets from the real Cocoa Caramel photos ----
+TABLE = os.path.join(ROOT, 'public/media/table')
+os.makedirs(TABLE, exist_ok=True)
+src = lambda f: os.path.join(ROOT, 'assets/source', f)
+
+top = Image.open(src('dessert-table-overhead.png')).convert('RGB')
+for w in (960, 1536):
+    t = top.resize((w, round(w * top.height / top.width)), Image.LANCZOS)
+    t.save(os.path.join(TABLE, f'table-{w}.webp'), 'WEBP', quality=82, method=6)
+    t.save(os.path.join(TABLE, f'table-{w}.jpg'), 'JPEG', quality=82, optimize=True, progressive=True)
+
+def real_cut(name, file, box, model='isnet-general-use', width=520):
+    img = clean(cut(Image.open(src(file)).convert('RGB').crop(box), model), name)
+    img.thumbnail((width, width * 2), Image.LANCZOS)
+    img.save(os.path.join(TABLE, f'{name}.webp'), 'WEBP', quality=86, method=6); print('table', name, img.size)
+
+def real_fill(name, file, box, width=640):
+    img = Image.open(src(file)).convert('RGB').crop(box)
+    img.thumbnail((width, width), Image.LANCZOS)
+    img.save(os.path.join(TABLE, f'{name}-fill.webp'), 'WEBP', quality=84, method=6); print('table fill', name, img.size)
+
+real_cut('macaron-tower', 'real-macaron-tower.png', (0, 0, 528, 1040))
+real_cut('mini-eclairs', 'real-mini-eclairs.png', (0, 80, 1000, 560))
+real_fill('chocolate-pieces', 'real-chocolate-pieces.png', (120, 290, 760, 620))
+real_fill('mini-cheesecakes', 'real-mini-cheesecakes.png', (0, 200, 470, 560))

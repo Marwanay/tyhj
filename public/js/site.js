@@ -257,6 +257,25 @@
     stepsForm.addEventListener('submit', (e) => {
       for (let i = 0; i < steps.length; i++) if (!validStep(steps[i])) { e.preventDefault(); go(i, false); validStep(steps[i]); return; }
     });
+    // A design from Build Your Dessert Table: pre-fill the menu quantities and attach the design.
+    if (/[?&]design=1\b/.test(location.search)) {
+      let design = null;
+      try { design = JSON.parse(localStorage.getItem('cc.table.current')); } catch { /* storage unavailable */ }
+      if (design && Array.isArray(design.items) && design.items.length) {
+        const totals = {};
+        design.items.forEach(it => { totals[it.id] = (totals[it.id] || 0) + Number(it.qty || 0); });
+        for (const [id, qty] of Object.entries(totals)) { const input = $(`input[name="m_${id}"]`, stepsForm); if (input) input.value = String(qty); }
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden'; hidden.name = 'table_design';
+        hidden.value = JSON.stringify({ v: 1, items: design.items.map(({ zone, id, qty }) => ({ zone, id, qty })) });
+        stepsForm.appendChild(hidden);
+        const note = document.createElement('div');
+        note.className = 'notice design-attached';
+        note.innerHTML = `<strong>Your dessert table design is attached</strong> — ${design.items.length} ${design.items.length === 1 ? 'dessert' : 'desserts'}, with quantities filled in below. <a href="/build-your-table#start">Edit my design</a>`;
+        $('.progress', stepsForm).after(note);
+      }
+    }
+
     // Menu picker: one category at a time, live table of everything chosen.
     const menu = $('[data-menu]', stepsForm);
     if (menu) {

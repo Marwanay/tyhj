@@ -6,7 +6,7 @@ import { config } from '../config.js';
 import { monogram, pill, button, mediaUrl } from './components.js';
 import { ASSET_VERSION } from './layout.js';
 import { ORDER_STATUSES, PAYMENT_STATUSES } from '../services/orders.js';
-import { ENQUIRY_STATUSES, QUOTE_STATUSES, quoteProblems } from '../services/quotes.js';
+import { ENQUIRY_STATUSES, QUOTE_STATUSES, quoteProblems, DESIGN_FILE } from '../services/quotes.js';
 import { formatQuantity, menuToQuoteLines } from '../services/menu.js';
 
 // ---- Primitives ---------------------------------------------------------------------
@@ -300,6 +300,8 @@ export function enquiriesView({ list, filter }) {
 }
 
 export function enquiryView({ e, quote, link, s }) {
+  const designFile = e.files.find(f => f.original_name === DESIGN_FILE);
+  const inspiration = e.files.filter(f => f !== designFile);
   return html`${head(`${e.name} — ${e.event_type}`, `${e.ref} · received ${prettyDateTime(e.created_at)}`, pill(ENQUIRY_STATUSES[e.status], statusTone(e.status)))}
   <div class="grid-main">
     <div>
@@ -311,7 +313,10 @@ export function enquiryView({ e, quote, link, s }) {
           <table class="table"><thead><tr><th>Item</th><th>Category</th><th style="text-align:right">Quantity</th></tr></thead>
           <tbody>${e.menuList.map(m => html`<tr><td>${m.name}</td><td class="muted">${m.category}</td><td style="text-align:right;white-space:nowrap">${formatQuantity(m.qty, m.unit)}</td></tr>`)}</tbody></table>` : ''}
         ${e.styling ? html`<h3>Styling & requests</h3><p style="white-space:pre-wrap">${e.styling}</p>` : ''}
-        ${e.files.length ? html`<h3>Inspiration</h3><div class="img-list">${e.files.map(f => html`<a class="img-item" href="/admin/files/${f.id}" target="_blank"><img src="/admin/files/${f.id}" alt="${f.original_name}" loading="lazy"></a>`)}</div>` : ''}
+        ${designFile ? html`<h3>Their dessert table design</h3>
+          <a href="/admin/files/${designFile.id}" target="_blank"><img src="/admin/files/${designFile.id}" alt="The client's dessert table design" style="width:100%;height:auto;border:1px solid var(--rule)"></a>
+          <p class="muted">Built with “Build Your Dessert Table” — ${e.tableDesign.length} ${e.tableDesign.length === 1 ? 'dessert' : 'desserts'} placed. Quantities are in the menu selection above.</p>` : ''}
+        ${inspiration.length ? html`<h3>Inspiration</h3><div class="img-list">${inspiration.map(f => html`<a class="img-item" href="/admin/files/${f.id}" target="_blank"><img src="/admin/files/${f.id}" alt="${f.original_name}" loading="lazy"></a>`)}</div>` : ''}
       </div>
       ${quote ? quoteEditor({ e, q: quote, link, s }) : html`<div class="card"><h2>Quote</h2><p class="muted">Prepare an itemised quote with an expiry date, terms and a deposit or full-payment option.</p>
         ${postButton(s, `/admin/enquiries/${e.id}/quotes`, 'Prepare a quote')}</div>`}

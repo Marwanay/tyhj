@@ -277,9 +277,9 @@ try {
     // Each chosen dessert pops onto the live dessert table; removing it takes it off again.
     assert.equal(await cp.locator('.scene-item img').count(), 2);
     await cp.click('[data-menu-tab="dessert-bowls"]');
-    await cp.locator('[data-menu-item="trifle"] [data-menu-inc]').click();
+    await cp.locator('[data-menu-item="mango-bowl"] [data-menu-inc]').click();
     assert.equal(await cp.locator('.scene-item.has-glass').count(), 1);
-    await cp.click('[data-menu-remove="trifle"]');
+    await cp.click('[data-menu-remove="mango-bowl"]');
     await cp.locator('.scene-item.has-glass').waitFor({ state: 'detached' });
     await snap(cp, 'catering-menu');
     await cp.click('[data-step="3"] [data-next]');
@@ -354,6 +354,61 @@ try {
     await cp.waitForSelector('text=paid in full');
     await admin.reload();
     await see(admin, 'Paid in full');
+  });
+
+  await step('Build Your Dessert Table: place, move, persist, then send the design with an enquiry', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } });
+    const tp = await ctx.newPage(); watch(tp);
+    await tp.goto(`${BASE}/build-your-table`);
+    await tp.click('[data-tb-start]');
+    assert.equal(await tp.locator('.tb-item').count(), 0);
+    // Several stands suit a cake: they glow and the client chooses one.
+    await tp.click('[data-tb-add="chocolate-cake"]');
+    assert.ok(await tp.locator('.tb-zone.is-target').count() > 1);
+    assert.equal(await tp.locator('.tb-zone.is-target[data-tb-zone^="tray"]').count(), 0, 'cakes are never offered a tray');
+    await tp.click('[data-tb-zone="stand-centre"]');
+    await tp.locator('.tb-item[data-zone="stand-centre"]').waitFor();
+    // Choosing an empty surface first shows only desserts that fit it.
+    await tp.click('[data-tb-zone="tray-raised-left"]');
+    assert.equal(await tp.locator('[data-tb-card][data-ids~="chocolate-cake"]').isHidden(), true);
+    await tp.click('[data-tb-add="mini-eclairs"]');
+    await tp.locator('.tb-item[data-zone="tray-raised-left"]').waitFor();
+    // Popover: quantity and move.
+    await tp.click('[data-tb-zone="stand-centre"]');
+    await tp.click('[data-pop-qty="1"]');
+    await tp.click('[data-pop-move]');
+    await tp.click('[data-tb-zone="stand-top-left"]');
+    await tp.locator('.tb-item[data-zone="stand-top-left"]').waitFor();
+    // Survives a refresh.
+    await tp.reload();
+    await tp.click('[data-tb-continue]');
+    assert.equal(await tp.locator('.tb-item').count(), 2);
+    await snap(tp, 'dessert-table');
+    // Request a quote: the existing enquiry form opens with quantities filled and the design attached.
+    await tp.click('.tb-summary [data-tb-quote]');
+    await tp.waitForURL(/\/catering\?design=1/);
+    await see(tp, 'Your dessert table design is attached');
+    assert.equal(await tp.inputValue('input[name="m_chocolate-cake"]'), '2');
+    assert.equal(await tp.inputValue('input[name="m_mini-eclairs"]'), '1');
+    await tp.check('input[value="Wedding"]', { force: true });
+    await tp.fill('#f-event_date', new Date(Date.now() + 60 * 864e5).toISOString().slice(0, 10));
+    await tp.click('[data-step="1"] [data-next]');
+    await tp.fill('#f-venue', 'Design Venue'); await tp.fill('#f-guests', '80');
+    await tp.check('input[value="Dessert tables"]', { force: true });
+    await tp.click('[data-step="2"] [data-next]');
+    await tp.click('[data-step="3"] [data-next]');
+    await tp.click('[data-step="4"] [data-next]');
+    await tp.fill('#f-name', 'Design Client'); await tp.fill('#f-phone', '01001234567'); await tp.fill('#f-email', 'design@example.test');
+    await tp.getByRole('button', { name: 'Request a Quote' }).click();
+    await tp.waitForURL(/\/catering\/received/);
+    await ctx.close();
+    // The team sees the rendered table with the enquiry.
+    await admin.goto(`${BASE}/admin/enquiries`);
+    await admin.locator('table.table tbody tr a').first().click();
+    await see(admin, 'Their dessert table design');
+    const ok = await admin.locator('img[alt="The client\'s dessert table design"]').evaluate(img => img.decode().then(() => img.naturalWidth));
+    assert.equal(ok, 1536);
+    await see(admin, 'Mini Éclairs');
   });
 
   await step('Customer & team notifications were recorded', async () => {

@@ -291,6 +291,8 @@ const SCHEMA = [
   `,
   // 2 — menu selection chosen while requesting a quote (JSON snapshot of names and quantities)
   `ALTER TABLE enquiries ADD COLUMN menu TEXT NOT NULL DEFAULT '[]';`,
+  // 3 — Build Your Dessert Table: the client's arrangement ([{ zone, id, qty }])
+  `ALTER TABLE enquiries ADD COLUMN table_design TEXT NOT NULL DEFAULT '[]';`,
 ];
 
 // ---- Drivers ------------------------------------------------------------------------

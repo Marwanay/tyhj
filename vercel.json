@@ -4,7 +4,7 @@
   "buildCommand": "node scripts/build-media.mjs --if-missing",
   "outputDirectory": "public",
   "functions": {
-    "api/index.js": { "maxDuration": 30, "memory": 1024 }
+    "api/index.js": { "maxDuration": 30, "memory": 1024, "includeFiles": "public/media/{table,menu}/**" }
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
   "headers": [

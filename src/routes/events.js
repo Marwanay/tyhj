@@ -13,6 +13,7 @@ import { notify, notifyTeam, templates, menuLines } from '../services/notify.js'
 import { getPage } from '../services/content.js';
 import { getProvider, activeProviderStatus } from '../payments/index.js';
 import { buildSandboxCallback } from '../payments/sandbox.js';
+import { tableBuilderPage } from '../views/table.js';
 import { cateringPage, enquiryThanksPage, quotePage, contentPage, messagePage, sandboxGatewayPage } from '../views/catering.js';
 
 export const events = express.Router();
@@ -25,6 +26,10 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 4 * 1024 * 1024, files: 6, fields: 120 },
   fileFilter: (req, file, cb) => cb(null, /^image\//.test(file.mimetype)),
+});
+
+events.get('/build-your-table', (req, res) => {
+  res.send(String(tableBuilderPage({ cartCount: res.locals.cartCount })));
 });
 
 events.get('/catering', (req, res) => {
