@@ -124,40 +124,29 @@
   }
 
   // ---- Rendering -----------------------------------------------------------------------------
-  /** Mirrors placementBox() in src/services/table.js. */
+  /** Mirrors placementBox() in src/services/table.js (table pixels → normalised units). */
+  const TW = 1536, TH = 1024;
   function box(z, d) {
-    const kindFit = z.kind === 'platter-sm' ? 1.05 : 1;
-    if (d.mode === 'cutout') {
-      const cap = d.aspect && d.maxH ? z.h * d.maxH * d.aspect * (1024 / 1536) : Infinity;
-      const width = Math.min(z.w * d.fit * kindFit, cap);
-      return { left: z.x - width / 2, bottom: z.y + (z.h / 2) * d.lift, width };
+    if (d.mode === 'asset') {
+      const [x, y, w, h] = d.rect, [cx, cy, pw, ph] = d.plate;
+      const s = d.surface === z.id ? 1 : Math.min(1.15, (z.w * TW) / pw, (z.h * TH) / ph);
+      return { left: (z.x * TW + (x - cx) * s) / TW, top: (z.y * TH + (y - cy) * s) / TH, width: (w * s) / TW, height: (h * s) / TH };
     }
-    const f = d.mode === 'card' ? 0.8 : (d.fit || 0.9);
-    return { left: z.x - (z.w * f) / 2, top: z.y - (z.h * f) / 2, width: z.w * f, height: z.h * f };
+    return { left: z.x - (z.w * 0.8) / 2, top: z.y - (z.h * 0.8) / 2, width: z.w * 0.8, height: z.h * 0.8 };
   }
-  const glassSVG = ([a, b, c]) => `<svg viewBox="0 0 40 56" aria-hidden="true">` +
-    `<path d="M9.3 34h21.4l-1 14.2a3 3 0 0 1-3 2.8H13.3a3 3 0 0 1-3-2.8z" fill="${a}"/><path d="M8.4 22h23.2l-.9 12H9.3z" fill="${b}"/>` +
-    `<path d="M7.8 14h24.4l-.6 8H8.4z" fill="${a}" opacity=".85"/><circle cx="16" cy="12.5" r="3.4" fill="${c}"/><circle cx="23" cy="11.5" r="2.6" fill="${c}" opacity=".85"/>` +
-    `<path d="M6 4h28l-3.1 44.3A4 4 0 0 1 26.9 52H13.1a4 4 0 0 1-4-3.7z" fill="rgb(255 255 255 / .18)" stroke="rgb(255 255 255 / .95)" stroke-width="1.3"/>` +
-    `<path d="M10.5 9l1.6 36" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 
+  // One element per dessert: its own transparent render over the fixed table photo, or — while a
+  // dessert's render is still being made — a place card with its name.
   function itemEl(it, { animate = true } = {}) {
     const p = PRODUCTS.get(it.id), z = ZONES.get(it.zone), d = p.display, b = box(z, d);
     const el = document.createElement('div');
     el.className = `tb-item mode-${d.mode} shape-${z.shape}${animate && !reduceMotion ? ' is-entering' : ''}`;
     el.dataset.zone = z.id; el.dataset.id = p.id;
-    el.style.left = pct(b.left); el.style.width = pct(b.width);
-    el.style.zIndex = String(Math.round(z.y * 1000));
-    if (d.mode === 'cutout') {
-      el.style.top = pct(b.bottom);
-      el.innerHTML = `<div class="tb-item-in"><img src="${esc(d.src)}" alt="" draggable="false"></div>`;
-    } else {
-      el.style.top = pct(b.top); el.style.height = pct(b.height);
-      const inner = d.mode === 'fill' ? `<img src="${esc(d.src)}" alt="" draggable="false">`
-        : d.mode === 'glass' ? `<span class="tb-glasses">${glassSVG(d.colors).repeat(3)}</span>`
-        : `<span class="tb-place-card"><span class="tb-place-name">${esc(p.name)}</span>${p.variant ? `<span class="tb-place-variant">${esc(p.variant)}</span>` : ''}</span>`;
-      el.innerHTML = `<div class="tb-item-in">${inner}</div>`;
-    }
+    el.style.left = pct(b.left); el.style.top = pct(b.top); el.style.width = pct(b.width); el.style.height = pct(b.height);
+    el.style.zIndex = String(Math.round((b.top + b.height) * 1000));   // front of the table draws last
+    el.innerHTML = d.mode === 'asset'
+      ? `<div class="tb-item-in"><img src="${esc(d.src)}" alt="${esc(p.label)}" draggable="false"></div>`
+      : `<div class="tb-item-in"><span class="tb-place-card"><span class="tb-place-name">${esc(p.name)}</span>${p.variant ? `<span class="tb-place-variant">${esc(p.variant)}</span>` : ''}<span class="tb-place-note">Preview coming soon</span></span></div>`;
     if (animate && !reduceMotion) setTimeout(() => el.classList.remove('is-entering'), 600);
     return el;
   }

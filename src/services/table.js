@@ -1,131 +1,113 @@
-// Build Your Dessert Table — the serving surfaces of the overhead table photo
-// (assets/source/dessert-table-overhead.png, 1536 × 1024) and how desserts sit on them.
+// Build Your Dessert Table — the serving surfaces of the empty overhead table and the dessert
+// assets that appear on them.
 //
-// Coordinates are measured on the photo and stored normalised (0–1 of width / height),
-// so overlays, hit areas and the server-side preview all share one coordinate system.
-// Round surfaces are ellipses (the table is seen from ~60° above); trays are rectangles.
+// The table photo (public/media/table/table-1536.jpg, 1536 × 1024) never changes. Each dessert
+// is its own transparent image (public/media/table/desserts/<id>.webp) that appears on one
+// surface when chosen and disappears when removed.
+//
+// Surfaces:  src/data/table-placement.json  (R01–R07 cake stands, S01–S02 raised trays,
+//            P01–P02 scalloped bowls, T01–T04 gold trays, M01–M04 small stands)
+// Assets:    src/data/table-assets.json      (written by scripts/extract-table-desserts.py)
+// Manifest:  public/media/table/manifest.json (written by scripts/build-table-manifest.mjs)
+//
+// Every position is stored normalised (0–1 of the table's width / height) so the browser, the
+// server-side preview and the manifest all share one coordinate system.
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const placement = require('../data/table-placement.json');
+const assets = require('../data/table-assets.json');
 
 const W = 1536, H = 1024;
-
-// [id, kind, shape, centre x, centre y, half-width, half-height] in photo pixels.
-const RAW = [
-  // Large round marble cake stands
-  ['stand-centre', 'stand-lg', 'ellipse', 770, 218, 95, 52],
-  ['stand-top-left', 'stand-lg', 'ellipse', 435, 240, 85, 47],
-  ['stand-top-right', 'stand-lg', 'ellipse', 1156, 248, 83, 48],
-  // Medium round stands
-  ['stand-left', 'stand-md', 'ellipse', 263, 371, 83, 48],
-  ['stand-right', 'stand-md', 'ellipse', 1056, 396, 80, 47],
-  ['stand-inner-left', 'stand-md', 'ellipse', 578, 286, 66, 40],
-  ['stand-inner-right', 'stand-md', 'ellipse', 948, 283, 72, 42],
-  // Small platters in gold frames (minis)
-  ['platter-frame-top', 'platter-sm', 'ellipse', 143, 289, 51, 30],
-  ['platter-frame-mid', 'platter-sm', 'ellipse', 131, 415, 47, 28],
-  ['platter-frame-low', 'platter-sm', 'ellipse', 160, 556, 45, 26],
-  // Scalloped round platters
-  ['shell-left', 'platter-md', 'ellipse', 420, 519, 80, 50],
-  ['shell-right', 'platter-md', 'ellipse', 1232, 515, 84, 52],
-  ['shell-small', 'platter-sm', 'ellipse', 1265, 378, 56, 33],
-  // Tiered stand (right edge) — towers and tiered minis
-  ['tiers', 'tower', 'ellipse', 1446, 470, 82, 44],
-  // Rectangular marble trays
-  ['tray-raised-left', 'tray-md', 'rect', 657, 474, 96, 46],
-  ['tray-raised-right', 'tray-md', 'rect', 861, 474, 95, 46],
-  ['tray-centre', 'tray-feature', 'rect', 768, 626, 216, 40],
-  ['tray-front-left', 'tray-lg', 'rect', 340, 714, 158, 56],
-  ['tray-front-centre', 'tray-lg', 'rect', 779, 754, 163, 46],
-  ['tray-front-right', 'tray-lg', 'rect', 1260, 722, 193, 58],
-  // Glass dessert bowls
-  ['bowl-left', 'bowl', 'ellipse', 505, 456, 34, 22],
-  ['bowl-pink', 'bowl', 'ellipse', 1058, 566, 48, 28],
-  ['bowl-front', 'bowl', 'ellipse', 1006, 727, 34, 22],
-];
-
-export const ZONE_LABELS = {
-  'stand-lg': 'Large cake stand', 'stand-md': 'Cake stand', 'platter-sm': 'Small platter', 'platter-md': 'Round platter',
-  tower: 'Tiered display', 'tray-md': 'Raised tray', 'tray-lg': 'Marble tray', 'tray-feature': 'Feature tray', bowl: 'Glass bowl',
-};
-
-export const ZONES = RAW.map(([id, kind, shape, x, y, rx, ry]) => ({
-  id, kind, shape, label: ZONE_LABELS[kind],
-  x: x / W, y: y / H, w: (rx * 2) / W, h: (ry * 2) / H,
-}));
-
 export const TABLE_IMAGE = { width: W, height: H };
 
-// ---- Which surfaces each dessert can be served on --------------------------------------------
-const STANDS = ['stand-lg', 'stand-md'];
-const MINIS = ['platter-md', 'platter-sm', 'tower', 'tray-md'];
-const TRAYS = ['tray-lg', 'tray-md', 'tray-feature', 'platter-md'];
-const BY_CATEGORY = {
-  'signature-cakes': STANDS, 'wedding-cakes': ['stand-lg'], 'tarts-cheesecakes': ['stand-md', 'stand-lg', 'platter-md'],
-  'chocolate-delights': [...TRAYS, 'platter-sm'], 'dessert-bowls': ['bowl', 'platter-md'], 'mini-desserts': MINIS,
-  towers: ['tower', 'stand-lg'], 'cookies-slices': ['tray-md', 'tray-lg', 'platter-md', 'platter-sm'], 'big-trays': ['tray-feature', 'tray-lg'],
-};
-const ACCEPTS = {
-  'assorted-mini-cakes': MINIS, 'mini-cheesecakes': MINIS, 'mini-tarts': MINIS,
-  'raspberry-wedding-rect': ['tray-feature', 'tray-md', 'tray-lg'], 'tiramisu-wedding-rect': ['tray-feature', 'tray-md', 'tray-lg'],
-  'mousse-cups': ['bowl', 'platter-md', 'tray-md'], 'mini-eclairs': ['tray-lg', 'tray-md', 'tray-feature'],
-};
-export const acceptsFor = (item) => ACCEPTS[item.id] || BY_CATEGORY[item.category] || [];
+const SHAPE_LABELS = { round: 'Cake stand', square: 'Raised marble tray', shell: 'Scalloped bowl', rect: 'Gold tray' };
+const label = (z) => z.id.startsWith('M') ? 'Small stand' : SHAPE_LABELS[z.shape] || 'Serving surface';
 
-// ---- How each dessert is drawn on the table ------------------------------------------------
-// cutout: transparent image standing on the surface (width = surface width × fit; its base sits
-//         `lift` × surface height below the surface centre).
-// fill:   a crop of a real photo filling the surface, feathered at the edges (never stretched).
-// card:   no approved image yet — an elegant place card with the dessert's name.
-const M = (f) => `/media/menu/${f}.webp`, T = (f) => `/media/table/${f}.webp`;
-// maxH caps a cut-out's height at maxH × the surface height, so wide trays don't make desserts tower.
-const CAKE = { mode: 'cutout', fit: 0.86, lift: 0.18, maxH: 2.4 };
-const GROUP = { mode: 'cutout', fit: 0.8, lift: 0.4, maxH: 1.25 };
-// Width / height of each cut-out (scripts/cut-menu-art.py output), for the height cap.
-const ASPECT = {
-  'menu/assorted-mini-cakes': 1.962, 'menu/brownie-bar-pistachio': 1.714, 'menu/caramel-pecan': 1.898, 'menu/cherry-cake': 1.645,
-  'menu/chocolate-cake': 1.722, 'menu/classic-cheesecake': 2.118, 'menu/ferrero-rocher': 1.603, 'menu/lemon-berry-cake': 1.625,
-  'menu/lemon-berry-tart': 2.146, 'menu/mini-chocolate-sticks': 1.617, 'menu/mini-tarts': 1.864, 'menu/pistachio-cake': 1.979,
-  'menu/raspberry-cake': 1.696, 'menu/raspberry-wedding': 1.671, 'menu/snickers-bites': 1.451, 'menu/tiramisu-wedding': 1.879,
-  'table/macaron-tower': 0.56, 'table/mini-eclairs': 2.232,
+export const ZONES = placement.zones.map(z => ({
+  id: z.id, kind: z.id, shape: z.shape === 'round' || z.shape === 'shell' ? 'ellipse' : 'rect', label: `${label(z)} ${z.id}`,
+  x: z.center.x / 100, y: z.center.y / 100, w: z.bounds.width / 100, h: z.bounds.height / 100,
+  categories: z.compatibleCategories, safeScale: z.safeScale,
+}));
+export const ZONE_LABELS = Object.fromEntries(ZONES.map(z => [z.id, z.label]));
+const ZONE = new Map(ZONES.map(z => [z.id, z]));
+
+// Each menu item's serving category (the categories the surfaces accept).
+const CATEGORY = {
+  'chocolate-cake': 'signature_cakes', 'raspberry-cake': 'signature_cakes', 'pistachio-cake': 'signature_cakes',
+  'lemon-berry-cake': 'signature_cakes', 'cherry-cake': 'signature_cakes', 'assorted-mini-cakes': 'mini_cakes',
+  'raspberry-wedding-round': 'wedding_cakes_circle', 'tiramisu-wedding-round': 'wedding_cakes_circle',
+  'raspberry-wedding-rect': 'wedding_cakes_rectangle', 'tiramisu-wedding-rect': 'wedding_cakes_rectangle',
+  'lemon-berry-tart': 'tarts', 'mini-tarts': 'tarts', 'classic-cheesecake': 'cheesecakes', 'mini-cheesecakes': 'cheesecakes',
+  'brownie-bar-pistachio': 'brownies', 'mini-eclairs': 'eclairs', 'macaron-tower': 'macaron_tower', 'madeleine-tower': 'madlen_tower',
+  'mini-cupcakes': 'mini_desserts', 'mousse-cups': 'mini_desserts', 'mini-macarons': 'mini_desserts',
+  'florentine-cookies': 'cookies', 'florentine-slices': 'cookies',
 };
-const DISPLAY = {
-  'chocolate-cake': { ...CAKE, src: M('chocolate-cake') }, 'raspberry-cake': { ...CAKE, src: M('raspberry-cake') },
-  'pistachio-cake': { ...CAKE, src: M('pistachio-cake') }, 'lemon-berry-cake': { ...CAKE, src: M('lemon-berry-cake') },
-  'cherry-cake': { ...CAKE, src: M('cherry-cake') }, 'raspberry-wedding-round': { ...CAKE, fit: 0.9, src: M('raspberry-cake') },
-  'lemon-berry-tart': { ...CAKE, fit: 0.9, lift: 0.22, src: M('lemon-berry-tart') }, 'classic-cheesecake': { ...CAKE, src: M('classic-cheesecake') },
-  'raspberry-wedding-rect': { mode: 'cutout', fit: 0.62, lift: 0.55, maxH: 1.45, src: M('raspberry-wedding') },
-  'tiramisu-wedding-rect': { mode: 'cutout', fit: 0.62, lift: 0.55, maxH: 1.45, src: M('tiramisu-wedding') },
-  'assorted-mini-cakes': { ...GROUP, src: M('assorted-mini-cakes') }, 'mini-tarts': { ...GROUP, src: M('mini-tarts') },
-  'mini-chocolate-sticks': { ...GROUP, src: M('mini-chocolate-sticks') }, 'brownie-bar-pistachio': { ...GROUP, src: M('brownie-bar-pistachio') },
-  'caramel-pecan': { ...GROUP, src: M('caramel-pecan') }, 'snickers-bites': { ...GROUP, src: M('snickers-bites') },
-  'ferrero-rocher': { ...GROUP, src: M('ferrero-rocher') },
-  // From real Cocoa Caramel event photographs.
-  'mini-eclairs': { mode: 'cutout', fit: 0.96, lift: 0.5, maxH: 1.4, src: T('mini-eclairs'), real: true },
-  'macaron-tower': { mode: 'cutout', fit: 0.92, lift: 0.22, maxH: 9, src: T('macaron-tower'), real: true },
-  'chocolate-pieces': { mode: 'fill', fit: 0.9, src: T('chocolate-pieces-fill'), real: true },
-  'mini-cheesecakes': { mode: 'fill', fit: 0.86, src: T('mini-cheesecakes-fill'), real: true },
-};
-export function displayFor(item) {
-  const d = DISPLAY[item.id];
-  if (d) return { concept: !d.real, ...d, aspect: ASPECT[d.src.replace(/^\/media\//, '').replace(/\.webp$/, '')] || 0 };
-  // Desserts in glasses have no approved photograph yet: shown as a place card, not a drawing.
-  return { mode: 'card' };
+const BY_MENU_CATEGORY = { 'chocolate-delights': 'chocolates', 'dessert-bowls': 'dessert_bowls', 'big-trays': 'tray_desserts' };
+export const servingCategory = (item) => CATEGORY[item.id] || BY_MENU_CATEGORY[item.category] || 'mini_desserts';
+
+// Where the extra surfaces come from: a dessert may also go where the reference arrangement
+// served it (its own surface), and some never move (the madeleines fill the tiered stand).
+const ONLY = { 'madeleine-tower': ['M03'] };
+// Served there in the reference arrangements: mini tarts in a scalloped bowl, cupcakes on the feature tray.
+const EXTRA = { 'mini-tarts': ['P01', 'P02'], 'mini-cupcakes': ['T02'] };
+
+// Asset scale limits: smaller than MIN_SCALE and pieces would look unrealistically tiny on the
+// surface; larger than MAX_SCALE and the image would be blown up past its resolution.
+const MIN_SCALE = 0.65, MAX_SCALE = 1.15;
+
+export function assetFor(item) {
+  const a = assets[item.id];
+  return a ? { ...a } : null;
+}
+
+/** Scale that fits a dessert's own serving footprint inside a surface (contain, never distorted). */
+export function scaleOn(zone, asset) {
+  const [, , pw, ph] = asset.plate;
+  return Math.min(MAX_SCALE, (zone.w * W) / pw, (zone.h * H) / ph);
 }
 
 /**
- * Where a dessert's image goes on a surface, in normalised table units.
- * cutout → { left, bottom, width } (height follows the image); fill/glass/card → { left, top, width, height }.
- * The browser and the server-side preview both use this, so they always agree.
+ * Surfaces a dessert can be served on (zone ids): those that accept its serving category, plus
+ * the surface its render was made on and that surface's siblings (another cake stand, another
+ * raised tray) — as long as the render fits without being shrunk below MIN_SCALE.
+ */
+export function acceptsFor(item) {
+  if (ONLY[item.id]) return ONLY[item.id];
+  const cat = servingCategory(item), a = assetFor(item);
+  const family = a?.surface?.charAt(0);
+  return ZONES.filter(zn => {
+    if (a && zn.id === a.surface) return true;
+    if (!zn.categories.includes(cat) && zn.id.charAt(0) !== family && !EXTRA[item.id]?.includes(zn.id)) return false;
+    return !a || scaleOn(zn, a) >= MIN_SCALE;
+  }).map(zn => zn.id);
+}
+
+// ---- How each dessert is drawn ------------------------------------------------------------------
+// asset:   the dessert's own transparent render, placed by its serving footprint.
+// pending: no render yet — a place card with the dessert's name (never a stand-in image).
+export function displayFor(item) {
+  const a = assetFor(item);
+  return a ? { mode: 'asset', src: a.src, rect: a.rect, plate: a.plate, surface: a.surface } : { mode: 'pending' };
+}
+
+/**
+ * Where a dessert's image goes on a surface, in normalised table units: { left, top, width, height }.
+ * The asset keeps its offset from its own serving footprint, scaled to the new surface — so on the
+ * surface it was rendered on it lands exactly where it was rendered. The browser, the preview and
+ * the manifest all use this.
  */
 export function placementBox(zone, display) {
-  const kindFit = zone.kind === 'platter-sm' ? 1.05 : 1;
-  if (display.mode === 'cutout') {
-    // zone.h is in table-height units; convert the height cap to width units via the table's 3:2 shape.
-    const cap = display.aspect && display.maxH ? zone.h * display.maxH * display.aspect * (H / W) : Infinity;
-    const width = Math.min(zone.w * display.fit * kindFit, cap);
-    return { left: zone.x - width / 2, bottom: zone.y + (zone.h / 2) * display.lift, width };
+  if (display.mode === 'asset') {
+    const [x, y, w, h] = display.rect, [cx, cy] = display.plate;
+    const s = display.surface === zone.id ? 1 : scaleOn(zone, display);
+    return {
+      left: (zone.x * W + (x - cx) * s) / W, top: (zone.y * H + (y - cy) * s) / H,
+      width: (w * s) / W, height: (h * s) / H, scale: s,
+    };
   }
-  const f = display.mode === 'card' ? 0.8 : display.fit || 0.9;
-  const width = zone.w * f, height = zone.h * f;
-  return { left: zone.x - width / 2, top: zone.y - height / 2, width, height };
+  const width = zone.w * 0.8, height = zone.h * 0.8;
+  return { left: zone.x - width / 2, top: zone.y - height / 2, width, height, scale: 1 };
 }
 
 /**
@@ -136,14 +118,32 @@ export function parseDesign(raw, menuItems) {
   let data;
   try { data = JSON.parse(String(raw || '')); } catch { return []; }
   const items = Array.isArray(data?.items) ? data.items.slice(0, ZONES.length) : [];
-  const zones = new Map(ZONES.map(z => [z.id, z])), seen = new Set(), out = [];
+  const seen = new Set(), out = [];
   for (const it of items) {
-    const z = zones.get(it?.zone), p = menuItems.get(it?.id);
-    if (!z || !p || seen.has(z.id) || !acceptsFor(p).includes(z.kind)) continue;
-    seen.add(z.id);
+    const zn = ZONE.get(it?.zone), p = menuItems.get(it?.id);
+    if (!zn || !p || seen.has(zn.id) || !acceptsFor(p).includes(zn.id)) continue;
+    seen.add(zn.id);
     const n = Number(it.qty);
     const qty = Number.isFinite(n) && n > 0 ? Math.min(p.max, Math.max(p.step, Math.round(n / p.step) * p.step)) : p.step;
-    out.push({ zone: z.id, id: p.id, qty });
+    out.push({ zone: zn.id, id: p.id, qty });
   }
   return out;
 }
+
+// The two reference arrangements, rebuilt from the individual renders on the empty table.
+// 1 follows reference arrangement A; 2 holds the menu items that are not in 1.
+export const ARRANGEMENTS = [
+  {
+    id: 'arrangement-1', name: 'Reference arrangement 1',
+    items: [
+      ['R01', 'chocolate-cake'], ['R02', 'assorted-mini-cakes'], ['R03', 'raspberry-cake'], ['R05', 'pistachio-cake'],
+      ['R06', 'cherry-cake'], ['R07', 'lemon-berry-cake'], ['M01', 'macaron-tower'], ['M03', 'madeleine-tower'],
+      ['P01', 'nutella-profiterole'], ['P02', 'mini-tarts'], ['S01', 'mini-eclairs'], ['S02', 'mousse-cups'],
+      ['T01', 'chocolate-pieces'], ['T02', 'mini-cupcakes'], ['T03', 'brownie-bar-pistachio'],
+    ],
+  },
+  {
+    id: 'arrangement-2', name: 'Reference arrangement 2',
+    items: [['R02', 'mini-cheesecakes'], ['P01', 'caramel-pecan'], ['T04', 'mini-macarons']],
+  },
+].map(a => ({ ...a, items: a.items.map(([zone, id]) => ({ zone, id, qty: 1 })) }));

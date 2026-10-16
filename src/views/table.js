@@ -17,7 +17,7 @@ export function tableConfig() {
       id: i.id, name: i.name, variant: i.note && !/flavours|varieties/i.test(i.note) ? i.note : '', label: itemLabel(i),
       note: /flavours|varieties/i.test(i.note) ? i.note : '', desc: i.desc, category: cat.id, categoryName: cat.name,
       unit: i.unit, step: i.step, max: i.max, accepts: acceptsFor(i),
-      display: { ...d, src: v(d.src) }, thumb: v(i.photo || (d.mode === 'cutout' || d.mode === 'fill' ? d.src : '')),
+      display: { ...d, src: v(d.src) }, thumb: v(d.mode === 'asset' ? d.src : i.photo),
     };
   }));
   return { zones: ZONES, zoneLabels: ZONE_LABELS, products, categories: MENU.map(c => ({ id: c.id, name: c.name })) };
@@ -31,9 +31,9 @@ export function tableBuilderPage({ cartCount }) {
     const g = groups.find(x => x.category === p.category && x.name === p.name && p.variant);
     if (g) g.items.push(p); else groups.push({ category: p.category, categoryName: p.categoryName, name: p.name, items: [p] });
   }
-  const badge = (p) => p.display.real ? html`<span class="tb-badge is-real">Real photo</span>`
-    : p.display.mode === 'card' || p.display.mode === 'glass' ? html`<span class="tb-badge">Image coming soon</span>`
-    : html`<span class="tb-badge">Concept render</span>`;
+  // Every dessert on the table is its own render; the ones still being rendered say so.
+  const badge = (p) => p.display.mode === 'asset' ? html`<span class="tb-badge">Concept render</span>`
+    : html`<span class="tb-badge is-pending">Preview coming soon</span>`;
 
   const body = html`
 <section class="tb-intro on-plum" data-tb-intro>

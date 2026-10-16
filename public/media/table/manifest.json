@@ -1,0 +1,5368 @@
+{
+  "table": {
+    "image": "/media/table/table-1536.jpg",
+    "width": 1536,
+    "height": 1024,
+    "note": "The empty table never changes; desserts are separate transparent layers."
+  },
+  "coordinates": "box values are fractions (0–1) of the table image width / height; pixels are on the 1536 × 1024 table image",
+  "rendering": {
+    "zOrder": "table, then desserts from the back of the table to the front (by the bottom edge of their box)",
+    "scaleRule": "a render keeps its offset from its own serving footprint; on another surface it is scaled to fit that surface (contain, aspect kept, 0.65–1.15)",
+    "animation": {
+      "durationMs": 450,
+      "startScale": 0.85,
+      "endScale": 1,
+      "fade": true
+    }
+  },
+  "summary": {
+    "products": 45,
+    "rendered": 18,
+    "pending": [
+      "raspberry-wedding-round",
+      "raspberry-wedding-rect",
+      "tiramisu-wedding-round",
+      "tiramisu-wedding-rect",
+      "lemon-berry-tart",
+      "classic-cheesecake",
+      "mini-chocolate-sticks",
+      "snickers-bites",
+      "ferrero-rocher",
+      "praline-truffles",
+      "raspberry-cheesecake-bites",
+      "rocher-caramel",
+      "pistachio-rocher",
+      "pecan-carrot-cake-bowls",
+      "meringue-berries",
+      "mango-bowl",
+      "blueberry-bowl",
+      "cherry-bowl",
+      "twix-mousse",
+      "florentine-cookies",
+      "florentine-slices",
+      "tiramisu-tray",
+      "tres-leches-classic",
+      "tres-leches-pistachio",
+      "tres-leches-coffee",
+      "tres-leches-white-chocolate",
+      "tres-leches-berry"
+    ]
+  },
+  "zones": [
+    {
+      "id": "R01",
+      "label": "Cake stand R01",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.28,
+        "y": 0.2158
+      },
+      "size": {
+        "width": 0.1074,
+        "height": 0.1123
+      },
+      "pixels": {
+        "cx": 430,
+        "cy": 221,
+        "width": 165,
+        "height": 115
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R02",
+      "label": "Cake stand R02",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.3711,
+        "y": 0.2861
+      },
+      "size": {
+        "width": 0.0814,
+        "height": 0.0859
+      },
+      "pixels": {
+        "cx": 570,
+        "cy": 293,
+        "width": 125,
+        "height": 88
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R03",
+      "label": "Cake stand R03",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.5098,
+        "y": 0.2139
+      },
+      "size": {
+        "width": 0.1263,
+        "height": 0.1357
+      },
+      "pixels": {
+        "cx": 783,
+        "cy": 219,
+        "width": 194,
+        "height": 139
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R04",
+      "label": "Cake stand R04",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.6191,
+        "y": 0.2842
+      },
+      "size": {
+        "width": 0.0931,
+        "height": 0.0977
+      },
+      "pixels": {
+        "cx": 951,
+        "cy": 291,
+        "width": 143,
+        "height": 100
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R05",
+      "label": "Cake stand R05",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.7513,
+        "y": 0.2412
+      },
+      "size": {
+        "width": 0.1159,
+        "height": 0.1133
+      },
+      "pixels": {
+        "cx": 1154,
+        "cy": 247,
+        "width": 178,
+        "height": 116
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R06",
+      "label": "Cake stand R06",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.1712,
+        "y": 0.3701
+      },
+      "size": {
+        "width": 0.1094,
+        "height": 0.1211
+      },
+      "pixels": {
+        "cx": 263,
+        "cy": 379,
+        "width": 168,
+        "height": 124
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "R07",
+      "label": "Cake stand R07",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.6862,
+        "y": 0.3955
+      },
+      "size": {
+        "width": 0.1113,
+        "height": 0.1123
+      },
+      "pixels": {
+        "cx": 1054,
+        "cy": 405,
+        "width": 171,
+        "height": 115
+      },
+      "compatibleCategories": [
+        "signature_cakes",
+        "cheesecakes",
+        "tarts",
+        "wedding_cakes_circle"
+      ]
+    },
+    {
+      "id": "S01",
+      "label": "Raised marble tray S01",
+      "shape": "rect",
+      "center": {
+        "x": 0.4277,
+        "y": 0.4629
+      },
+      "size": {
+        "width": 0.1231,
+        "height": 0.1016
+      },
+      "pixels": {
+        "cx": 657,
+        "cy": 474,
+        "width": 189,
+        "height": 104
+      },
+      "compatibleCategories": [
+        "mini_cakes",
+        "mini_desserts",
+        "chocolates",
+        "dessert_bowls"
+      ]
+    },
+    {
+      "id": "S02",
+      "label": "Raised marble tray S02",
+      "shape": "rect",
+      "center": {
+        "x": 0.554,
+        "y": 0.4648
+      },
+      "size": {
+        "width": 0.1244,
+        "height": 0.1045
+      },
+      "pixels": {
+        "cx": 851,
+        "cy": 476,
+        "width": 191,
+        "height": 107
+      },
+      "compatibleCategories": [
+        "mini_cakes",
+        "mini_desserts",
+        "chocolates",
+        "dessert_bowls"
+      ]
+    },
+    {
+      "id": "P01",
+      "label": "Scalloped bowl P01",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.28,
+        "y": 0.5166
+      },
+      "size": {
+        "width": 0.097,
+        "height": 0.1182
+      },
+      "pixels": {
+        "cx": 430,
+        "cy": 529,
+        "width": 149,
+        "height": 121
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "cookies",
+        "chocolates",
+        "dessert_bowls"
+      ]
+    },
+    {
+      "id": "P02",
+      "label": "Scalloped bowl P02",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.8138,
+        "y": 0.5166
+      },
+      "size": {
+        "width": 0.1029,
+        "height": 0.1143
+      },
+      "pixels": {
+        "cx": 1250,
+        "cy": 529,
+        "width": 158,
+        "height": 117
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "cookies",
+        "chocolates",
+        "dessert_bowls"
+      ]
+    },
+    {
+      "id": "T01",
+      "label": "Gold tray T01",
+      "shape": "rect",
+      "center": {
+        "x": 0.2207,
+        "y": 0.6904
+      },
+      "size": {
+        "width": 0.209,
+        "height": 0.1289
+      },
+      "pixels": {
+        "cx": 339,
+        "cy": 707,
+        "width": 321,
+        "height": 132
+      },
+      "compatibleCategories": [
+        "chocolates",
+        "eclairs",
+        "brownies",
+        "cookies",
+        "mini_desserts"
+      ]
+    },
+    {
+      "id": "T02",
+      "label": "Gold tray T02",
+      "shape": "rect",
+      "center": {
+        "x": 0.5006,
+        "y": 0.6201
+      },
+      "size": {
+        "width": 0.2708,
+        "height": 0.1035
+      },
+      "pixels": {
+        "cx": 769,
+        "cy": 635,
+        "width": 416,
+        "height": 106
+      },
+      "compatibleCategories": [
+        "wedding_cakes",
+        "tray_desserts",
+        "eclairs",
+        "chocolates",
+        "wedding_cakes_rectangle"
+      ]
+    },
+    {
+      "id": "T03",
+      "label": "Gold tray T03",
+      "shape": "rect",
+      "center": {
+        "x": 0.8106,
+        "y": 0.6914
+      },
+      "size": {
+        "width": 0.2344,
+        "height": 0.1318
+      },
+      "pixels": {
+        "cx": 1245,
+        "cy": 708,
+        "width": 360,
+        "height": 135
+      },
+      "compatibleCategories": [
+        "chocolates",
+        "eclairs",
+        "brownies",
+        "cookies",
+        "mini_desserts"
+      ]
+    },
+    {
+      "id": "T04",
+      "label": "Gold tray T04",
+      "shape": "rect",
+      "center": {
+        "x": 0.5033,
+        "y": 0.7363
+      },
+      "size": {
+        "width": 0.2057,
+        "height": 0.0898
+      },
+      "pixels": {
+        "cx": 773,
+        "cy": 754,
+        "width": 316,
+        "height": 92
+      },
+      "compatibleCategories": [
+        "chocolates",
+        "eclairs",
+        "cookies",
+        "mini_desserts"
+      ]
+    },
+    {
+      "id": "M01",
+      "label": "Small stand M01",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.0755,
+        "y": 0.4004
+      },
+      "size": {
+        "width": 0.0592,
+        "height": 0.0674
+      },
+      "pixels": {
+        "cx": 116,
+        "cy": 410,
+        "width": 91,
+        "height": 69
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "chocolates"
+      ]
+    },
+    {
+      "id": "M02",
+      "label": "Small stand M02",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.0931,
+        "y": 0.5322
+      },
+      "size": {
+        "width": 0.054,
+        "height": 0.0557
+      },
+      "pixels": {
+        "cx": 143,
+        "cy": 545,
+        "width": 83,
+        "height": 57
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "chocolates"
+      ]
+    },
+    {
+      "id": "M03",
+      "label": "Small stand M03",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.944,
+        "y": 0.2998
+      },
+      "size": {
+        "width": 0.0807,
+        "height": 0.0781
+      },
+      "pixels": {
+        "cx": 1450,
+        "cy": 307,
+        "width": 124,
+        "height": 80
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "macaron_tower",
+        "madlen_tower"
+      ]
+    },
+    {
+      "id": "M04",
+      "label": "Small stand M04",
+      "shape": "ellipse",
+      "center": {
+        "x": 0.071,
+        "y": 0.2686
+      },
+      "size": {
+        "width": 0.0651,
+        "height": 0.0781
+      },
+      "pixels": {
+        "cx": 109,
+        "cy": 275,
+        "width": 100,
+        "height": 80
+      },
+      "compatibleCategories": [
+        "mini_desserts",
+        "macaron_tower",
+        "madlen_tower"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "id": "chocolate-cake",
+      "name": "Chocolate Cake",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "signature_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/chocolate-cake.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "R01",
+      "servingFootprint": {
+        "cx": 430,
+        "cy": 221,
+        "width": 165,
+        "height": 115
+      },
+      "arrangement": "One whole cake, centred on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1,
+          "box": {
+            "left": 0.2233,
+            "top": 0.125,
+            "width": 0.1257,
+            "height": 0.1738
+          },
+          "pixels": {
+            "left": 343,
+            "top": 128,
+            "width": 193,
+            "height": 178
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 0.758,
+          "box": {
+            "left": 0.3282,
+            "top": 0.2173,
+            "width": 0.0952,
+            "height": 0.1317
+          },
+          "pixels": {
+            "left": 504,
+            "top": 223,
+            "width": 146,
+            "height": 135
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.4446,
+            "top": 0.1094,
+            "width": 0.1445,
+            "height": 0.1999
+          },
+          "pixels": {
+            "left": 683,
+            "top": 112,
+            "width": 222,
+            "height": 205
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.867,
+          "box": {
+            "left": 0.5701,
+            "top": 0.2055,
+            "width": 0.1089,
+            "height": 0.1507
+          },
+          "pixels": {
+            "left": 876,
+            "top": 210,
+            "width": 167,
+            "height": 154
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1.009,
+          "box": {
+            "left": 0.6942,
+            "top": 0.1496,
+            "width": 0.1267,
+            "height": 0.1753
+          },
+          "pixels": {
+            "left": 1066,
+            "top": 153,
+            "width": 195,
+            "height": 180
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1.018,
+          "box": {
+            "left": 0.1135,
+            "top": 0.2776,
+            "width": 0.1279,
+            "height": 0.177
+          },
+          "pixels": {
+            "left": 174,
+            "top": 284,
+            "width": 197,
+            "height": 181
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1,
+          "box": {
+            "left": 0.6296,
+            "top": 0.3047,
+            "width": 0.1256,
+            "height": 0.1738
+          },
+          "pixels": {
+            "left": 967,
+            "top": 312,
+            "width": 193,
+            "height": 178
+          }
+        }
+      ]
+    },
+    {
+      "id": "raspberry-cake",
+      "name": "Raspberry Cake",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "signature_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/raspberry-cake.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "R03",
+      "servingFootprint": {
+        "cx": 783,
+        "cy": 219,
+        "width": 194,
+        "height": 139
+      },
+      "arrangement": "One whole cake, centred on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 0.827,
+          "box": {
+            "left": 0.2148,
+            "top": 0.1552,
+            "width": 0.1115,
+            "height": 0.147
+          },
+          "pixels": {
+            "left": 330,
+            "top": 159,
+            "width": 171,
+            "height": 151
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1,
+          "box": {
+            "left": 0.431,
+            "top": 0.1406,
+            "width": 0.1348,
+            "height": 0.1777
+          },
+          "pixels": {
+            "left": 662,
+            "top": 144,
+            "width": 207,
+            "height": 182
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.719,
+          "box": {
+            "left": 0.5625,
+            "top": 0.2315,
+            "width": 0.097,
+            "height": 0.1279
+          },
+          "pixels": {
+            "left": 864,
+            "top": 237,
+            "width": 149,
+            "height": 131
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 0.835,
+          "box": {
+            "left": 0.6856,
+            "top": 0.1801,
+            "width": 0.1125,
+            "height": 0.1483
+          },
+          "pixels": {
+            "left": 1053,
+            "top": 184,
+            "width": 173,
+            "height": 152
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 0.866,
+          "box": {
+            "left": 0.103,
+            "top": 0.3067,
+            "width": 0.1167,
+            "height": 0.1539
+          },
+          "pixels": {
+            "left": 158,
+            "top": 314,
+            "width": 179,
+            "height": 158
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 0.827,
+          "box": {
+            "left": 0.621,
+            "top": 0.3349,
+            "width": 0.1115,
+            "height": 0.147
+          },
+          "pixels": {
+            "left": 954,
+            "top": 343,
+            "width": 171,
+            "height": 151
+          }
+        }
+      ]
+    },
+    {
+      "id": "pistachio-cake",
+      "name": "Pistachio Cake",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "signature_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/pistachio-cake.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "R05",
+      "servingFootprint": {
+        "cx": 1154,
+        "cy": 247,
+        "width": 178,
+        "height": 116
+      },
+      "arrangement": "One whole cake, centred on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 0.927,
+          "box": {
+            "left": 0.1961,
+            "top": 0.1217,
+            "width": 0.1165,
+            "height": 0.1521
+          },
+          "pixels": {
+            "left": 301,
+            "top": 125,
+            "width": 179,
+            "height": 156
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 0.702,
+          "box": {
+            "left": 0.3075,
+            "top": 0.2148,
+            "width": 0.0882,
+            "height": 0.1152
+          },
+          "pixels": {
+            "left": 472,
+            "top": 220,
+            "width": 136,
+            "height": 118
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.09,
+          "box": {
+            "left": 0.4111,
+            "top": 0.1032,
+            "width": 0.1369,
+            "height": 0.1788
+          },
+          "pixels": {
+            "left": 632,
+            "top": 106,
+            "width": 210,
+            "height": 183
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.803,
+          "box": {
+            "left": 0.5464,
+            "top": 0.2026,
+            "width": 0.1009,
+            "height": 0.1318
+          },
+          "pixels": {
+            "left": 839,
+            "top": 207,
+            "width": 155,
+            "height": 135
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1,
+          "box": {
+            "left": 0.6608,
+            "top": 0.1396,
+            "width": 0.1257,
+            "height": 0.1641
+          },
+          "pixels": {
+            "left": 1015,
+            "top": 143,
+            "width": 193,
+            "height": 168
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 0.944,
+          "box": {
+            "left": 0.0858,
+            "top": 0.2743,
+            "width": 0.1186,
+            "height": 0.1549
+          },
+          "pixels": {
+            "left": 132,
+            "top": 281,
+            "width": 182,
+            "height": 159
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 0.961,
+          "box": {
+            "left": 0.5993,
+            "top": 0.2979,
+            "width": 0.1207,
+            "height": 0.1576
+          },
+          "pixels": {
+            "left": 920,
+            "top": 305,
+            "width": 185,
+            "height": 161
+          }
+        }
+      ]
+    },
+    {
+      "id": "lemon-berry-cake",
+      "name": "Lemon & Berry Cake",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "signature_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/lemon-berry-cake.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 1300,
+        "cy": 302,
+        "width": 186,
+        "height": 100
+      },
+      "arrangement": "One whole cake, centred on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 0.887,
+          "box": {
+            "left": 0.2303,
+            "top": 0.1353,
+            "width": 0.0964,
+            "height": 0.136
+          },
+          "pixels": {
+            "left": 354,
+            "top": 139,
+            "width": 148,
+            "height": 139
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 0.672,
+          "box": {
+            "left": 0.3335,
+            "top": 0.2251,
+            "width": 0.0731,
+            "height": 0.103
+          },
+          "pixels": {
+            "left": 512,
+            "top": 230,
+            "width": 112,
+            "height": 106
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.043,
+          "box": {
+            "left": 0.4514,
+            "top": 0.1191,
+            "width": 0.1134,
+            "height": 0.1599
+          },
+          "pixels": {
+            "left": 693,
+            "top": 122,
+            "width": 174,
+            "height": 164
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.769,
+          "box": {
+            "left": 0.5761,
+            "top": 0.2144,
+            "width": 0.0836,
+            "height": 0.1179
+          },
+          "pixels": {
+            "left": 885,
+            "top": 219,
+            "width": 128,
+            "height": 121
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 0.957,
+          "box": {
+            "left": 0.6977,
+            "top": 0.1543,
+            "width": 0.1041,
+            "height": 0.1467
+          },
+          "pixels": {
+            "left": 1072,
+            "top": 158,
+            "width": 160,
+            "height": 150
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 0.903,
+          "box": {
+            "left": 0.1206,
+            "top": 0.2881,
+            "width": 0.0982,
+            "height": 0.1385
+          },
+          "pixels": {
+            "left": 185,
+            "top": 295,
+            "width": 151,
+            "height": 142
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 0.919,
+          "box": {
+            "left": 0.6347,
+            "top": 0.312,
+            "width": 0.1,
+            "height": 0.141
+          },
+          "pixels": {
+            "left": 975,
+            "top": 320,
+            "width": 154,
+            "height": 144
+          }
+        }
+      ]
+    },
+    {
+      "id": "cherry-cake",
+      "name": "Cherry Cake",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "signature_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/cherry-cake.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "R06",
+      "servingFootprint": {
+        "cx": 263,
+        "cy": 379,
+        "width": 168,
+        "height": 124
+      },
+      "arrangement": "One whole cake, centred on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 0.927,
+          "box": {
+            "left": 0.2335,
+            "top": 0.118,
+            "width": 0.1038,
+            "height": 0.1404
+          },
+          "pixels": {
+            "left": 359,
+            "top": 121,
+            "width": 160,
+            "height": 144
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 0.71,
+          "box": {
+            "left": 0.3355,
+            "top": 0.2113,
+            "width": 0.0795,
+            "height": 0.1074
+          },
+          "pixels": {
+            "left": 515,
+            "top": 216,
+            "width": 122,
+            "height": 110
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.121,
+          "box": {
+            "left": 0.4536,
+            "top": 0.0956,
+            "width": 0.1255,
+            "height": 0.1697
+          },
+          "pixels": {
+            "left": 697,
+            "top": 98,
+            "width": 193,
+            "height": 174
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.806,
+          "box": {
+            "left": 0.5787,
+            "top": 0.1991,
+            "width": 0.0903,
+            "height": 0.1221
+          },
+          "pixels": {
+            "left": 889,
+            "top": 204,
+            "width": 139,
+            "height": 125
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 0.935,
+          "box": {
+            "left": 0.7044,
+            "top": 0.1425,
+            "width": 0.1048,
+            "height": 0.1416
+          },
+          "pixels": {
+            "left": 1082,
+            "top": 146,
+            "width": 161,
+            "height": 145
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1,
+          "box": {
+            "left": 0.1211,
+            "top": 0.2647,
+            "width": 0.112,
+            "height": 0.1514
+          },
+          "pixels": {
+            "left": 186,
+            "top": 271,
+            "width": 172,
+            "height": 155
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 0.927,
+          "box": {
+            "left": 0.6397,
+            "top": 0.2977,
+            "width": 0.1038,
+            "height": 0.1404
+          },
+          "pixels": {
+            "left": 983,
+            "top": 305,
+            "width": 160,
+            "height": 144
+          }
+        }
+      ]
+    },
+    {
+      "id": "assorted-mini-cakes",
+      "name": "Assorted Mini Cakes",
+      "menuCategory": "Signature Cakes",
+      "servingCategory": "mini_cakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/assorted-mini-cakes.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "R02",
+      "servingFootprint": {
+        "cx": 570,
+        "cy": 293,
+        "width": 125,
+        "height": 88
+      },
+      "arrangement": "A cluster of individual mini cakes",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.2373,
+            "top": 0.1698,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 364,
+            "top": 174,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.334,
+            "top": 0.2461,
+            "width": 0.1003,
+            "height": 0.1416
+          },
+          "pixels": {
+            "left": 513,
+            "top": 252,
+            "width": 154,
+            "height": 145
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.4671,
+            "top": 0.1678,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 717,
+            "top": 172,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1.136,
+          "box": {
+            "left": 0.577,
+            "top": 0.2387,
+            "width": 0.1139,
+            "height": 0.1609
+          },
+          "pixels": {
+            "left": 886,
+            "top": 244,
+            "width": 175,
+            "height": 165
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7086,
+            "top": 0.1952,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 1088,
+            "top": 200,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1285,
+            "top": 0.3241,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 197,
+            "top": 332,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1.15,
+          "box": {
+            "left": 0.6435,
+            "top": 0.3495,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 988,
+            "top": 358,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "S01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.3851,
+            "top": 0.4168,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 591,
+            "top": 427,
+            "width": 177,
+            "height": 167
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1.15,
+          "box": {
+            "left": 0.5114,
+            "top": 0.4188,
+            "width": 0.1153,
+            "height": 0.1628
+          },
+          "pixels": {
+            "left": 785,
+            "top": 429,
+            "width": 177,
+            "height": 167
+          }
+        }
+      ]
+    },
+    {
+      "id": "raspberry-wedding-round",
+      "name": "Raspberry Cake — Circle",
+      "menuCategory": "Big Cakes for Weddings",
+      "servingCategory": "wedding_cakes_circle",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One round cake on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1,
+          "box": {
+            "left": 0.237,
+            "top": 0.1709,
+            "width": 0.0859,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 364,
+            "top": 175,
+            "width": 132,
+            "height": 92
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.3385,
+            "top": 0.2518,
+            "width": 0.0651,
+            "height": 0.0688
+          },
+          "pixels": {
+            "left": 520,
+            "top": 258,
+            "width": 100,
+            "height": 70
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1,
+          "box": {
+            "left": 0.4592,
+            "top": 0.1596,
+            "width": 0.101,
+            "height": 0.1086
+          },
+          "pixels": {
+            "left": 705,
+            "top": 163,
+            "width": 155,
+            "height": 111
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1,
+          "box": {
+            "left": 0.5819,
+            "top": 0.2451,
+            "width": 0.0745,
+            "height": 0.0781
+          },
+          "pixels": {
+            "left": 894,
+            "top": 251,
+            "width": 114,
+            "height": 80
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1,
+          "box": {
+            "left": 0.7049,
+            "top": 0.1959,
+            "width": 0.0927,
+            "height": 0.0906
+          },
+          "pixels": {
+            "left": 1083,
+            "top": 201,
+            "width": 142,
+            "height": 93
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1,
+          "box": {
+            "left": 0.1275,
+            "top": 0.3217,
+            "width": 0.0875,
+            "height": 0.0969
+          },
+          "pixels": {
+            "left": 196,
+            "top": 329,
+            "width": 134,
+            "height": 99
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1,
+          "box": {
+            "left": 0.6417,
+            "top": 0.3506,
+            "width": 0.0891,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 986,
+            "top": 359,
+            "width": 137,
+            "height": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "raspberry-wedding-rect",
+      "name": "Raspberry Cake — Rectangle",
+      "menuCategory": "Big Cakes for Weddings",
+      "servingCategory": "wedding_cakes_rectangle",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One rectangular cake along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tiramisu-wedding-round",
+      "name": "Tiramisu Cake — Circle",
+      "menuCategory": "Big Cakes for Weddings",
+      "servingCategory": "wedding_cakes_circle",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One round cake on a cake stand",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1,
+          "box": {
+            "left": 0.237,
+            "top": 0.1709,
+            "width": 0.0859,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 364,
+            "top": 175,
+            "width": 132,
+            "height": 92
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.3385,
+            "top": 0.2518,
+            "width": 0.0651,
+            "height": 0.0688
+          },
+          "pixels": {
+            "left": 520,
+            "top": 258,
+            "width": 100,
+            "height": 70
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1,
+          "box": {
+            "left": 0.4592,
+            "top": 0.1596,
+            "width": 0.101,
+            "height": 0.1086
+          },
+          "pixels": {
+            "left": 705,
+            "top": 163,
+            "width": 155,
+            "height": 111
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1,
+          "box": {
+            "left": 0.5819,
+            "top": 0.2451,
+            "width": 0.0745,
+            "height": 0.0781
+          },
+          "pixels": {
+            "left": 894,
+            "top": 251,
+            "width": 114,
+            "height": 80
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1,
+          "box": {
+            "left": 0.7049,
+            "top": 0.1959,
+            "width": 0.0927,
+            "height": 0.0906
+          },
+          "pixels": {
+            "left": 1083,
+            "top": 201,
+            "width": 142,
+            "height": 93
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1,
+          "box": {
+            "left": 0.1275,
+            "top": 0.3217,
+            "width": 0.0875,
+            "height": 0.0969
+          },
+          "pixels": {
+            "left": 196,
+            "top": 329,
+            "width": 134,
+            "height": 99
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1,
+          "box": {
+            "left": 0.6417,
+            "top": 0.3506,
+            "width": 0.0891,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 986,
+            "top": 359,
+            "width": 137,
+            "height": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "tiramisu-wedding-rect",
+      "name": "Tiramisu Cake — Rectangle",
+      "menuCategory": "Big Cakes for Weddings",
+      "servingCategory": "wedding_cakes_rectangle",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One rectangular cake along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "lemon-berry-tart",
+      "name": "Lemon & Berry Tart",
+      "menuCategory": "Tarts & Cheesecakes",
+      "servingCategory": "tarts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Whole tart, or a cluster of mini tarts",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1,
+          "box": {
+            "left": 0.237,
+            "top": 0.1709,
+            "width": 0.0859,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 364,
+            "top": 175,
+            "width": 132,
+            "height": 92
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.3385,
+            "top": 0.2518,
+            "width": 0.0651,
+            "height": 0.0688
+          },
+          "pixels": {
+            "left": 520,
+            "top": 258,
+            "width": 100,
+            "height": 70
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1,
+          "box": {
+            "left": 0.4592,
+            "top": 0.1596,
+            "width": 0.101,
+            "height": 0.1086
+          },
+          "pixels": {
+            "left": 705,
+            "top": 163,
+            "width": 155,
+            "height": 111
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1,
+          "box": {
+            "left": 0.5819,
+            "top": 0.2451,
+            "width": 0.0745,
+            "height": 0.0781
+          },
+          "pixels": {
+            "left": 894,
+            "top": 251,
+            "width": 114,
+            "height": 80
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1,
+          "box": {
+            "left": 0.7049,
+            "top": 0.1959,
+            "width": 0.0927,
+            "height": 0.0906
+          },
+          "pixels": {
+            "left": 1083,
+            "top": 201,
+            "width": 142,
+            "height": 93
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1,
+          "box": {
+            "left": 0.1275,
+            "top": 0.3217,
+            "width": 0.0875,
+            "height": 0.0969
+          },
+          "pixels": {
+            "left": 196,
+            "top": 329,
+            "width": 134,
+            "height": 99
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1,
+          "box": {
+            "left": 0.6417,
+            "top": 0.3506,
+            "width": 0.0891,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 986,
+            "top": 359,
+            "width": 137,
+            "height": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "classic-cheesecake",
+      "name": "Classic Cheesecake",
+      "menuCategory": "Tarts & Cheesecakes",
+      "servingCategory": "cheesecakes",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Whole cheesecake, or a cluster of individual cheesecakes",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1,
+          "box": {
+            "left": 0.237,
+            "top": 0.1709,
+            "width": 0.0859,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 364,
+            "top": 175,
+            "width": 132,
+            "height": 92
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.3385,
+            "top": 0.2518,
+            "width": 0.0651,
+            "height": 0.0688
+          },
+          "pixels": {
+            "left": 520,
+            "top": 258,
+            "width": 100,
+            "height": 70
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1,
+          "box": {
+            "left": 0.4592,
+            "top": 0.1596,
+            "width": 0.101,
+            "height": 0.1086
+          },
+          "pixels": {
+            "left": 705,
+            "top": 163,
+            "width": 155,
+            "height": 111
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1,
+          "box": {
+            "left": 0.5819,
+            "top": 0.2451,
+            "width": 0.0745,
+            "height": 0.0781
+          },
+          "pixels": {
+            "left": 894,
+            "top": 251,
+            "width": 114,
+            "height": 80
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1,
+          "box": {
+            "left": 0.7049,
+            "top": 0.1959,
+            "width": 0.0927,
+            "height": 0.0906
+          },
+          "pixels": {
+            "left": 1083,
+            "top": 201,
+            "width": 142,
+            "height": 93
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1,
+          "box": {
+            "left": 0.1275,
+            "top": 0.3217,
+            "width": 0.0875,
+            "height": 0.0969
+          },
+          "pixels": {
+            "left": 196,
+            "top": 329,
+            "width": 134,
+            "height": 99
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1,
+          "box": {
+            "left": 0.6417,
+            "top": 0.3506,
+            "width": 0.0891,
+            "height": 0.0898
+          },
+          "pixels": {
+            "left": 986,
+            "top": 359,
+            "width": 137,
+            "height": 92
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-cheesecakes",
+      "name": "Mini Cheesecakes",
+      "menuCategory": "Tarts & Cheesecakes",
+      "servingCategory": "cheesecakes",
+      "status": "rendered",
+      "image": "/media/table/desserts/mini-cheesecakes.webp",
+      "imageSource": "assets/source/reference-arrangement-b.png",
+      "renderedOn": "R02",
+      "servingFootprint": {
+        "cx": 570,
+        "cy": 293,
+        "width": 125,
+        "height": 88
+      },
+      "arrangement": "Whole cheesecake, or a cluster of individual cheesecakes",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.253,
+            "top": 0.1642,
+            "width": 0.0883,
+            "height": 0.137
+          },
+          "pixels": {
+            "left": 389,
+            "top": 168,
+            "width": 136,
+            "height": 140
+          }
+        },
+        {
+          "zone": "R02",
+          "scale": 1,
+          "box": {
+            "left": 0.3477,
+            "top": 0.2412,
+            "width": 0.0768,
+            "height": 0.1191
+          },
+          "pixels": {
+            "left": 534,
+            "top": 247,
+            "width": 118,
+            "height": 122
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.4828,
+            "top": 0.1622,
+            "width": 0.0883,
+            "height": 0.137
+          },
+          "pixels": {
+            "left": 742,
+            "top": 166,
+            "width": 136,
+            "height": 140
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 1.136,
+          "box": {
+            "left": 0.5925,
+            "top": 0.2331,
+            "width": 0.0873,
+            "height": 0.1354
+          },
+          "pixels": {
+            "left": 910,
+            "top": 239,
+            "width": 134,
+            "height": 139
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7243,
+            "top": 0.1895,
+            "width": 0.0883,
+            "height": 0.137
+          },
+          "pixels": {
+            "left": 1113,
+            "top": 194,
+            "width": 136,
+            "height": 140
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1443,
+            "top": 0.3185,
+            "width": 0.0883,
+            "height": 0.137
+          },
+          "pixels": {
+            "left": 222,
+            "top": 326,
+            "width": 136,
+            "height": 140
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 1.15,
+          "box": {
+            "left": 0.6592,
+            "top": 0.3438,
+            "width": 0.0883,
+            "height": 0.137
+          },
+          "pixels": {
+            "left": 1013,
+            "top": 352,
+            "width": 136,
+            "height": 140
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-tarts",
+      "name": "Mini Tarts",
+      "menuCategory": "Tarts & Cheesecakes",
+      "servingCategory": "tarts",
+      "status": "rendered",
+      "image": "/media/table/desserts/mini-tarts.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 1200,
+        "cy": 506,
+        "width": 196,
+        "height": 118
+      },
+      "arrangement": "Whole tart, or a cluster of mini tarts",
+      "placements": [
+        {
+          "zone": "R01",
+          "scale": 0.842,
+          "box": {
+            "left": 0.2295,
+            "top": 0.1681,
+            "width": 0.0948,
+            "height": 0.1077
+          },
+          "pixels": {
+            "left": 353,
+            "top": 172,
+            "width": 146,
+            "height": 110
+          }
+        },
+        {
+          "zone": "R03",
+          "scale": 0.99,
+          "box": {
+            "left": 0.4505,
+            "top": 0.1578,
+            "width": 0.1115,
+            "height": 0.1266
+          },
+          "pixels": {
+            "left": 692,
+            "top": 162,
+            "width": 171,
+            "height": 130
+          }
+        },
+        {
+          "zone": "R04",
+          "scale": 0.73,
+          "box": {
+            "left": 0.5754,
+            "top": 0.2429,
+            "width": 0.0822,
+            "height": 0.0933
+          },
+          "pixels": {
+            "left": 884,
+            "top": 249,
+            "width": 126,
+            "height": 96
+          }
+        },
+        {
+          "zone": "R05",
+          "scale": 0.908,
+          "box": {
+            "left": 0.6969,
+            "top": 0.1898,
+            "width": 0.1023,
+            "height": 0.1162
+          },
+          "pixels": {
+            "left": 1070,
+            "top": 194,
+            "width": 157,
+            "height": 119
+          }
+        },
+        {
+          "zone": "R06",
+          "scale": 0.857,
+          "box": {
+            "left": 0.1199,
+            "top": 0.3216,
+            "width": 0.0965,
+            "height": 0.1097
+          },
+          "pixels": {
+            "left": 184,
+            "top": 329,
+            "width": 148,
+            "height": 112
+          }
+        },
+        {
+          "zone": "R07",
+          "scale": 0.872,
+          "box": {
+            "left": 0.6339,
+            "top": 0.3461,
+            "width": 0.0983,
+            "height": 0.1116
+          },
+          "pixels": {
+            "left": 974,
+            "top": 354,
+            "width": 151,
+            "height": 114
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 0.76,
+          "box": {
+            "left": 0.2344,
+            "top": 0.4735,
+            "width": 0.0856,
+            "height": 0.0973
+          },
+          "pixels": {
+            "left": 360,
+            "top": 485,
+            "width": 132,
+            "height": 100
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 0.806,
+          "box": {
+            "left": 0.7655,
+            "top": 0.4709,
+            "width": 0.0908,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 1176,
+            "top": 482,
+            "width": 139,
+            "height": 106
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-chocolate-sticks",
+      "name": "Mini Chocolate Sticks",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "chocolate-pieces",
+      "name": "Chocolate Pieces",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "rendered",
+      "image": "/media/table/desserts/chocolate-pieces.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "T01",
+      "servingFootprint": {
+        "cx": 339,
+        "cy": 707,
+        "width": 321,
+        "height": 132
+      },
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1159,
+            "top": 0.6855,
+            "width": 0.1875,
+            "height": 0.0811
+          },
+          "pixels": {
+            "left": 178,
+            "top": 702,
+            "width": 288,
+            "height": 83
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 0.803,
+          "box": {
+            "left": 0.4165,
+            "top": 0.6162,
+            "width": 0.1506,
+            "height": 0.0651
+          },
+          "pixels": {
+            "left": 640,
+            "top": 631,
+            "width": 231,
+            "height": 67
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.023,
+          "box": {
+            "left": 0.7033,
+            "top": 0.6864,
+            "width": 0.1918,
+            "height": 0.0829
+          },
+          "pixels": {
+            "left": 1080,
+            "top": 703,
+            "width": 295,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.697,
+          "box": {
+            "left": 0.4302,
+            "top": 0.7329,
+            "width": 0.1307,
+            "height": 0.0565
+          },
+          "pixels": {
+            "left": 661,
+            "top": 751,
+            "width": 201,
+            "height": 58
+          }
+        }
+      ]
+    },
+    {
+      "id": "brownie-bar-pistachio",
+      "name": "Brownie Bar with Pistachio",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "brownies",
+      "status": "rendered",
+      "image": "/media/table/desserts/brownie-bar-pistachio.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "T03",
+      "servingFootprint": {
+        "cx": 1245,
+        "cy": 708,
+        "width": 360,
+        "height": 135
+      },
+      "arrangement": "Bars side by side in a single row",
+      "placements": [
+        {
+          "zone": "T01",
+          "scale": 0.892,
+          "box": {
+            "left": 0.1209,
+            "top": 0.646,
+            "width": 0.2107,
+            "height": 0.1184
+          },
+          "pixels": {
+            "left": 186,
+            "top": 662,
+            "width": 324,
+            "height": 121
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 0.785,
+          "box": {
+            "left": 0.4127,
+            "top": 0.581,
+            "width": 0.1856,
+            "height": 0.1043
+          },
+          "pixels": {
+            "left": 634,
+            "top": 595,
+            "width": 285,
+            "height": 107
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.6986,
+            "top": 0.6416,
+            "width": 0.2363,
+            "height": 0.1328
+          },
+          "pixels": {
+            "left": 1073,
+            "top": 657,
+            "width": 363,
+            "height": 136
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.681,
+          "box": {
+            "left": 0.427,
+            "top": 0.7024,
+            "width": 0.161,
+            "height": 0.0905
+          },
+          "pixels": {
+            "left": 656,
+            "top": 719,
+            "width": 247,
+            "height": 93
+          }
+        }
+      ]
+    },
+    {
+      "id": "caramel-pecan",
+      "name": "Caramel Pecan",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "rendered",
+      "image": "/media/table/desserts/caramel-pecan.webp",
+      "imageSource": "assets/source/reference-arrangement-b.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 1268,
+        "cy": 360,
+        "width": 170,
+        "height": 114
+      },
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 0.912,
+          "box": {
+            "left": 0.3838,
+            "top": 0.4005,
+            "width": 0.0986,
+            "height": 0.1301
+          },
+          "pixels": {
+            "left": 589,
+            "top": 410,
+            "width": 151,
+            "height": 133
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 0.939,
+          "box": {
+            "left": 0.5088,
+            "top": 0.4007,
+            "width": 0.1014,
+            "height": 0.1338
+          },
+          "pixels": {
+            "left": 782,
+            "top": 410,
+            "width": 156,
+            "height": 137
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 0.877,
+          "box": {
+            "left": 0.2377,
+            "top": 0.4567,
+            "width": 0.0947,
+            "height": 0.125
+          },
+          "pixels": {
+            "left": 365,
+            "top": 468,
+            "width": 146,
+            "height": 128
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 0.929,
+          "box": {
+            "left": 0.769,
+            "top": 0.4531,
+            "width": 0.1004,
+            "height": 0.1325
+          },
+          "pixels": {
+            "left": 1181,
+            "top": 464,
+            "width": 154,
+            "height": 136
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1653,
+            "top": 0.6118,
+            "width": 0.1243,
+            "height": 0.164
+          },
+          "pixels": {
+            "left": 254,
+            "top": 627,
+            "width": 191,
+            "height": 168
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 0.93,
+          "box": {
+            "left": 0.4559,
+            "top": 0.5566,
+            "width": 0.1005,
+            "height": 0.1326
+          },
+          "pixels": {
+            "left": 700,
+            "top": 570,
+            "width": 154,
+            "height": 136
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7551,
+            "top": 0.6128,
+            "width": 0.1243,
+            "height": 0.164
+          },
+          "pixels": {
+            "left": 1160,
+            "top": 628,
+            "width": 191,
+            "height": 168
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.807,
+          "box": {
+            "left": 0.4644,
+            "top": 0.6812,
+            "width": 0.0872,
+            "height": 0.1151
+          },
+          "pixels": {
+            "left": 713,
+            "top": 698,
+            "width": 134,
+            "height": 118
+          }
+        }
+      ]
+    },
+    {
+      "id": "snickers-bites",
+      "name": "Snickers Bites",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "ferrero-rocher",
+      "name": "Ferrero Rocher",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "praline-truffles",
+      "name": "Praline Truffles",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "raspberry-cheesecake-bites",
+      "name": "Raspberry Cheesecake Bites",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "rocher-caramel",
+      "name": "Rocher Caramel",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "pistachio-rocher",
+      "name": "Pistachio Rocher",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "pecan-carrot-cake-bowls",
+      "name": "Pecan Carrot Cake Balls",
+      "menuCategory": "Chocolate Delights",
+      "servingCategory": "chocolates",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        },
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0518,
+            "top": 0.3734,
+            "width": 0.0474,
+            "height": 0.0539
+          },
+          "pixels": {
+            "left": 80,
+            "top": 382,
+            "width": 73,
+            "height": 55
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 1,
+          "box": {
+            "left": 0.0715,
+            "top": 0.51,
+            "width": 0.0432,
+            "height": 0.0445
+          },
+          "pixels": {
+            "left": 110,
+            "top": 522,
+            "width": 66,
+            "height": 46
+          }
+        }
+      ]
+    },
+    {
+      "id": "nutella-profiterole",
+      "name": "Nutella Profiterole",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "rendered",
+      "image": "/media/table/desserts/nutella-profiterole.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 410,
+        "cy": 505,
+        "width": 190,
+        "height": 118
+      },
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 0.881,
+          "box": {
+            "left": 0.3767,
+            "top": 0.4009,
+            "width": 0.0998,
+            "height": 0.1257
+          },
+          "pixels": {
+            "left": 579,
+            "top": 411,
+            "width": 153,
+            "height": 129
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 0.907,
+          "box": {
+            "left": 0.5015,
+            "top": 0.4011,
+            "width": 0.1027,
+            "height": 0.1293
+          },
+          "pixels": {
+            "left": 770,
+            "top": 411,
+            "width": 158,
+            "height": 132
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 0.784,
+          "box": {
+            "left": 0.2345,
+            "top": 0.4615,
+            "width": 0.0888,
+            "height": 0.1118
+          },
+          "pixels": {
+            "left": 360,
+            "top": 473,
+            "width": 136,
+            "height": 115
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 0.832,
+          "box": {
+            "left": 0.7656,
+            "top": 0.4581,
+            "width": 0.0942,
+            "height": 0.1186
+          },
+          "pixels": {
+            "left": 1176,
+            "top": 469,
+            "width": 145,
+            "height": 121
+          }
+        }
+      ]
+    },
+    {
+      "id": "meringue-berries",
+      "name": "Meringue with Mixed Berries & Raspberry",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        }
+      ]
+    },
+    {
+      "id": "mango-bowl",
+      "name": "Trifle — Mango",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        }
+      ]
+    },
+    {
+      "id": "blueberry-bowl",
+      "name": "Trifle — Blueberry",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        }
+      ]
+    },
+    {
+      "id": "cherry-bowl",
+      "name": "Trifle — Cherry",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        }
+      ]
+    },
+    {
+      "id": "twix-mousse",
+      "name": "Twix Chocolate Mousse",
+      "menuCategory": "Dessert Bowls",
+      "servingCategory": "dessert_bowls",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Individual servings grouped in the bowl or on the tray",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3785,
+            "top": 0.4223,
+            "width": 0.0984,
+            "height": 0.0812
+          },
+          "pixels": {
+            "left": 581,
+            "top": 432,
+            "width": 151,
+            "height": 83
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1,
+          "box": {
+            "left": 0.5043,
+            "top": 0.423,
+            "width": 0.0995,
+            "height": 0.0836
+          },
+          "pixels": {
+            "left": 775,
+            "top": 433,
+            "width": 153,
+            "height": 86
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-cupcakes",
+      "name": "Mini Cupcakes",
+      "menuCategory": "Mini Desserts & Cups",
+      "servingCategory": "mini_desserts",
+      "status": "rendered",
+      "image": "/media/table/desserts/mini-cupcakes.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 655,
+        "cy": 642,
+        "width": 196,
+        "height": 110
+      },
+      "arrangement": "Pieces in neat rows or a small cluster",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 0.945,
+          "box": {
+            "left": 0.3649,
+            "top": 0.4149,
+            "width": 0.1262,
+            "height": 0.1099
+          },
+          "pixels": {
+            "left": 561,
+            "top": 425,
+            "width": 194,
+            "height": 113
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 0.973,
+          "box": {
+            "left": 0.4894,
+            "top": 0.4154,
+            "width": 0.1298,
+            "height": 0.113
+          },
+          "pixels": {
+            "left": 752,
+            "top": 425,
+            "width": 199,
+            "height": 116
+          }
+        },
+        {
+          "zone": "P01",
+          "scale": 0.76,
+          "box": {
+            "left": 0.2295,
+            "top": 0.478,
+            "width": 0.1015,
+            "height": 0.0883
+          },
+          "pixels": {
+            "left": 352,
+            "top": 489,
+            "width": 156,
+            "height": 90
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 0.806,
+          "box": {
+            "left": 0.7603,
+            "top": 0.4757,
+            "width": 0.1076,
+            "height": 0.0937
+          },
+          "pixels": {
+            "left": 1168,
+            "top": 487,
+            "width": 165,
+            "height": 96
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1443,
+            "top": 0.632,
+            "width": 0.1535,
+            "height": 0.1336
+          },
+          "pixels": {
+            "left": 222,
+            "top": 647,
+            "width": 236,
+            "height": 137
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 0.964,
+          "box": {
+            "left": 0.4367,
+            "top": 0.5712,
+            "width": 0.1286,
+            "height": 0.112
+          },
+          "pixels": {
+            "left": 671,
+            "top": 585,
+            "width": 198,
+            "height": 115
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7342,
+            "top": 0.633,
+            "width": 0.1535,
+            "height": 0.1336
+          },
+          "pixels": {
+            "left": 1128,
+            "top": 648,
+            "width": 236,
+            "height": 137
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.836,
+          "box": {
+            "left": 0.4477,
+            "top": 0.6939,
+            "width": 0.1116,
+            "height": 0.0972
+          },
+          "pixels": {
+            "left": 688,
+            "top": 711,
+            "width": 171,
+            "height": 100
+          }
+        }
+      ]
+    },
+    {
+      "id": "mousse-cups",
+      "name": "Mousse Cups",
+      "menuCategory": "Mini Desserts & Cups",
+      "servingCategory": "mini_desserts",
+      "status": "rendered",
+      "image": "/media/table/desserts/mousse-cups.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "reference vessel",
+      "servingFootprint": {
+        "cx": 320,
+        "cy": 668,
+        "width": 256,
+        "height": 98
+      },
+      "arrangement": "Pieces in neat rows or a small cluster",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 0.738,
+          "box": {
+            "left": 0.3701,
+            "top": 0.4196,
+            "width": 0.1192,
+            "height": 0.0692
+          },
+          "pixels": {
+            "left": 568,
+            "top": 430,
+            "width": 183,
+            "height": 71
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 0.746,
+          "box": {
+            "left": 0.4958,
+            "top": 0.4211,
+            "width": 0.1205,
+            "height": 0.0699
+          },
+          "pixels": {
+            "left": 761,
+            "top": 431,
+            "width": 185,
+            "height": 72
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1309,
+            "top": 0.623,
+            "width": 0.1857,
+            "height": 0.1078
+          },
+          "pixels": {
+            "left": 201,
+            "top": 638,
+            "width": 285,
+            "height": 110
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7207,
+            "top": 0.624,
+            "width": 0.1857,
+            "height": 0.1078
+          },
+          "pixels": {
+            "left": 1107,
+            "top": 639,
+            "width": 285,
+            "height": 110
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.939,
+          "box": {
+            "left": 0.4299,
+            "top": 0.6813,
+            "width": 0.1516,
+            "height": 0.088
+          },
+          "pixels": {
+            "left": 660,
+            "top": 698,
+            "width": 233,
+            "height": 90
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-eclairs",
+      "name": "Mini Éclairs",
+      "menuCategory": "Mini Desserts & Cups",
+      "servingCategory": "eclairs",
+      "status": "rendered",
+      "image": "/media/table/desserts/mini-eclairs.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "S01",
+      "servingFootprint": {
+        "cx": 657,
+        "cy": 474,
+        "width": 189,
+        "height": 104
+      },
+      "arrangement": "Éclairs side by side in a single row",
+      "placements": [
+        {
+          "zone": "S01",
+          "scale": 1,
+          "box": {
+            "left": 0.3652,
+            "top": 0.4111,
+            "width": 0.1276,
+            "height": 0.123
+          },
+          "pixels": {
+            "left": 561,
+            "top": 421,
+            "width": 196,
+            "height": 126
+          }
+        },
+        {
+          "zone": "S02",
+          "scale": 1.011,
+          "box": {
+            "left": 0.4909,
+            "top": 0.4125,
+            "width": 0.129,
+            "height": 0.1244
+          },
+          "pixels": {
+            "left": 754,
+            "top": 422,
+            "width": 198,
+            "height": 127
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1.15,
+          "box": {
+            "left": 0.1488,
+            "top": 0.6309,
+            "width": 0.1467,
+            "height": 0.1415
+          },
+          "pixels": {
+            "left": 229,
+            "top": 646,
+            "width": 225,
+            "height": 145
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1.019,
+          "box": {
+            "left": 0.4369,
+            "top": 0.5674,
+            "width": 0.1301,
+            "height": 0.1254
+          },
+          "pixels": {
+            "left": 671,
+            "top": 581,
+            "width": 200,
+            "height": 128
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.7387,
+            "top": 0.6319,
+            "width": 0.1467,
+            "height": 0.1415
+          },
+          "pixels": {
+            "left": 1135,
+            "top": 647,
+            "width": 225,
+            "height": 145
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 0.885,
+          "box": {
+            "left": 0.448,
+            "top": 0.6905,
+            "width": 0.1129,
+            "height": 0.1088
+          },
+          "pixels": {
+            "left": 688,
+            "top": 707,
+            "width": 173,
+            "height": 111
+          }
+        }
+      ]
+    },
+    {
+      "id": "mini-macarons",
+      "name": "Mini Macarons",
+      "menuCategory": "Mini Desserts & Cups",
+      "servingCategory": "mini_desserts",
+      "status": "rendered",
+      "image": "/media/table/desserts/mini-macarons.webp",
+      "imageSource": "assets/source/reference-arrangement-b.png",
+      "renderedOn": "T04",
+      "servingFootprint": {
+        "cx": 773,
+        "cy": 754,
+        "width": 316,
+        "height": 92
+      },
+      "arrangement": "Pieces in neat rows or a small cluster",
+      "placements": [
+        {
+          "zone": "T01",
+          "scale": 1.016,
+          "box": {
+            "left": 0.1486,
+            "top": 0.6508,
+            "width": 0.1786,
+            "height": 0.0942
+          },
+          "pixels": {
+            "left": 228,
+            "top": 666,
+            "width": 274,
+            "height": 97
+          }
+        },
+        {
+          "zone": "T02",
+          "scale": 1.15,
+          "box": {
+            "left": 0.419,
+            "top": 0.5752,
+            "width": 0.2021,
+            "height": 0.1067
+          },
+          "pixels": {
+            "left": 644,
+            "top": 589,
+            "width": 311,
+            "height": 109
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1.139,
+          "box": {
+            "left": 0.7297,
+            "top": 0.6469,
+            "width": 0.2003,
+            "height": 0.1057
+          },
+          "pixels": {
+            "left": 1121,
+            "top": 662,
+            "width": 308,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.4323,
+            "top": 0.6973,
+            "width": 0.1758,
+            "height": 0.0928
+          },
+          "pixels": {
+            "left": 664,
+            "top": 714,
+            "width": 270,
+            "height": 95
+          }
+        }
+      ]
+    },
+    {
+      "id": "macaron-tower",
+      "name": "Macaron Tower",
+      "menuCategory": "Towers & Displays",
+      "servingCategory": "macaron_tower",
+      "status": "rendered",
+      "image": "/media/table/desserts/macaron-tower.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "M01",
+      "servingFootprint": {
+        "cx": 116,
+        "cy": 410,
+        "width": 91,
+        "height": 69
+      },
+      "arrangement": "Tower standing on its own plate",
+      "placements": [
+        {
+          "zone": "M01",
+          "scale": 1,
+          "box": {
+            "left": 0.0156,
+            "top": 0.2461,
+            "width": 0.1016,
+            "height": 0.2305
+          },
+          "pixels": {
+            "left": 24,
+            "top": 252,
+            "width": 156,
+            "height": 236
+          }
+        },
+        {
+          "zone": "M02",
+          "scale": 0.826,
+          "box": {
+            "left": 0.0436,
+            "top": 0.4048,
+            "width": 0.0839,
+            "height": 0.1904
+          },
+          "pixels": {
+            "left": 67,
+            "top": 414,
+            "width": 129,
+            "height": 195
+          }
+        },
+        {
+          "zone": "M03",
+          "scale": 1.15,
+          "box": {
+            "left": 0.8751,
+            "top": 0.1224,
+            "width": 0.1168,
+            "height": 0.265
+          },
+          "pixels": {
+            "left": 1344,
+            "top": 125,
+            "width": 179,
+            "height": 271
+          }
+        },
+        {
+          "zone": "M04",
+          "scale": 1.099,
+          "box": {
+            "left": 0.0051,
+            "top": 0.099,
+            "width": 0.1116,
+            "height": 0.2532
+          },
+          "pixels": {
+            "left": 8,
+            "top": 101,
+            "width": 171,
+            "height": 259
+          }
+        }
+      ]
+    },
+    {
+      "id": "madeleine-tower",
+      "name": "Madlen Tower",
+      "menuCategory": "Towers & Displays",
+      "servingCategory": "madlen_tower",
+      "status": "rendered",
+      "image": "/media/table/desserts/madeleine-tower.webp",
+      "imageSource": "assets/source/reference-arrangement-a.png",
+      "renderedOn": "M03",
+      "servingFootprint": {
+        "cx": 1450,
+        "cy": 307,
+        "width": 124,
+        "height": 80
+      },
+      "arrangement": "Madeleines on each tier of the tiered stand",
+      "placements": [
+        {
+          "zone": "M03",
+          "scale": 1,
+          "box": {
+            "left": 0.8906,
+            "top": 0.2744,
+            "width": 0.1081,
+            "height": 0.252
+          },
+          "pixels": {
+            "left": 1368,
+            "top": 281,
+            "width": 166,
+            "height": 258
+          }
+        }
+      ]
+    },
+    {
+      "id": "florentine-cookies",
+      "name": "Florentine Almond Cookies",
+      "menuCategory": "Cookies & Slices",
+      "servingCategory": "cookies",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows or overlapping in the bowl",
+      "placements": [
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        }
+      ]
+    },
+    {
+      "id": "florentine-slices",
+      "name": "Florentine Almond Slices",
+      "menuCategory": "Cookies & Slices",
+      "servingCategory": "cookies",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "Pieces in neat rows or overlapping in the bowl",
+      "placements": [
+        {
+          "zone": "P01",
+          "scale": 1,
+          "box": {
+            "left": 0.2411,
+            "top": 0.4693,
+            "width": 0.0776,
+            "height": 0.0945
+          },
+          "pixels": {
+            "left": 370,
+            "top": 481,
+            "width": 119,
+            "height": 97
+          }
+        },
+        {
+          "zone": "P02",
+          "scale": 1,
+          "box": {
+            "left": 0.7727,
+            "top": 0.4709,
+            "width": 0.0823,
+            "height": 0.0914
+          },
+          "pixels": {
+            "left": 1187,
+            "top": 482,
+            "width": 126,
+            "height": 94
+          }
+        },
+        {
+          "zone": "T01",
+          "scale": 1,
+          "box": {
+            "left": 0.1371,
+            "top": 0.6389,
+            "width": 0.1672,
+            "height": 0.1031
+          },
+          "pixels": {
+            "left": 211,
+            "top": 654,
+            "width": 257,
+            "height": 106
+          }
+        },
+        {
+          "zone": "T03",
+          "scale": 1,
+          "box": {
+            "left": 0.7168,
+            "top": 0.6387,
+            "width": 0.1875,
+            "height": 0.1055
+          },
+          "pixels": {
+            "left": 1101,
+            "top": 654,
+            "width": 288,
+            "height": 108
+          }
+        },
+        {
+          "zone": "T04",
+          "scale": 1,
+          "box": {
+            "left": 0.421,
+            "top": 0.7004,
+            "width": 0.1646,
+            "height": 0.0719
+          },
+          "pixels": {
+            "left": 647,
+            "top": 717,
+            "width": 253,
+            "height": 74
+          }
+        }
+      ]
+    },
+    {
+      "id": "tiramisu-tray",
+      "name": "Classic Tiramisu Tray",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tres-leches-classic",
+      "name": "Tres Leches Tray — Classic",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tres-leches-pistachio",
+      "name": "Tres Leches Tray — Pistachio",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tres-leches-coffee",
+      "name": "Tres Leches Tray — Coffee",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tres-leches-white-chocolate",
+      "name": "Tres Leches Tray — White Chocolate",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    },
+    {
+      "id": "tres-leches-berry",
+      "name": "Tres Leches Tray — Berry",
+      "menuCategory": "Big Tray Desserts",
+      "servingCategory": "tray_desserts",
+      "status": "render-pending",
+      "image": null,
+      "imageSource": null,
+      "renderedOn": null,
+      "servingFootprint": null,
+      "arrangement": "One whole tray dessert along the feature tray",
+      "placements": [
+        {
+          "zone": "T02",
+          "scale": 1,
+          "box": {
+            "left": 0.3923,
+            "top": 0.5787,
+            "width": 0.2167,
+            "height": 0.0828
+          },
+          "pixels": {
+            "left": 603,
+            "top": 593,
+            "width": 333,
+            "height": 85
+          }
+        }
+      ]
+    }
+  ],
+  "arrangements": [
+    {
+      "id": "arrangement-1",
+      "name": "Reference arrangement 1",
+      "image": "/media/table/arrangement-1.jpg",
+      "items": [
+        {
+          "zone": "R01",
+          "id": "chocolate-cake"
+        },
+        {
+          "zone": "R02",
+          "id": "assorted-mini-cakes"
+        },
+        {
+          "zone": "R03",
+          "id": "raspberry-cake"
+        },
+        {
+          "zone": "R05",
+          "id": "pistachio-cake"
+        },
+        {
+          "zone": "R06",
+          "id": "cherry-cake"
+        },
+        {
+          "zone": "R07",
+          "id": "lemon-berry-cake"
+        },
+        {
+          "zone": "M01",
+          "id": "macaron-tower"
+        },
+        {
+          "zone": "M03",
+          "id": "madeleine-tower"
+        },
+        {
+          "zone": "P01",
+          "id": "nutella-profiterole"
+        },
+        {
+          "zone": "P02",
+          "id": "mini-tarts"
+        },
+        {
+          "zone": "S01",
+          "id": "mini-eclairs"
+        },
+        {
+          "zone": "S02",
+          "id": "mousse-cups"
+        },
+        {
+          "zone": "T01",
+          "id": "chocolate-pieces"
+        },
+        {
+          "zone": "T02",
+          "id": "mini-cupcakes"
+        },
+        {
+          "zone": "T03",
+          "id": "brownie-bar-pistachio"
+        }
+      ]
+    },
+    {
+      "id": "arrangement-2",
+      "name": "Reference arrangement 2",
+      "image": "/media/table/arrangement-2.jpg",
+      "items": [
+        {
+          "zone": "R02",
+          "id": "mini-cheesecakes"
+        },
+        {
+          "zone": "P01",
+          "id": "caramel-pecan"
+        },
+        {
+          "zone": "T04",
+          "id": "mini-macarons"
+        }
+      ]
+    }
+  ]
+}

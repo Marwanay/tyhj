@@ -365,20 +365,30 @@ try {
     // Several stands suit a cake: they glow and the client chooses one.
     await tp.click('[data-tb-add="chocolate-cake"]');
     assert.ok(await tp.locator('.tb-zone.is-target').count() > 1);
-    assert.equal(await tp.locator('.tb-zone.is-target[data-tb-zone^="tray"]').count(), 0, 'cakes are never offered a tray');
-    await tp.click('[data-tb-zone="stand-centre"]');
-    await tp.locator('.tb-item[data-zone="stand-centre"]').waitFor();
+    assert.equal(await tp.locator('.tb-zone.is-target:not([data-tb-zone^="R"])').count(), 0, 'cakes only go on cake stands');
+    await tp.click('[data-tb-zone="R03"]');
+    await tp.locator('.tb-item[data-zone="R03"] img[src*="/media/table/desserts/chocolate-cake.webp"]').waitFor();
+    // Only that dessert's own render is added over the unchanged table photo.
+    assert.equal(await tp.locator('.tb-item').count(), 1);
+    assert.match(await tp.locator('.tb-table').getAttribute('src'), /table-960\.jpg/);
     // Choosing an empty surface first shows only desserts that fit it.
-    await tp.click('[data-tb-zone="tray-raised-left"]');
+    await tp.click('[data-tb-zone="S01"]');
     assert.equal(await tp.locator('[data-tb-card][data-ids~="chocolate-cake"]').isHidden(), true);
     await tp.click('[data-tb-add="mini-eclairs"]');
-    await tp.locator('.tb-item[data-zone="tray-raised-left"]').waitFor();
+    await tp.locator('.tb-item[data-zone="S01"]').waitFor();
+    // A dessert whose render is still being made shows a labelled place card, never a stand-in image.
+    await tp.click('[data-tb-zone="T02"]');
+    await tp.click('[data-tb-add="tiramisu-tray"]');
+    await tp.locator('.tb-item.mode-pending[data-zone="T02"]', { hasText: 'Preview coming soon' }).waitFor();
+    await tp.click('[data-tb-zone="T02"]');
+    await tp.click('[data-pop-remove]');
+    await tp.locator('.tb-item[data-zone="T02"]').waitFor({ state: 'detached' });
     // Popover: quantity and move.
-    await tp.click('[data-tb-zone="stand-centre"]');
+    await tp.click('[data-tb-zone="R03"]');
     await tp.click('[data-pop-qty="1"]');
     await tp.click('[data-pop-move]');
-    await tp.click('[data-tb-zone="stand-top-left"]');
-    await tp.locator('.tb-item[data-zone="stand-top-left"]').waitFor();
+    await tp.click('[data-tb-zone="R01"]');
+    await tp.locator('.tb-item[data-zone="R01"]').waitFor();
     // Survives a refresh.
     await tp.reload();
     await tp.click('[data-tb-continue]');

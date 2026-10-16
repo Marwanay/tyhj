@@ -91,3 +91,38 @@ test('webhook processing is idempotent and amount-checked', async () => {
   assert.equal(o.status, 'confirmed');
   assert.equal((await processEvent('sandbox', evt({ providerOrderId: 'nope', eventKey: 'x:paid' }), {})).result, 'unknown_payment');
 });
+
+test('dessert table: renders, surfaces and the manifest agree', async () => {
+  const { MENU_ITEMS } = await import('../src/services/menu.js');
+  const { ZONES, acceptsFor, assetFor, displayFor, placementBox, parseDesign } = await import('../src/services/table.js');
+  const manifest = JSON.parse(fs.readFileSync(new URL('../public/media/table/manifest.json', import.meta.url)));
+  assert.equal(ZONES.length, 19);
+  assert.equal(manifest.products.length, MENU_ITEMS.size, 'every menu item is in the manifest');
+  for (const [id, item] of MENU_ITEMS) {
+    const entry = manifest.products.find(p => p.id === id);
+    assert.ok(acceptsFor(item).length > 0, `${id} has somewhere to go`);
+    assert.deepEqual(entry.placements.map(p => p.zone), acceptsFor(item), `${id} manifest is current`);
+    const a = assetFor(item);
+    assert.equal(entry.status, a ? 'rendered' : 'render-pending');
+    if (!a) continue;
+    assert.ok(fs.existsSync(new URL(`../public${a.src}`, import.meta.url)), `${id} render exists`);
+    // On the surface it was rendered on, a dessert lands exactly where it was rendered.
+    if (a.surface) {
+      const b = placementBox(ZONES.find(z => z.id === a.surface), displayFor(item));
+      assert.ok(Math.abs(b.left * 1536 - a.rect[0]) < 0.01 && Math.abs(b.top * 1024 - a.rect[1]) < 0.01, `${id} native position`);
+    }
+    for (const p of entry.placements) assert.ok(p.scale >= 0.65 && p.scale <= 1.15, `${id} on ${p.zone} keeps a sensible scale`);
+  }
+  // Cakes only on cake stands; designs naming the wrong surface are dropped.
+  assert.ok(acceptsFor(MENU_ITEMS.get('chocolate-cake')).every(z => z.startsWith('R')));
+  const design = parseDesign(JSON.stringify({ items: [{ zone: 'T01', id: 'chocolate-cake' }, { zone: 'R01', id: 'chocolate-cake', qty: 2 }, { zone: 'R01', id: 'cherry-cake' }] }), MENU_ITEMS);
+  assert.deepEqual(design, [{ zone: 'R01', id: 'chocolate-cake', qty: 2 }]);
+});
+
+test('dessert table: both reference arrangements are valid designs', async () => {
+  const { MENU_ITEMS } = await import('../src/services/menu.js');
+  const { ARRANGEMENTS, parseDesign } = await import('../src/services/table.js');
+  for (const a of ARRANGEMENTS) assert.equal(parseDesign(JSON.stringify(a), MENU_ITEMS).length, a.items.length, a.id);
+  const [one, two] = ARRANGEMENTS.map(a => new Set(a.items.map(i => i.id)));
+  assert.ok([...two].every(id => !one.has(id)), 'arrangement 2 only holds desserts not in arrangement 1');
+});
