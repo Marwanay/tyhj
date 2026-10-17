@@ -1,5 +1,5 @@
-# Music and sound effects for the launch film, synthesised from scratch (no samples, no
-# licensed music) and locked to the picture: 120 bpm, so one beat = 0.5 s and one bar = 2 s,
+# Music and sound effects for the launch film: a violin instrumental over a fast beat, synthesised
+# from scratch (bowed-string modelling — no samples, no licensed music) and locked to the picture: 120 bpm, so one beat = 0.5 s and one bar = 2 s,
 # and every cut in launch.html lands on a bar.
 #   python video/sound.py video/out/soundtrack.wav [bpm]     (needs numpy + scipy; default 140 bpm)
 # Everything below is written on a 120 bpm grid (beat 0.5 s, bar 2 s) and scaled to the chosen
@@ -11,7 +11,7 @@
 #               (send → quote → booking confirmed) · 38 s FINAL DROP · 41.5 s stop, tail to 42 s.
 import sys
 import numpy as np
-from scipy.signal import butter, sosfilt, fftconvolve
+from scipy.signal import butter, sosfilt, fftconvolve, lfilter
 from scipy.io import wavfile
 
 SR = 48000
@@ -26,7 +26,7 @@ rng = np.random.default_rng(5)
 def buf():
     return np.zeros((N, 2))
 
-drums, bassb, synth, padb, fx = buf(), buf(), buf(), buf(), buf()
+drums, fx = buf(), buf()
 
 def T(sec):
     return np.arange(int(sec * SR)) / SR
@@ -46,9 +46,6 @@ def filt(x, kind, f, order=2):
 
 def hz(m):
     return 440.0 * 2 ** ((m - 69) / 12)
-
-def saw(f, t):
-    return 2 * ((f * t) % 1) - 1
 
 # ---- Drums ------------------------------------------------------------------------------
 def kick():
@@ -82,33 +79,7 @@ def impact(dur=2.5):
     f = 32 + 80 * np.exp(-t * 9)
     return np.tanh(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 1.8) * 2) + filt(rng.standard_normal(len(t)), 'low', 600) * np.exp(-t * 5) * .5
 
-# ---- Tonal --------------------------------------------------------------------------------
-def pluck(m, dur=0.6, bright=1.0):
-    """Saw-like pluck: harmonics decay faster the higher they are (a filter envelope, additively)."""
-    t = T(dur); f = hz(m)
-    s = np.zeros(len(t))
-    for k in range(1, 16):
-        if f * k > 15000:
-            break
-        s += np.sin(2 * np.pi * f * k * t) / k * np.exp(-t * (5 + k * 2.2 / bright))
-    s += 0.5 * np.sin(2 * np.pi * f * 2 * t) * np.exp(-t * 6)
-    return s * np.clip(t / 0.002, 0, 1) * 0.6
-
-def supersaw(notes, dur, cutoff=2600):
-    t = T(dur)
-    s = np.zeros(len(t))
-    for m in notes:
-        for d in (-0.12, -0.05, 0, 0.05, 0.12):
-            s += saw(hz(m + d), t + rng.uniform(0, 1))
-    s = filt(s, 'low', cutoff, 2)
-    e = np.clip(t / 0.03, 0, 1) * np.clip((dur - t) / 0.08, 0, 1)
-    return s * e / (len(notes) * 5)
-
-def bass(m, dur=0.22):
-    t = T(dur); f = hz(m)
-    s = np.sin(2 * np.pi * f * t) + 0.6 * filt(saw(f, t), 'low', 700)
-    return np.tanh(s * 1.5) * np.clip(t / 0.004, 0, 1) * np.clip((dur - t) / 0.03, 0, 1)
-
+# ---- Tonal ----------------------------------------------------------------------------------
 def bell(m, dur=1.6):
     t = T(dur); f = hz(m)
     s = np.sin(2 * np.pi * f * t) + .4 * np.sin(2 * np.pi * f * 2.76 * t) * np.exp(-t * 5) + .2 * np.sin(2 * np.pi * f * 5.4 * t) * np.exp(-t * 8)
@@ -149,12 +120,63 @@ def shimmer(dur=1.8, base=86, count=26):
 def notify():  # two-tone "message sent" chime
     return np.concatenate([bell(88, .18)[:int(.12 * SR)], bell(93, 1.2)])
 
-# ---- Music --------------------------------------------------------------------------------------
-# D minor: Dm – Bb – F – C, one chord per bar.
-CH = [([62, 65, 69, 74], 38), ([58, 62, 65, 70], 34), ([57, 60, 65, 69], 41), ([55, 60, 64, 67], 36)]
-# Hook (16ths in a bar): two alternating bars.
-HOOK_A = [(0, 74), (3, 77), (6, 81), (8, 79), (10, 77), (12, 76), (14, 74)]
-HOOK_B = [(0, 72), (3, 74), (6, 77), (8, 81), (11, 79), (14, 77)]
+# ---- Strings ------------------------------------------------------------------------------------
+
+def peaking(x, f0, gain_db, q):
+    """RBJ peaking EQ (the violin's body resonances)."""
+    A = 10 ** (gain_db / 40); w = 2 * np.pi * f0 / SR; al = np.sin(w) / (2 * q)
+    bb = [1 + al * A, -2 * np.cos(w), 1 - al * A]; aa = [1 + al / A, -2 * np.cos(w), 1 - al / A]
+    return lfilter(np.array(bb) / aa[0], np.array(aa) / aa[0], x, axis=0)
+
+def body(x, cello=False):
+    """Wooden body: resonances, then the bridge roll-off."""
+    peaks = [(110, 5, 1.2), (210, 4, 1.4), (380, 3, 2.0), (1200, 2, 1.5)] if cello else \
+            [(290, 6, 1.6), (460, 4, 2.0), (1050, 3, 1.8), (2600, 4, 1.4), (3500, 2, 2.0)]
+    for f0, g, q in peaks:
+        x = peaking(x, f0, g, q)
+    x = filt(x, 'high', 70 if cello else 190)
+    return filt(x, 'low', 5000 if cello else 7500)
+
+def bowed(m, dur, att=0.05, rel=0.18, vib=0.0045, bright=1.0, noise=0.05, rate=5.6, detune=0.0, ph=0.0):
+    """One bowed note: band-limited sawtooth (the bow's stick-slip) with delayed vibrato and bow hiss."""
+    t = T(dur + rel); f = hz(m + detune)
+    v = 1 + vib * np.sin(2 * np.pi * rate * t + ph) * np.clip((t - 0.15) / 0.35, 0, 1) + 0.0008 * np.sin(2 * np.pi * 1.3 * t + ph)
+    phase = 2 * np.pi * np.cumsum(f * v) / SR
+    s = np.zeros(len(t))
+    for k in range(1, 40):
+        if f * k > 11000:
+            break
+        s += np.sin(k * phase) / k ** (1.05 / bright)
+    s += filt(rng.standard_normal(len(t)), 'band', [2500, 7000]) * noise
+    e = np.clip(t / att, 0, 1) ** 1.5 * np.where(t < dur, 1.0, np.exp(-(t - dur) / (rel / 4)))
+    e *= 1 + 0.08 * np.clip(t / max(dur, .01), 0, 1)          # bow swell
+    return s * e * 0.25
+
+def pizz(m, dur=0.45):
+    t = T(dur); f = hz(m)
+    s = sum(np.sin(2 * np.pi * f * k * t) / k ** 1.4 * np.exp(-t * (9 + 6 * k)) for k in range(1, 9))
+    return s * np.clip(t / 0.0015, 0, 1) * 0.5
+
+def section_strings(notes, dur, gain=1.0):
+    """String section: several detuned players per note, slow attack."""
+    out = np.zeros(int((dur + 0.4) * SR))
+    for m in notes:
+        for v in range(4):
+            x = bowed(m, dur, att=0.18, rel=0.4, vib=0.004, bright=0.8, noise=0.02, rate=5.0 + v * 0.35,
+                      detune=rng.uniform(-0.09, 0.09), ph=rng.uniform(0, 6.28))
+            out[:len(x)] += x
+    return out * gain / (len(notes) * 2.2)
+
+# ---- Music: violin over a fast beat ---------------------------------------------------------------
+# D minor: Dm – Bb – F – C, one chord per bar (bar = 2 grid seconds; 16 sixteenths of .125).
+CH = [([50, 57, 62, 65, 69], 38), ([46, 53, 58, 62, 65], 34), ([45, 53, 57, 60, 65], 41), ([48, 55, 60, 64, 67], 36)]
+# The violin theme, four bars: (start 16th, length in 16ths, midi note).
+THEME = [
+    [(0, 6, 81), (6, 2, 86), (8, 2, 84), (10, 2, 81), (12, 4, 77)],
+    [(0, 4, 79), (4, 2, 77), (6, 2, 74), (8, 4, 77), (12, 2, 79), (14, 2, 81)],
+    [(0, 6, 81), (6, 2, 84), (8, 4, 89), (12, 2, 88), (14, 2, 84)],
+    [(0, 6, 86), (6, 2, 84), (8, 2, 82), (10, 2, 81), (12, 4, 79)],
+]
 S16 = BEAT / 4
 
 def section(t):
@@ -165,38 +187,63 @@ def section(t):
     if t < 41.5: return 'drop'
     return 'end'
 
-for b in range(21):
-    start = b * BAR
-    sec = section(start)
-    notes, root = CH[b % 4]
+violin, strings, cello = buf(), buf(), buf()
+
+def play_violin(start, length16, m, gain, pan=0.1, accent=False):
+    dur = length16 * S16 * K
+    add(violin, start, bowed(m, dur * 0.96, att=0.02 if accent else 0.045, bright=1.15 if accent else 1.0), gain, pan)
+
+# Intro: a lone violin, long notes, then a rising run into the drop.
+play_violin(0.2, 14, 81, .55)
+play_violin(2.0, 8, 86, .5)
+for i, m in enumerate([74, 76, 77, 79, 81, 82, 84, 86]):
+    play_violin(3.0 + i * S16, 1, m, .45 + i * .03, accent=True)
+add(strings, 0.0, section_strings([50, 57, 62], 4.0 * K), .5)
+
+for bar in range(2, 21):
+    start = bar * BAR; sec = section(start)
     if sec == 'end':
         break
-    # Pad (sidechained later), brighter as the film builds.
-    cutoff = {'intro': 900, 'A': 2400, 'B': 3200, 'build': 1200, 'drop': 4200}[sec]
-    if sec == 'build':
-        for q in range(4):  # filter opens up across the build
-            add(padb, start + q * .5, supersaw(notes, .5 * K, 900 + (start - 34 + q * .5) * 900), .55)
-    else:
-        add(padb, start, supersaw(notes, BAR * K, cutoff), .55 if sec != 'intro' else .45)
-    # Hook.
-    hook = HOOK_A if b % 2 == 0 else HOOK_B
-    if sec in ('intro', 'A', 'B', 'drop') or (sec == 'build' and start < 36):
-        for step, m in hook:
-            br = .5 if sec == 'intro' else 1.4 if sec == 'drop' else 1.0
-            add(synth, start + step * S16, pluck(m, .55, br), .30 if sec != 'intro' else .2, pan=.15)
-            add(synth, start + step * S16 + .375, pluck(m, .5, br) * .35, .30, pan=-.5)   # dotted-8th echo
-    # Bright 16th arpeggio in B and the drop.
+    notes, root = CH[bar % 4]
+    phrase = THEME[(bar - 2) % 4]
+    # Strings section under everything (fuller in B and the drop).
+    if sec != 'build':
+        add(strings, start, section_strings(notes[1:], BAR * K * 0.98, 1.0 if sec == 'A' else 1.25), .55)
+    # The theme on solo violin; a second violin a sixth below in B and the drop.
+    if sec in ('A', 'B', 'drop'):
+        for st, ln, m in phrase:
+            play_violin(start + st * S16, ln, m, .62 if sec != 'drop' else .72, accent=st % 4 == 0)
+            if sec in ('B', 'drop'):
+                play_violin(start + st * S16, ln, m - 9 + (1 if (m - 9) % 12 in (1, 6) else 0), .32, pan=-.35)
+            if sec == 'drop':
+                play_violin(start + st * S16, ln, m - 12, .28, pan=.35)
+    # Pizzicato 16ths in B and the drop.
     if sec in ('B', 'drop'):
-        arp = [notes[0] + 12, notes[1] + 12, notes[2] + 12, notes[3] + 12]
+        arp = [notes[2] + 12, notes[3] + 12, notes[4] + 12, notes[3] + 12]
         for k in range(16):
-            add(synth, start + k * S16, pluck(arp[k % 4] + (12 if k % 8 >= 4 else 0), .2, 1.2), .07, pan=(-.5 if k % 2 else .5))
-    # Bass: pumping eighths on the off-beats (and every 8th in the drop).
+            add(strings, start + k * S16, pizz(arp[k % 4] + (12 if k % 8 >= 4 else 0)), .16, pan=(-.5 if k % 2 else .5))
+    # Cello: driving off-beat spiccato (every 8th in the drop).
     if sec in ('A', 'B', 'drop'):
         for k in range(8):
             if k % 2 == 1 or sec == 'drop':
-                add(bassb, start + k * BEAT / 2, bass(root + (12 if k == 7 else 0)), .5)
-    elif sec == 'build':
-        add(bassb, start, bass(root, BAR * .95 * K), .35)
+                add(cello, start + k * BEAT / 2, bowed(root + (12 if k == 7 else 0), 0.16 * K, att=0.008, rel=0.08, vib=0, bright=1.2, noise=0.08), .9)
+    # Build: violins tremolo (32nds), climbing a step each half bar, strings swell.
+    if sec == 'build':
+        climb = [74, 76, 77, 79, 81, 82, 84, 86]
+        for h in range(4):
+            seg = start + h * BEAT
+            m = climb[(bar - 17) * 4 + h]
+            for q in range(8):
+                add(violin, seg + q * BEAT / 8, bowed(m, BEAT / 8 * K * 0.9, att=0.006, rel=0.03, vib=0, bright=1.2, noise=0.08), .3 + .1 * h + .25 * (bar - 17), pan=.1)
+                add(violin, seg + q * BEAT / 8, bowed(m - 12, BEAT / 8 * K * 0.9, att=0.006, rel=0.03, vib=0, noise=0.08), .2 + .05 * h, pan=-.3)
+        add(strings, start, section_strings(notes[1:], BAR * K, .9 + .5 * (bar - 17)), .55)
+        add(cello, start, bowed(root, BAR * K * 0.95, att=0.3, rel=0.2, vib=0.003), .6)
+
+# Final: one long chord, the violin holds the top D, then a clean stop at 41.5.
+add(strings, 41.5, section_strings([50, 57, 62, 65, 69, 74], 0.6 * K, 1.4), .6)
+add(violin, 41.5, bowed(86, 0.5 * K, att=0.01, rel=1.2, bright=1.2), .7)
+add(cello, 41.5, bowed(38, 0.5 * K, att=0.01, rel=1.0), .9)
+add(fx, 41.5, impact(1.5), .5)
 
 # Drums.
 for k in range(int(DUR / BEAT)):
@@ -230,11 +277,6 @@ for i, at in enumerate(np.arange(3.0, 4.0, .125)):
 # The drops.
 for d in (4.0, 38.0):
     add(drums, d, crash(), .35); add(fx, d, impact(), .7)
-# Final chord and hook end, then a clean stop at 41.5 with tails.
-add(padb, 41.5, supersaw([62, 65, 69, 74, 77], .5, 3000), .5)
-add(synth, 41.5, bell(86, 2.5), .25)
-add(synth, 41.5, bell(81, 2.5), .18, pan=-.4)
-add(fx, 41.5, impact(1.5), .5)
 
 # ---- Sound effects on the picture --------------------------------------------------------------
 add(fx, 0.1, shimmer(1.8, 86, 30), .16)                    # monogram draws in gold
@@ -286,7 +328,7 @@ def reverb(x, seconds, mix, damp):
     wet *= (np.max(np.abs(x)) + 1e-9) / (np.max(np.abs(wet)) + 1e-9)
     return x * (1 - mix) + wet * mix
 
-# Sidechain: pad, synths and bass duck on every kick in the groove.
+# Sidechain: the strings and cello breathe with every kick in the groove.
 tt = np.arange(N) / SR / K          # grid time
 duck = np.ones(N)
 for a, b in ((4, 34), (38, 41.5)):
@@ -294,13 +336,21 @@ for a, b in ((4, 34), (38, 41.5)):
     duck[m] = 1 - 0.75 * np.exp(-((tt[m] - a) % BEAT) * 12)
 m = (tt >= 34) & (tt < 37)
 duck[m] = 1 - 0.5 * np.exp(-((tt[m] - 34) % BEAT) * 12)
-padb *= duck[:, None]; bassb *= (0.4 + 0.6 * duck)[:, None]; synth *= (0.6 + 0.4 * duck)[:, None]
-
-padb = reverb(padb, 2.2, .35, 6000)
-synth = reverb(synth, 1.6, .28, 8000)
+violin = body(violin); strings = body(strings); cello = body(cello, cello=True)
+strings *= (0.55 + 0.45 * duck)[:, None]; cello *= (0.5 + 0.5 * duck)[:, None]
+violin = reverb(violin, 2.4, .3, 7000)
+strings = reverb(strings, 2.6, .4, 6000)
+cello = reverb(cello, 1.2, .15, 5000)
 fx = reverb(fx, 1.4, .2, 8000)
-bassb = filt(bassb, 'low', 900)
-mix = drums * .9 + bassb * 1.0 + synth * 1.1 + padb * .8 + fx * 1.0
+sub = buf()                                   # a little sub under the cello for weight on phones/speakers
+for bar in range(2, 21):
+    start = bar * BAR; sec = section(start)
+    if sec in ('A', 'B', 'drop'):
+        for k in range(1, 8, 2):
+            add(sub, start + k * BEAT / 2, np.sin(2 * np.pi * hz(CH[bar % 4][1]) * T(.2 * K)) * np.exp(-T(.2 * K) * 6), .35)
+norm = lambda x: x / (np.max(np.abs(x)) + 1e-9)
+ref = np.max(np.abs(drums)) + 1e-9               # drums and effects keep their relative levels
+mix = drums / ref * .5 + fx / ref * .55 + norm(violin) * .62 + norm(strings) * .32 + norm(cello) * .4 + norm(sub) * .2
 mix = filt(mix, 'high', 28)
 mix *= np.clip((N - np.arange(N)) / (0.25 * SR), 0, 1)[:, None]
 mix /= np.max(np.abs(mix))
