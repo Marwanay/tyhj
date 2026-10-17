@@ -1,6 +1,8 @@
 // Renders the website launch film (video/launch.html) to MP4, frame by frame.
 //   node video/render.mjs                    → video/out/cocoa-caramel-launch.mp4
 //   node video/render.mjs --stills 2,5,9.5   → PNG stills at those seconds (for checking)
+// If video/out/soundtrack.wav exists (python video/sound.py video/out/soundtrack.wav), it is
+// mixed in as the film's music and sound effects.
 // Needs Chromium (Playwright) and ffmpeg. Before rendering, refresh the phone screenshots in
 // video/assets/ if the site has changed.
 import fs from 'node:fs/promises';
@@ -65,6 +67,14 @@ if (stills) {
   }
   ff.stdin.end();
   await done;
+  const wav = path.join(out, 'soundtrack.wav');
+  if (await fs.stat(wav).catch(() => null)) {
+    const silent = file.replace('.mp4', '-silent.mp4');
+    await fs.rename(file, silent);
+    await new Promise((res, rej) => spawn('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-i', wav, '-map', '0:v', '-map', '1:a',
+      '-c:v', 'copy', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', file], { stdio: 'inherit' })
+      .on('close', c => (c === 0 ? res() : rej(new Error('ffmpeg mux exited ' + c)))));
+  }
   console.log(file);
 }
 await browser.close();
