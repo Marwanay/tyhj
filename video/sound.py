@@ -1,7 +1,8 @@
 # Music and sound effects for the launch film: a violin instrumental over a fast beat, synthesised
 # from scratch (bowed-string modelling — no samples, no licensed music) and locked to the picture: 120 bpm, so one beat = 0.5 s and one bar = 2 s,
 # and every cut in launch.html lands on a bar.
-#   python video/sound.py video/out/soundtrack.wav [bpm]     (needs numpy + scipy; default 140 bpm)
+#   python video/sound.py video/out/soundtrack.wav [bpm] [sfx]   (needs numpy + scipy; default 120 bpm;
+#                                                                 'sfx' = sound effects only, no music)
 # Everything below is written on a 120 bpm grid (beat 0.5 s, bar 2 s) and scaled to the chosen
 # tempo by K, exactly as launch.html scales its timeline.
 # render.mjs mixes the result into the MP4.
@@ -15,7 +16,8 @@ from scipy.signal import butter, sosfilt, fftconvolve, lfilter
 from scipy.io import wavfile
 
 SR = 48000
-BPM = float(sys.argv[2]) if len(sys.argv) > 2 else 140.0
+BPM = float(sys.argv[2]) if len(sys.argv) > 2 else 120.0
+SFX_ONLY = len(sys.argv) > 3 and sys.argv[3] == 'sfx'   # sound effects only, no music
 K = 120.0 / BPM                      # grid seconds → real seconds
 DUR = 42.0
 N = int(SR * DUR * K)
@@ -350,6 +352,8 @@ for bar in range(2, 21):
             add(sub, start + k * BEAT / 2, np.sin(2 * np.pi * hz(CH[bar % 4][1]) * T(.2 * K)) * np.exp(-T(.2 * K) * 6), .35)
 norm = lambda x: x / (np.max(np.abs(x)) + 1e-9)
 ref = np.max(np.abs(drums)) + 1e-9               # drums and effects keep their relative levels
+if SFX_ONLY:
+    drums[:] = 0; violin[:] = 0; strings[:] = 0; cello[:] = 0; sub[:] = 0
 mix = drums / ref * .5 + fx / ref * .55 + norm(violin) * .62 + norm(strings) * .32 + norm(cello) * .4 + norm(sub) * .2
 mix = filt(mix, 'high', 28)
 mix *= np.clip((N - np.arange(N)) / (0.25 * SR), 0, 1)[:, None]

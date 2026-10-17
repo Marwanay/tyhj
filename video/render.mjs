@@ -1,9 +1,8 @@
 // Renders the website launch film (video/launch.html) to MP4, frame by frame.
 //   node video/render.mjs                    → video/out/cocoa-caramel-launch.mp4
 //   node video/render.mjs --stills 2,5,9.5   → PNG stills at those seconds (for checking)
-// If video/out/soundtrack.wav exists (python video/sound.py video/out/soundtrack.wav 140 — same tempo
-// as FILM_BPM, default 140), it is
-// mixed in as the film's music and sound effects.
+// If video/out/soundtrack.wav exists (python video/sound.py video/out/soundtrack.wav <bpm> [sfx] — same
+// tempo as FILM_BPM, default 120), it is mixed in at FILM_LUFS loudness (default -14).
 // Needs Chromium (Playwright) and ffmpeg. Before rendering, refresh the phone screenshots in
 // video/assets/ if the site has changed.
 import fs from 'node:fs/promises';
@@ -41,7 +40,7 @@ const data = {
     { name: 'Raspberry Cake', unit: 'cake', unitLabel: 'Signature cake', src: '../public/media/table/desserts/raspberry-cake.webp', steps: [1], at: [3.0] },
     { name: 'Macaron Tower', unit: 'tower', unitLabel: 'Tower', src: '../public/media/table/desserts/macaron-tower.webp', steps: [1], at: [3.5] },
   ],
-  bpm: Number(process.env.FILM_BPM || 140),
+  bpm: Number(process.env.FILM_BPM || 120),
   url: process.env.FILM_URL || 'cocoa-caramel-inky.vercel.app',
   instagram: '@cocoacaramel.eg  ·  0122 211 1681',
 };
@@ -81,7 +80,7 @@ if (stills) {
     const silent = file.replace('.mp4', '-silent.mp4');
     await fs.rename(file, silent);
     await new Promise((res, rej) => spawn('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-i', wav, '-map', '0:v', '-map', '1:a',
-      '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', file], { stdio: 'inherit' })
+      '-c:v', 'copy', '-af', `loudnorm=I=${process.env.FILM_LUFS || -14}:TP=-1.5:LRA=11`, '-ar', '48000', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', file], { stdio: 'inherit' })
       .on('close', c => (c === 0 ? res() : rej(new Error('ffmpeg mux exited ' + c)))));
   }
   console.log(file);
