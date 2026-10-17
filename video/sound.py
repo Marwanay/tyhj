@@ -1,7 +1,9 @@
 # Music and sound effects for the launch film, synthesised from scratch (no samples, no
 # licensed music) and locked to the picture: 120 bpm, so one beat = 0.5 s and one bar = 2 s,
 # and every cut in launch.html lands on a bar.
-#   python video/sound.py video/out/soundtrack.wav      (needs numpy + scipy)
+#   python video/sound.py video/out/soundtrack.wav [bpm]     (needs numpy + scipy; default 140 bpm)
+# Everything below is written on a 120 bpm grid (beat 0.5 s, bar 2 s) and scaled to the chosen
+# tempo by K, exactly as launch.html scales its timeline.
 # render.mjs mixes the result into the MP4.
 #
 # Arrangement:  0–4 s intro build · 4 s DROP · 4–22 s groove (collection, fillings, events)
@@ -13,8 +15,10 @@ from scipy.signal import butter, sosfilt, fftconvolve
 from scipy.io import wavfile
 
 SR = 48000
+BPM = float(sys.argv[2]) if len(sys.argv) > 2 else 140.0
+K = 120.0 / BPM                      # grid seconds → real seconds
 DUR = 42.0
-N = int(SR * DUR)
+N = int(SR * DUR * K)
 BEAT = 0.5
 BAR = 2.0
 rng = np.random.default_rng(5)
@@ -28,7 +32,7 @@ def T(sec):
     return np.arange(int(sec * SR)) / SR
 
 def add(b, start, sig, gain=1.0, pan=0.0):
-    i = int(round(start * SR))
+    i = int(round(start * K * SR))
     if i >= N or i < 0:
         return
     sig = sig[: N - i]
@@ -171,9 +175,9 @@ for b in range(21):
     cutoff = {'intro': 900, 'A': 2400, 'B': 3200, 'build': 1200, 'drop': 4200}[sec]
     if sec == 'build':
         for q in range(4):  # filter opens up across the build
-            add(padb, start + q * .5, supersaw(notes, .5, 900 + (start - 34 + q * .5) * 900), .55)
+            add(padb, start + q * .5, supersaw(notes, .5 * K, 900 + (start - 34 + q * .5) * 900), .55)
     else:
-        add(padb, start, supersaw(notes, BAR, cutoff), .55 if sec != 'intro' else .45)
+        add(padb, start, supersaw(notes, BAR * K, cutoff), .55 if sec != 'intro' else .45)
     # Hook.
     hook = HOOK_A if b % 2 == 0 else HOOK_B
     if sec in ('intro', 'A', 'B', 'drop') or (sec == 'build' and start < 36):
@@ -192,7 +196,7 @@ for b in range(21):
             if k % 2 == 1 or sec == 'drop':
                 add(bassb, start + k * BEAT / 2, bass(root + (12 if k == 7 else 0)), .5)
     elif sec == 'build':
-        add(bassb, start, bass(root, BAR * .95), .35)
+        add(bassb, start, bass(root, BAR * .95 * K), .35)
 
 # Drums.
 for k in range(int(DUR / BEAT)):
@@ -218,9 +222,9 @@ for i, at in enumerate(roll):
     add(drums, at, snare(), .12 + .3 * (at - 34) / 4, pan=.1)
 for at in np.arange(34, 37, BEAT):          # half-time kick under the build
     add(drums, at, kick(), .6)
-add(fx, 34.0, riser(4.0), .55)
+add(fx, 34.0, riser(4.0 * K), .55)
 # Intro: filtered riser and snare roll into the first drop.
-add(fx, 1.0, riser(3.0), .45)
+add(fx, 1.0, riser(3.0 * K), .45)
 for i, at in enumerate(np.arange(3.0, 4.0, .125)):
     add(drums, at, snare(), .1 + i * .03)
 # The drops.
@@ -283,7 +287,7 @@ def reverb(x, seconds, mix, damp):
     return x * (1 - mix) + wet * mix
 
 # Sidechain: pad, synths and bass duck on every kick in the groove.
-tt = np.arange(N) / SR
+tt = np.arange(N) / SR / K          # grid time
 duck = np.ones(N)
 for a, b in ((4, 34), (38, 41.5)):
     m = (tt >= a) & (tt < b)

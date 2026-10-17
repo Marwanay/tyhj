@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Cocoa Caramel — website launch film (1080 × 1920, 42 s at 120 bpm).
+  Cocoa Caramel — website launch film (1080 × 1920; 42 s on a 120 bpm grid, played at FILM_DATA.bpm).
   A deterministic motion composition: window.render(t) draws the frame at time t (seconds),
   so video/render.mjs can capture every frame exactly. Cuts and pops sit on the beat of the
   soundtrack (video/sound.py): one beat = 0.5 s, one bar = 2 s. Open with ?play to preview.
@@ -200,10 +200,10 @@ img { display: block; }
     <p class="abs center-x lede">Each creation is made to order and composed to be the centrepiece of the table.</p>
     <div class="card" data-card="0"><div class="mat"><img class="cover" src="../public/media/signature-tray-studio-1080.jpg" alt=""></div></div>
     <div class="card" data-card="1"><div class="mat"><img class="cover" src="../public/media/round-tray-studio-1080.jpg" alt=""></div></div>
-    <div class="card" data-card="2"><div class="mat"><img class="cover" src="../public/media/tiered-tray-studio-1080.jpg" alt=""></div></div>
+    <div class="card" data-card="2"><div class="mat"><img class="cover" src="../public/media/square-tray-studio-1080.jpg" alt=""></div></div>
     <div class="abs center-x name" data-name="0"><p class="num">No. 01</p><p class="nm">The Signature Chocolate Tray</p></div>
     <div class="abs center-x name" data-name="1"><p class="num">No. 02</p><p class="nm">The Signature Round Tray</p></div>
-    <div class="abs center-x name" data-name="2"><p class="num">No. 03</p><p class="nm">The Signature Tiered Tray</p></div>
+    <div class="abs center-x name" data-name="2"><p class="num">No. 03</p><p class="nm">The Signature Square Tray</p></div>
   </section>
 
   <section class="scene" id="s4">
@@ -594,7 +594,9 @@ img { display: block; }
     }
   }
 
-  window.FILM = { render, duration: DURATION, fps: 30 };
+  // The timeline is written on a 120 bpm grid; it plays at the soundtrack's tempo.
+  const SPEED = (D.bpm || 120) / 120;
+  window.FILM = { render: (t) => render(t * SPEED), duration: DURATION / SPEED, fps: 30 };
   window.filmReady = (async () => {
     await document.fonts.ready;
     await Promise.all($$('img').map(i => i.decode().catch(() => {})));
@@ -603,7 +605,7 @@ img { display: block; }
   })();
   if (new URLSearchParams(location.search).has('play')) {
     const t0 = performance.now();
-    const loop = () => { render(((performance.now() - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
+    const loop = () => { window.FILM.render(((performance.now() - t0) / 1000) % window.FILM.duration); requestAnimationFrame(loop); };
     window.filmReady.then(loop);
   }
 })();

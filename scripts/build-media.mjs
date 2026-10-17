@@ -14,7 +14,7 @@ const outDir = path.join(root, 'public/media');
 const STUDIO = src('signature-tray-studio.png');   // 1254 × 1254
 const TABLE = src('signature-tray-table.png');     // 1536 × 1024
 const ROUND = src('round-tray-studio.png');         // 1312 × 1199
-const TIERED = src('tiered-tray-studio.png');       // 1312 × 1199
+const SQUARE = src('square-tray-studio.png');       // 1312 × 1199
 
 const SITE = {
   'site-hero':          { file: STUDIO, alt: 'The Signature Chocolate Tray: gold-flecked chocolate domes in a clear tray beside cream gerberas' },
@@ -49,10 +49,10 @@ const COLLECTION = {
     'round-tray-detail':  { file: ROUND, crop: { left: 160, top: 760, width: 620, height: 400 }, alt: 'Close-up of the gold-flecked chocolate domes in the round tray' },
     'round-tray-flowers': { file: ROUND, crop: { left: 290, top: 80, width: 640, height: 720 }, alt: 'Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray' },
   },
-  'signature-tiered-tray': {
-    'tiered-tray-studio':  { file: TIERED, alt: 'The Signature Tiered Tray: three clear square tiers of gold-flecked chocolate domes around a vase of white lilies' },
-    'tiered-tray-detail':  { file: TIERED, crop: { left: 170, top: 690, width: 660, height: 420 }, alt: 'Close-up of the gold-flecked chocolate domes on the lowest tier' },
-    'tiered-tray-flowers': { file: TIERED, crop: { left: 350, top: 20, width: 700, height: 560 }, alt: 'White lilies and buds in the clear square vase at the top of the tiers' },
+  'signature-square-tray': {
+    'square-tray-studio':  { file: SQUARE, alt: 'The Signature Square Tray: gold-flecked chocolate domes in a clear square tray with gold corners, around a vase of white lilies' },
+    'square-tray-detail':  { file: SQUARE, crop: { left: 140, top: 640, width: 720, height: 460 }, alt: 'Close-up of the gold-flecked chocolate domes and the tray’s gold corner' },
+    'square-tray-flowers': { file: SQUARE, crop: { left: 290, top: 90, width: 760, height: 580 }, alt: 'A white lily, buds, small white blooms and greenery in the clear square vase' },
   },
 };
 

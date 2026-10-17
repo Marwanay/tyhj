@@ -245,8 +245,8 @@ export const COLLECTION_MEDIA = {
       "alt": "Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray"
     }
   },
-  "signature-tiered-tray": {
-    "tiered-tray-studio": {
+  "signature-square-tray": {
+    "square-tray-studio": {
       "width": 1312,
       "height": 1199,
       "widths": [
@@ -255,28 +255,28 @@ export const COLLECTION_MEDIA = {
         1080,
         1312
       ],
-      "placeholder": "rgb(200 168 152)",
-      "alt": "The Signature Tiered Tray: three clear square tiers of gold-flecked chocolate domes around a vase of white lilies"
+      "placeholder": "rgb(200 168 136)",
+      "alt": "The Signature Square Tray: gold-flecked chocolate domes in a clear square tray with gold corners, around a vase of white lilies"
     },
-    "tiered-tray-detail": {
-      "width": 660,
-      "height": 420,
+    "square-tray-detail": {
+      "width": 720,
+      "height": 460,
       "widths": [
         480,
-        660
+        720
       ],
-      "placeholder": "rgb(248 232 200)",
-      "alt": "Close-up of the gold-flecked chocolate domes on the lowest tier"
+      "placeholder": "rgb(248 216 184)",
+      "alt": "Close-up of the gold-flecked chocolate domes and the tray’s gold corner"
     },
-    "tiered-tray-flowers": {
-      "width": 700,
-      "height": 560,
+    "square-tray-flowers": {
+      "width": 760,
+      "height": 580,
       "widths": [
         480,
-        700
+        760
       ],
-      "placeholder": "rgb(200 168 152)",
-      "alt": "White lilies and buds in the clear square vase at the top of the tiers"
+      "placeholder": "rgb(200 168 136)",
+      "alt": "A white lily, buds, small white blooms and greenery in the clear square vase"
     }
   }
 };

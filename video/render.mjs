@@ -1,7 +1,8 @@
 // Renders the website launch film (video/launch.html) to MP4, frame by frame.
 //   node video/render.mjs                    → video/out/cocoa-caramel-launch.mp4
 //   node video/render.mjs --stills 2,5,9.5   → PNG stills at those seconds (for checking)
-// If video/out/soundtrack.wav exists (python video/sound.py video/out/soundtrack.wav), it is
+// If video/out/soundtrack.wav exists (python video/sound.py video/out/soundtrack.wav 140 — same tempo
+// as FILM_BPM, default 140), it is
 // mixed in as the film's music and sound effects.
 // Needs Chromium (Playwright) and ffmpeg. Before rendering, refresh the phone screenshots in
 // video/assets/ if the site has changed.
@@ -40,6 +41,7 @@ const data = {
     { name: 'Raspberry Cake', unit: 'cake', unitLabel: 'Signature cake', src: '../public/media/table/desserts/raspberry-cake.webp', steps: [1], at: [3.0] },
     { name: 'Macaron Tower', unit: 'tower', unitLabel: 'Tower', src: '../public/media/table/desserts/macaron-tower.webp', steps: [1], at: [3.5] },
   ],
+  bpm: Number(process.env.FILM_BPM || 140),
   url: process.env.FILM_URL || 'cocoa-caramel-inky.vercel.app',
   instagram: '@cocoacaramel.eg  ·  0122 211 1681',
 };
