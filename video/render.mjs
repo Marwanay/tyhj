@@ -33,6 +33,13 @@ const data = {
   fillings: ['Pecan caramel', 'Hazelnut praline', 'Pistachio cream', 'Mixed nuts', 'Croquant', 'Halawa pistachio cream'],
   events: EVENT_PHOTOS.map(([key]) => largest(key)),
   table,
+  // Q2 "Choose by quantity": each item's quantities and the beats (seconds into the scene) they tick on.
+  menu: [
+    { name: 'Chocolate Pieces', unit: 'kg', unitLabel: 'By the kilo', src: '../public/media/table/desserts/chocolate-pieces.webp', steps: [0.5, 1, 1.5, 2], at: [1.0, 1.25, 1.5, 1.75] },
+    { name: 'Mini Éclairs', unit: 'piece', unitLabel: 'By the piece', src: '../public/media/table/desserts/mini-eclairs.webp', steps: [12, 24, 36, 48, 60], at: [2.0, 2.125, 2.25, 2.375, 2.5] },
+    { name: 'Raspberry Cake', unit: 'cake', unitLabel: 'Signature cake', src: '../public/media/table/desserts/raspberry-cake.webp', steps: [1], at: [3.0] },
+    { name: 'Macaron Tower', unit: 'tower', unitLabel: 'Tower', src: '../public/media/table/desserts/macaron-tower.webp', steps: [1], at: [3.5] },
+  ],
   url: process.env.FILM_URL || 'cocoa-caramel-inky.vercel.app',
   instagram: '@cocoacaramel.eg  ·  0122 211 1681',
 };
@@ -72,7 +79,7 @@ if (stills) {
     const silent = file.replace('.mp4', '-silent.mp4');
     await fs.rename(file, silent);
     await new Promise((res, rej) => spawn('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-i', wav, '-map', '0:v', '-map', '1:a',
-      '-c:v', 'copy', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', file], { stdio: 'inherit' })
+      '-c:v', 'copy', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', file], { stdio: 'inherit' })
       .on('close', c => (c === 0 ? res() : rej(new Error('ffmpeg mux exited ' + c)))));
   }
   console.log(file);
