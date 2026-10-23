@@ -1,7 +1,7 @@
 // First-run setup, safe to call on every request: migrates the database, creates the
 // policy pages and seeds each collection piece once. A fresh Neon database therefore
 // sets itself up on the first visit after deploying.
-import { init, one, run, insert, tx } from '../db.js';
+import { init, one, all, run, insert, tx } from '../db.js';
 import { ensurePages, loadSettings, setSetting, getSetting } from './content.js';
 import { PRODUCT_MEDIA, COLLECTION_MEDIA } from '../views/media.js';
 
@@ -14,6 +14,8 @@ export function bootstrap() {
     await loadSettings();
     await seedCollection();
     await replaceTieredTray();
+    await updateSquareTrayWords();
+    await syncCollectionImages();
   })().catch((err) => { done = null; throw err; });
   return done;
 }
@@ -25,8 +27,10 @@ export function bootstrap() {
 // The fillings every chocolate tray in the collection offers (customers choose one per tray).
 const TRAY_FILLINGS = ['Pecan caramel', 'Hazelnut praline', 'Pistachio cream', 'Mixed nuts', 'Croquant', 'Halawa pistachio cream'].join('\n');
 
-export const SQUARE_TAGLINE = 'Gold-flecked chocolates around a vase of white lilies, in a clear square tray.';
-export const SQUARE_DESCRIPTION = 'Glossy chocolate domes, each finished with a fleck of gold, arranged in a clear square tray with gold corners around a vase of white lilies, small white blooms and greenery.\n\nA centrepiece for engagements, celebrations and gifts that deserve a moment of their own.';
+export const SQUARE_TAGLINE = 'Rows of assorted chocolates around a vase of white lilies, in a clear square tray.';
+export const SQUARE_DESCRIPTION = 'An assortment of our chocolates — glossy squares, rings and nut-topped pieces, some finished with a fleck of gold — set in neat rows in a clear square tray around a vase of white lilies.\n\nA centrepiece for engagements, celebrations and gifts that deserve a moment of their own.';
+// The square tray's first words (before its photo was updated), replaced only if the team hasn't edited them.
+const SQUARE_TAGLINE_V1 = 'Gold-flecked chocolates around a vase of white lilies, in a clear square tray.';
 
 const COLLECTION = [
   {
@@ -83,13 +87,40 @@ async function replaceTieredTray() {
     if (p && !(await one("SELECT 1 FROM products WHERE slug = 'signature-square-tray'"))) {
       await run(`UPDATE products SET slug = 'signature-square-tray', name = 'The Signature Square Tray', tagline = ?, description = ?, updated_at = now() WHERE id = ?`,
         SQUARE_TAGLINE, SQUARE_DESCRIPTION, p.id);
-      await run("DELETE FROM product_images WHERE product_id = ? AND source = 'static' AND media_key LIKE 'tiered-tray-%'", p.id);
-      let i = 0;
-      for (const [key, m] of Object.entries(COLLECTION_MEDIA['signature-square-tray'])) {
-        await run(`INSERT INTO product_images (product_id, media_key, source, alt, width, height, widths, placeholder, sort)
-          VALUES (?, ?, 'static', ?, ?, ?, ?, ?, ?)`, p.id, key, m.alt, m.width, m.height, JSON.stringify(m.widths), m.placeholder, i++);
-      }
     }
     await setSetting('system', { ...getSetting('system'), squareTraySwapped: true });
   });
+}
+
+// The square tray's photo was updated to an assortment of chocolates: refresh its words once.
+async function updateSquareTrayWords() {
+  if (getSetting('system').squareTrayWordsV2) return;
+  await run(`UPDATE products SET tagline = ?, description = ?, updated_at = now() WHERE slug = 'signature-square-tray' AND tagline = ?`,
+    SQUARE_TAGLINE, SQUARE_DESCRIPTION, SQUARE_TAGLINE_V1);
+  await setSetting('system', { ...getSetting('system'), squareTrayWordsV2: true });
+}
+
+/**
+ * Keeps each collection piece's built-in gallery in step with the photos shipped with the site
+ * (src/views/media.js). When a piece's photos are replaced, the old built-in images are swapped
+ * for the new ones; photos the team uploaded in the admin are left alone. Cheap when nothing changed.
+ */
+async function syncCollectionImages() {
+  for (const { slug } of COLLECTION) {
+    const media = slug === 'signature-chocolate-tray' ? PRODUCT_MEDIA : COLLECTION_MEDIA[slug];
+    const p = media && await one('SELECT id FROM products WHERE slug = ?', slug);
+    if (!p) continue;
+    const want = Object.keys(media);
+    const have = (await all("SELECT media_key FROM product_images WHERE product_id = ? AND source = 'static' ORDER BY sort, id", p.id)).map(r => r.media_key);
+    if (want.join() === have.join()) continue;
+    await tx(async () => {
+      await one('SELECT id FROM products WHERE id = ? FOR UPDATE', p.id);
+      await run("DELETE FROM product_images WHERE product_id = ? AND source = 'static'", p.id);
+      let i = 0;
+      for (const [key, m] of Object.entries(media)) {
+        await run(`INSERT INTO product_images (product_id, media_key, source, alt, width, height, widths, placeholder, sort)
+          VALUES (?, ?, 'static', ?, ?, ?, ?, ?, ?)`, p.id, key, m.alt, m.width, m.height, JSON.stringify(m.widths), m.placeholder, i++);
+      }
+    });
+  }
 }

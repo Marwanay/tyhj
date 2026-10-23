@@ -14,7 +14,7 @@ const outDir = path.join(root, 'public/media');
 const STUDIO = src('signature-tray-studio.png');   // 1254 × 1254
 const TABLE = src('signature-tray-table.png');     // 1536 × 1024
 const ROUND = src('round-tray-studio.png');         // 1312 × 1199
-const SQUARE = src('square-tray-studio.png');       // 1312 × 1199
+const SQUARE = src('square-tray-studio.png');       // 1536 × 1024
 
 const SITE = {
   'site-hero':          { file: STUDIO, alt: 'The Signature Chocolate Tray: gold-flecked chocolate domes in a clear tray beside cream gerberas' },
@@ -50,9 +50,9 @@ const COLLECTION = {
     'round-tray-flowers': { file: ROUND, crop: { left: 290, top: 80, width: 640, height: 720 }, alt: 'Cream gerberas, small white flowers and folded leaves in the clear vase at the centre of the tray' },
   },
   'signature-square-tray': {
-    'square-tray-studio':  { file: SQUARE, alt: 'The Signature Square Tray: gold-flecked chocolate domes in a clear square tray with gold corners, around a vase of white lilies' },
-    'square-tray-detail':  { file: SQUARE, crop: { left: 140, top: 640, width: 720, height: 460 }, alt: 'Close-up of the gold-flecked chocolate domes and the tray’s gold corner' },
-    'square-tray-flowers': { file: SQUARE, crop: { left: 290, top: 90, width: 760, height: 580 }, alt: 'A white lily, buds, small white blooms and greenery in the clear square vase' },
+    'square-tray-2-studio':  { file: SQUARE, alt: 'The Signature Square Tray: rows of assorted chocolates in a clear square tray, around a vase of white lilies' },
+    'square-tray-2-detail':  { file: SQUARE, crop: { left: 300, top: 470, width: 840, height: 410 }, alt: 'Close-up of the assorted chocolates: squares, rings and nut-topped pieces with flecks of gold' },
+    'square-tray-2-flowers': { file: SQUARE, crop: { left: 500, top: 170, width: 600, height: 560 }, alt: 'White lilies and buds in the clear square vase at the centre of the tray' },
   },
 };
 

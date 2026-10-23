@@ -246,37 +246,39 @@ export const COLLECTION_MEDIA = {
     }
   },
   "signature-square-tray": {
-    "square-tray-studio": {
-      "width": 1312,
-      "height": 1199,
+    "square-tray-2-studio": {
+      "width": 1536,
+      "height": 1024,
       "widths": [
         480,
         760,
         1080,
-        1312
+        1440,
+        1536
       ],
-      "placeholder": "rgb(200 168 136)",
-      "alt": "The Signature Square Tray: gold-flecked chocolate domes in a clear square tray with gold corners, around a vase of white lilies"
+      "placeholder": "rgb(232 216 200)",
+      "alt": "The Signature Square Tray: rows of assorted chocolates in a clear square tray, around a vase of white lilies"
     },
-    "square-tray-detail": {
-      "width": 720,
-      "height": 460,
+    "square-tray-2-detail": {
+      "width": 840,
+      "height": 410,
       "widths": [
         480,
-        720
+        760,
+        840
       ],
-      "placeholder": "rgb(248 216 184)",
-      "alt": "Close-up of the gold-flecked chocolate domes and the tray’s gold corner"
+      "placeholder": "rgb(232 216 200)",
+      "alt": "Close-up of the assorted chocolates: squares, rings and nut-topped pieces with flecks of gold"
     },
-    "square-tray-flowers": {
-      "width": 760,
-      "height": 580,
+    "square-tray-2-flowers": {
+      "width": 600,
+      "height": 560,
       "widths": [
         480,
-        760
+        600
       ],
-      "placeholder": "rgb(200 168 136)",
-      "alt": "A white lily, buds, small white blooms and greenery in the clear square vase"
+      "placeholder": "rgb(216 200 184)",
+      "alt": "White lilies and buds in the clear square vase at the centre of the tray"
     }
   }
 };
